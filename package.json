@@ -1,0 +1,31 @@
+{
+  "name": "x-slider",
+  "version": "0.0.1",
+  "description": "`Slider as a vanilla Web Component'",
+  "main": "src/x-slider.js",
+  "scripts": {
+    "install": "npm im && bower i",
+    "start": "python -m SimpleHTTPServer | open http://localhost:8000/demo/",
+    "test": "wct --npm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ciampo/x-slider.git"
+  },
+  "keywords": [
+    "Slider",
+    "Web",
+    "Components"
+  ],
+  "author": "Marco Ciampini <marco.ciampo@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ciampo/x-slider/issues"
+  },
+  "homepage": "https://github.com/ciampo/x-slider#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^1.0.10",
+    "web-component-tester": "^6.1.5"
+  }
+}
