@@ -7,6 +7,6 @@ Slider as a Vanilla Web Component.
 - bower
 
 ## How to..
-- Install dependencies: `npm run install`
+- Install local dependencies: `npm run install`
 - Run local serve: `npm run start`
-- Run tests: `npm run tests`
+- Run tests: `npm run test`

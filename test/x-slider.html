@@ -7,11 +7,12 @@
   <script src="../src/x-slider.js"></script>
 </head>
 <body>
-  <x-slider id="fixture"></x-slider>
+  <x-slider id="slider"></x-slider>
+
   <script>
     suite('<x-slider>', function() {
       test('is defined', function() {
-        assert.equal(document.getElementById('fixture').constructor.name, 'XSlider');
+        assert.equal(document.getElementById('slider').constructor.name, 'XSlider');
       });
     });
   </script>
