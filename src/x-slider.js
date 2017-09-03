@@ -1,3 +1,4 @@
+(function() {
 /**
  * Markup and styles.
  */
@@ -339,3 +340,4 @@ class XSlider extends HTMLElement {
 }
 
 window.customElements.define('x-slider', XSlider);
+})();
