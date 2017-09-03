@@ -12,10 +12,31 @@
     }
 
     .slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       background: white;
-      border: 1px solid #ccc;
 
       height: 200px;
+
+      text-transform: uppercase;
+    }
+
+    .slide:nth-child(n) {
+      background: coral;
+    }
+
+    .slide:nth-child(2n) {
+      background: lightgreen;
+    }
+
+    .slide:nth-child(3n) {
+      background: slategray;
+    }
+
+    .slide:nth-child(4n) {
+      background: deepskyblue;
     }
   </style>
 </head>
