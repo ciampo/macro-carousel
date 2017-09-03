@@ -21,7 +21,9 @@ template.innerHTML = `
       align-items: stretch;
 
       background-color: #ccc;
+    }
 
+    .host([transitioning]) #slidesWrapper {
       will-change: transform;
 
       transition: .5s transform ease-in-out;
@@ -64,30 +66,29 @@ class XSlider extends HTMLElement {
   }
 
   connectedCallback() {
-    // Grab references to the DOM
+    // Grab references to the DOM.
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
     this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
     this._slides = this._getSlides();
 
     // Setup the component.
-    this._selected = 0;
+    this.selected = this.getAttribute('initial-slide') || 0;
+    this.selected = this.selected || 0;
+
     this._updatePagination();
 
-    // Add event listeners
-    this._slidesSlot.addEventListener('slotchange', _ => {
-      this._slides = this._getSlides();
+    // Enable transitions only after the initial setup.
+    this.setAttribute('transitioning', '');
 
-      if (this._selected >= this._slides.length) {
-        this.selected = this._slides.length - 1;
-      }
-
-      this._updatePagination();
-    });
+    // Add event listeners.
+    this._onSlotChange = this._onSlotChange.bind(this);
+    this._slidesSlot.addEventListener('slotchange', this._onSlotChange);
   }
 
   disconnectedCallback() {
-
+    // Remove event listeners.
+    this._slidesSlot.removeEventListener('slotchange', this._onSlotChange);
   }
 
   static get observedAttributes() {
@@ -96,6 +97,16 @@ class XSlider extends HTMLElement {
 
   attributeChangedCallback(attrName, oldVal, newVal) {
     this[attrName] = newVal;
+  }
+
+  _onSlotChange() {
+    this._slides = this._getSlides();
+
+    if (this._selected >= this._slides.length) {
+      this.selected = this._slides.length - 1;
+    }
+
+    this._updatePagination();
   }
 
   /**
@@ -114,6 +125,8 @@ class XSlider extends HTMLElement {
     if (this._selected === parsed) return;
 
     this._selected = parsed;
+    this.setAttribute('selected', parsed);
+
     /* Update the DOM as necessary */
     requestAnimationFrame(_ => {
       this._slideTo(this._selected)
