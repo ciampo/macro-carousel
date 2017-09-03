@@ -81,7 +81,7 @@ template.innerHTML = `
  */
 class XSlider extends HTMLElement {
   static get observedAttributes() {
-    return ['selected'];
+    return ['selected', 'loop'];
   }
 
   /**
@@ -114,6 +114,7 @@ class XSlider extends HTMLElement {
 
     // Setup the component.
     this._upgradeProperty('selected');
+    this._upgradeProperty('loop');
 
     this._updatePagination();
     this._updateNavigation();
@@ -195,25 +196,48 @@ class XSlider extends HTMLElement {
         this._updatePagination();
         this._updateNavigation();
         break;
+      case 'loop':
+        this._updateNavigation();
+        break;
     }
   }
 
   /**
-   * Sets the selected slide and moves it into view.
+   * Reflects the property to its corresponding attribute.
    * @param {number} i The 0-based index of the selected slide.
    */
-  set selected(i) {
-    // Reflect to attribute.
-    this.setAttribute('selected', i);
+  set selected(index) {
+    this.setAttribute('selected', index);
   }
 
   /**
-   * Gets the index of the selected slide.
+   * Gets the property's value from the corresponding attribute.
    * @return {number} The 0-based index of the selected slide.
    */
   get selected() {
     const value = this.getAttribute('selected');
+    // Default value is `0`.
     return value === null ? '0' : parseInt(value);
+  }
+
+  /**
+   * Reflects the property to its corresponding attribute.
+   * @param {boolean} flag True to make the slider loop, false to disable it.
+   */
+  set loop(flag) {
+    if (flag) {
+      this.setAttribute('loop', '');
+    } else {
+      this.removeAttribute('loop');
+    }
+  }
+
+  /**
+   * Gets the property's value from the corresponding attribute.
+   * @return {boolean} True if the slider is looping, false otherwise.
+   */
+  get loop() {
+    return this.hasAttribute('loop');
   }
 
   /**
