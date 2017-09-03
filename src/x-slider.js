@@ -58,8 +58,15 @@ template.innerHTML = `
  * XSlider definition.
  */
 class XSlider extends HTMLElement {
+  static get observedAttributes() {
+    return ['selected'];
+  }
+
   /**
-   * Creates an instance of XSlider.
+   * Runs anytime a new instance is created (in HTML or JS).
+   * The construtor is a good place to create shadow DOM, though you should
+   * avoid touching any attributes or light DOM children as they may not
+   * be available yet.
    * @constructor
    */
   constructor() {
@@ -69,6 +76,11 @@ class XSlider extends HTMLElement {
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
 
+  /**
+   * Fires when the element is inserted into the DOM.
+   * It's a good place to set the initial `role`, `tabindex`, internal state,
+   * and install event listeners.
+   */
   connectedCallback() {
     // Grab references to the DOM.
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
@@ -90,27 +102,30 @@ class XSlider extends HTMLElement {
     this._slidesSlot.addEventListener('slotchange', this._onSlotChange);
   }
 
+  /**
+   * Fires when the element is removed from the DOM.
+   * It's a good place to do clean up work like releasing references and
+   * removing event listeners.
+   */
   disconnectedCallback() {
-    // Remove event listeners.
     this._slidesSlot.removeEventListener('slotchange', this._onSlotChange);
   }
 
-  static get observedAttributes() {
-    return ['selected'];
+  /**
+   * Used for upgrading properties in case this element is upgraded lazily.
+   * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
+   * @param {any} prop
+   */
+  _upgradeProperty(prop) {
+    if (this.hasOwnProperty(prop)) {
+      let value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
     this[attrName] = newVal;
-  }
-
-  _onSlotChange() {
-    this._slides = this._getSlides();
-
-    if (this._selected >= this._slides.length) {
-      this.selected = this._slides.length - 1;
-    }
-
-    this._updatePagination();
   }
 
   /**
@@ -146,6 +161,24 @@ class XSlider extends HTMLElement {
     return this._selected;
   }
 
+  /**
+   * Called when the content of #slidesSlot changes.
+   * Updates the slider to the new number of slides.
+   */
+  _onSlotChange() {
+    this._slides = this._getSlides();
+
+    if (this._selected >= this._slides.length) {
+      this.selected = this._slides.length - 1;
+    }
+
+    this._updatePagination();
+  }
+
+  /**
+   * Updates the pagination to relect the current number of slides,
+   * and highlights the bullet point correponsing to the selected slide.
+   */
   _updatePagination() {
     // Update the number of bullet points
     if (this._paginationWrapper.childElementCount !== this._slides.length) {
@@ -174,11 +207,19 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
+   * @returns {Array<HTMLElement>} The elements found in #slidesSlot.
+   */
   _getSlides() {
     return this._slidesSlot.assignedNodes()
         .filter(n => n.nodeType === Node.ELEMENT_NODE);
   }
 
+  /**
+   * Translates the slider to show the target slide.
+   * @param {number} targetSlide The slide to slide to.
+   */
   _slideTo(targetSlide) {
     this._slidesWrapper.style.transform = `translateX(${- targetSlide * 100}%)`;
   }
