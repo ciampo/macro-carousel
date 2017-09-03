@@ -16,6 +16,10 @@ template.innerHTML = `
       background-color: #ccc;
     }
 
+    :host([hidden]) {
+      display: none
+    }
+
     #slidesWrapper {
       display: flex;
       align-items: stretch;
