@@ -27,7 +27,7 @@ template.innerHTML = `
       background-color: #ccc;
     }
 
-    .host([transitioning]) #slidesWrapper {
+    :host([transitioning]) #slidesWrapper {
       will-change: transform;
 
       transition: .5s transform ease-in-out;
@@ -35,10 +35,6 @@ template.innerHTML = `
 
     #pagination {
       align-self: center;
-    }
-
-    #pagination .selected {
-      color: red;
     }
 
     ::slotted(*) {
@@ -95,11 +91,31 @@ class XSlider extends HTMLElement {
     this._updatePagination();
 
     // Enable transitions only after the initial setup.
-    this.setAttribute('transitioning', '');
+    // Double rAF is necessary to wait for 'selected' to take effect.
+    requestAnimationFrame(_ => {
+      requestAnimationFrame(_ => {
+        this.setAttribute('transitioning', '');
+      });
+    });
 
     // Add event listeners.
-    this._onSlotChange = this._onSlotChange.bind(this);
-    this._slidesSlot.addEventListener('slotchange', this._onSlotChange);
+    this._slidesSlot.addEventListener('slotchange', this);
+  }
+
+  /**
+   * Defining handleEvent allows to pass `this` as the callback to every
+   * `addEventListener` and `removeEventListener`. This avoids the need of
+   * binding every function. See
+   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
+   *
+   * @param {Event} e
+   */
+  handleEvent(e) {
+    if (e.target.name === 'x-slider-pagination') {
+      this._onPaginationChange(e);
+    } else if (e.target === this._slidesSlot) {
+      this._onSlotChange();
+    }
   }
 
   /**
@@ -108,7 +124,7 @@ class XSlider extends HTMLElement {
    * removing event listeners.
    */
   disconnectedCallback() {
-    this._slidesSlot.removeEventListener('slotchange', this._onSlotChange);
+    this._slidesSlot.removeEventListener('slotchange', this);
   }
 
   /**
@@ -134,6 +150,7 @@ class XSlider extends HTMLElement {
    */
   set selected(i) {
     const parsed = parseInt(i, 10);
+
     if (!Number.isFinite(parsed) ||
         parsed >= this._slides.length ||
         parsed < 0) {
@@ -168,7 +185,7 @@ class XSlider extends HTMLElement {
   _onSlotChange() {
     this._slides = this._getSlides();
 
-    if (this._selected >= this._slides.length) {
+    if (this.selected >= this._slides.length) {
       this.selected = this._slides.length - 1;
     }
 
@@ -184,27 +201,32 @@ class XSlider extends HTMLElement {
     if (this._paginationWrapper.childElementCount !== this._slides.length) {
       // Remove bullet points (TODO: optimise).
       while (this._paginationWrapper.firstChild) {
+        this._paginationWrapper.firstChild.removeEventListener('change', this);
         this._paginationWrapper.removeChild(this._paginationWrapper.firstChild);
       }
       // Add bullet points.
       const frag = document.createDocumentFragment();
       this._slides.forEach((s, i) => {
-        const span = document.createElement('span');
-        span.textContent = ' o ';
-        if (i === this._selected) span.classList.add('selected');
+        const radio = document.createElement('input');
+        radio.setAttribute('type', 'radio');
+        radio.setAttribute('name', 'x-slider-pagination');
+        radio.setAttribute('aria-label', `To slide ${i + 1}`);
+        radio.setAttribute('data-slide', i);
+        radio.checked = i === this._selected;
+        radio.addEventListener('change', this);
 
-        frag.appendChild(span);
+        frag.appendChild(radio);
       });
       this._paginationWrapper.appendChild(frag);
     } else {
-      Array.from(this._paginationWrapper.childNodes).forEach((el, i) => {
-        if (i === this._selected) {
-          el.classList.add('selected');
-        } else {
-          el.classList.remove('selected');
-        }
+      Array.from(this._paginationWrapper.childNodes).forEach((radio, i) => {
+        radio.checked = i === this._selected;
       });
     }
+  }
+
+  _onPaginationChange(e) {
+    this.selected = e.target.getAttribute('data-slide');
   }
 
   /**
