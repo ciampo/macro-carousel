@@ -63,6 +63,23 @@ template.innerHTML = `
     #next {
       right: 0;
     }
+    
+    @media print {
+      /* Remove the navigational buttons, they provide no context in print */
+      #previous,
+      #next,
+      #pagination {
+        display: none;
+      }
+
+      /* Stack the slides */
+      #slidesWrapper {
+        display: block;
+
+        transform: none !important;
+        transition: 0s;
+      }
+    }
   </style>
 
   <div id="slidesWrapper">
