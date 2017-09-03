@@ -112,10 +112,10 @@ class XSlider extends HTMLElement {
     this._nextButton = this.shadowRoot.querySelector('#next');
 
     // Setup the component.
-    this.selected = this.getAttribute('initial-slide') || 0;
-    this.selected = this.selected || 0;
+    this._upgradeProperty('selected');
 
     this._updatePagination();
+    this._updateNavigation();
 
     // Enable transitions only after the initial setup.
     // Double rAF is necessary to wait for 'selected' to take effect.
@@ -166,15 +166,35 @@ class XSlider extends HTMLElement {
    * @param {any} prop
    */
   _upgradeProperty(prop) {
-    if (this.hasOwnProperty(prop)) {
+    // Disabled the `hasOwnProperty` check waiting for
+    // https://github.com/GoogleChrome/howto-components/issues/116
+    // if (this.hasOwnProperty(prop)) {
       let value = this[prop];
       delete this[prop];
       this[prop] = value;
-    }
+    // }
   }
 
-  attributeChangedCallback(attrName, oldVal, newVal) {
-    this[attrName] = newVal;
+  attributeChangedCallback(name, oldValue, newValue) {
+    switch (name) {
+      case 'selected':
+        if (!this._slides) return;
+        const parsed = parseInt(newValue, 10);
+
+        // Accept only numbers between `0` and `this._slides.length - 1`.
+        if (!Number.isFinite(parsed) ||
+            parsed >= this._slides.length ||
+            parsed < 0) {
+          this.selected = oldValue;
+          return;
+        }
+
+        // Show the new selected slide and update pagination.
+        this._slideTo(parseInt(newValue, 10));
+        this._updatePagination();
+        this._updateNavigation();
+        break;
+    }
   }
 
   /**
@@ -182,41 +202,8 @@ class XSlider extends HTMLElement {
    * @param {number} i The 0-based index of the selected slide.
    */
   set selected(i) {
-    const parsed = parseInt(i, 10);
-
-    // Accept only numbers between `0` and `this._slides.length - 1`.
-    if (!Number.isFinite(parsed) ||
-        parsed >= this._slides.length ||
-        parsed < 0) {
-      console.warn(`Can not set selected slide to number ${i}`);
-      return;
-    }
-
-    // Return if property's value hasn't changed.
-    if (this._selected === parsed) return;
-
-    // Update internal state.
-    this._selected = parsed;
     // Reflect to attribute.
-    this.setAttribute('selected', parsed);
-
-    // Enable / Disable navigation buttons.
-    if (!this.loop && this.selected === 0) {
-      this._prevButton.setAttribute('disabled', '');
-    } else {
-      this._prevButton.removeAttribute('disabled');
-    }
-    if (!this.loop && this.selected === this._slides.length - 1) {
-      this._nextButton.setAttribute('disabled', '');
-    } else {
-      this._nextButton.removeAttribute('disabled');
-    }
-
-    // Show the new selected slide and update pagination.
-    requestAnimationFrame(_ => {
-      this._slideTo(this._selected)
-      this._updatePagination();
-    });
+    this.setAttribute('selected', i);
   }
 
   /**
@@ -224,7 +211,8 @@ class XSlider extends HTMLElement {
    * @return {number} The 0-based index of the selected slide.
    */
   get selected() {
-    return this._selected;
+    const value = this.getAttribute('selected');
+    return value === null ? '0' : parseInt(value);
   }
 
   /**
@@ -239,6 +227,7 @@ class XSlider extends HTMLElement {
     }
 
     this._updatePagination();
+    this._updateNavigation();
   }
 
   /**
@@ -246,6 +235,10 @@ class XSlider extends HTMLElement {
    * and highlights the bullet point correponsing to the selected slide.
    */
   _updatePagination() {
+    if (!this._paginationWrapper || !this._slides) return;
+
+    const currentSlide = this.selected;
+
     // Update the number of bullet points
     if (this._paginationWrapper.childElementCount !== this._slides.length) {
       // Remove bullet points (TODO: optimise).
@@ -260,8 +253,8 @@ class XSlider extends HTMLElement {
         radio.setAttribute('type', 'radio');
         radio.setAttribute('name', 'x-slider-pagination');
         radio.setAttribute('value', i);
-        radio.setAttribute('aria-label', `To slide ${i + 1}`);
-        radio.checked = i === this._selected;
+        radio.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        radio.checked = i === currentSlide;
         radio.addEventListener('change', this);
 
         frag.appendChild(radio);
@@ -269,8 +262,25 @@ class XSlider extends HTMLElement {
       this._paginationWrapper.appendChild(frag);
     } else {
       Array.from(this._paginationWrapper.childNodes).forEach((radio, i) => {
-        radio.checked = i === this._selected;
+        radio.checked = i === currentSlide;
       });
+    }
+  }
+
+  _updateNavigation() {
+    if (!this._prevButton || !this._nextButton || !this._slides) return;
+
+    const currentSlide = this.selected;
+
+    if (!this.loop && currentSlide === 0) {
+      this._prevButton.setAttribute('disabled', '');
+    } else {
+      this._prevButton.removeAttribute('disabled');
+    }
+    if (!this.loop && currentSlide === this._slides.length - 1) {
+      this._nextButton.setAttribute('disabled', '');
+    } else {
+      this._nextButton.removeAttribute('disabled');
     }
   }
 
@@ -323,6 +333,7 @@ class XSlider extends HTMLElement {
    * @param {number} targetSlide The slide to slide to.
    */
   _slideTo(targetSlide) {
+    if (!this._slidesWrapper) return;
     this._slidesWrapper.style.transform = `translateX(${- targetSlide * 100}%)`;
   }
 }
