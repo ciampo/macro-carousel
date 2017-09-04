@@ -14,15 +14,15 @@ template.innerHTML = `
 
       contain: content;
 
-      overflow: hidden;
-
-      background-color: #ccc;
-
       --x-slider-pagination-height: 2rem;
     }
 
     :host([hidden]) {
       display: none
+    }
+
+    #externalWrapper {
+      overflow: hidden;
     }
 
     #slidesWrapper {
@@ -64,8 +64,10 @@ template.innerHTML = `
     }
   </style>
 
-  <div id="slidesWrapper">
-    <slot id="slidesSlot"><p>No content available</p></slot>
+  <div id="externalWrapper">
+    <div id="slidesWrapper">
+      <slot id="slidesSlot"><p>No content available</p></slot>
+    </div>
   </div>
 
   <button id="previous" aria-label="To previous slide"><</button>
