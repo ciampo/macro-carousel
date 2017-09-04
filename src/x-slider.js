@@ -204,7 +204,7 @@ class XSlider extends HTMLElement {
         }
 
         // Show the new selected slide and update pagination.
-        this._slideTo(parseInt(newValue, 10));
+        this._slideTo(parsed);
         this._updatePagination();
         this._updateNavigation();
         break;
@@ -263,6 +263,7 @@ class XSlider extends HTMLElement {
       this.selected = this._slides.length - 1;
     }
 
+    this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
   }
