@@ -179,7 +179,10 @@ class XSlider extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
-        if (!this._slides) return;
+        if (!this._slides) {
+          return;
+        }
+
         const parsed = parseInt(newValue, 10);
 
         // Accept only numbers between `0` and `this._slides.length - 1`.
@@ -259,7 +262,9 @@ class XSlider extends HTMLElement {
    * and highlights the bullet point correponsing to the selected slide.
    */
   _updatePagination() {
-    if (!this._paginationWrapper || !this._slides) return;
+    if (!this._paginationWrapper || !this._slides) {
+      return;
+    }
 
     const currentSlide = this.selected;
 
@@ -292,7 +297,9 @@ class XSlider extends HTMLElement {
   }
 
   _updateNavigation() {
-    if (!this._prevButton || !this._nextButton || !this._slides) return;
+    if (!this._prevButton || !this._nextButton || !this._slides) {
+      return;
+    }
 
     const currentSlide = this.selected;
 
@@ -357,7 +364,10 @@ class XSlider extends HTMLElement {
    * @param {number} targetSlide The slide to slide to.
    */
   _slideTo(targetSlide) {
-    if (!this._slidesWrapper) return;
+    if (!this._slidesWrapper) {
+      return;
+    }
+
     this._slidesWrapper.style.transform = `translateX(${- targetSlide * 100}%)`;
   }
 }
