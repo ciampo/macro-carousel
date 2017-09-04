@@ -94,6 +94,13 @@ class XSlider extends HTMLElement {
 
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+    // Grab references to elements in the shadow DOM.
+    this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
+    this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
+    this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+    this._prevButton = this.shadowRoot.querySelector('#previous');
+    this._nextButton = this.shadowRoot.querySelector('#next');
   }
 
   /**
@@ -102,18 +109,14 @@ class XSlider extends HTMLElement {
    * and install event listeners.
    */
   connectedCallback() {
-    // Grab references to the DOM.
-    this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
-    this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
-    this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+    // Get Light Dom.
     this._slides = this._getSlides();
-    this._prevButton = this.shadowRoot.querySelector('#previous');
-    this._nextButton = this.shadowRoot.querySelector('#next');
 
     // Setup the component.
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
 
+    this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
 
@@ -166,13 +169,11 @@ class XSlider extends HTMLElement {
    * @param {any} prop
    */
   _upgradeProperty(prop) {
-    // Disabled the `hasOwnProperty` check waiting for
-    // https://github.com/GoogleChrome/howto-components/issues/116
-    // if (this.hasOwnProperty(prop)) {
+    if (this.hasOwnProperty(prop)) {
       let value = this[prop];
       delete this[prop];
       this[prop] = value;
-    // }
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
