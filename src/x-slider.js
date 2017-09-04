@@ -161,6 +161,14 @@ class XSlider extends HTMLElement {
    */
   disconnectedCallback() {
     this._slidesSlot.removeEventListener('slotchange', this);
+    this._prevButton.removeEventListener('click', this);
+    this._nextButton.removeEventListener('click', this);
+
+    const pagination = this.shadowRoot
+        .querySelectorAll('input[name="x-slider-pagination"]');
+    pagination.forEach(p => {
+      p.removeEventListener('change', this);
+    });
   }
 
   /**
