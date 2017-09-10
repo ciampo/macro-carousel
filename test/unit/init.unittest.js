@@ -1,9 +1,6 @@
 /* eslint max-len: ["off"] */
 
-// TODO: initial-selection (correct number, out of bounds number, string, epmty)
-// TODO: selected (correct number, out of bounds number, string, empty)
-// TODO: hidden
-// TODO: pagination (check that bullets are always updated with slides, that the selected bullet point always reflects the currently selected slide)
+// TODO: reflect props and attrs
 
 (function() {
   const expect = chai.expect;
@@ -19,7 +16,7 @@
         });
     });
 
-    it('should be registered', function() {
+    it('should be successfully registered as a XSlider', function() {
       expect(this.slider.constructor.name).to.equal('XSlider');
     });
   });
