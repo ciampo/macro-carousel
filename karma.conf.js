@@ -7,13 +7,9 @@ module.exports = function(config) {
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'tools/testing-helper.js',
       'src/*.js',
-      'test/*.js',
+      'test/unit/*.js',
     ],
-    exclude: [
-      'test/*.e2etest.js',
-    ],
-    preprocessors: {
-    },
+    preprocessors: {},
     reporters: ['progress'],
     port: 9876,
     colors: true,
