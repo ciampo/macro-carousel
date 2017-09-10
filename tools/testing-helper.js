@@ -42,3 +42,8 @@ window.wcutils.isHidden = function(elem) {
   return elem.hidden ||
     (elem.getAttribute('aria-hidden') || '').toLowerCase() === 'true';
 };
+
+window.wcutils.getCSSCustomProperty = function(elem, propertyName) {
+  const cssStyles = getComputedStyle(elem);
+  return String(cssStyles.getPropertyValue(propertyName)).trim();
+};
