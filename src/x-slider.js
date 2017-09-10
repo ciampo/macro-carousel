@@ -189,7 +189,7 @@ class XSlider extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
-        if (!this._slides) {
+        if (!this._slides || this._slides.length === 0) {
           return;
         }
 
@@ -228,8 +228,7 @@ class XSlider extends HTMLElement {
    */
   get selected() {
     const value = this.getAttribute('selected');
-    // Default value is `0`.
-    return value === null ? '0' : parseInt(value);
+    return value === null ? 0 : parseInt(value);
   }
 
   /**
@@ -273,7 +272,8 @@ class XSlider extends HTMLElement {
    * and highlights the bullet point correponsing to the selected slide.
    */
   _updatePagination() {
-    if (!this._paginationWrapper || !this._slides) {
+    if (!this._paginationWrapper || !this._slides ||
+        this._slides.length === 0) {
       return;
     }
 
@@ -308,7 +308,8 @@ class XSlider extends HTMLElement {
   }
 
   _updateNavigation() {
-    if (!this._prevButton || !this._nextButton || !this._slides) {
+    if (!this._prevButton || !this._nextButton ||
+        !this._slides || this._slides.length === 0) {
       return;
     }
 
