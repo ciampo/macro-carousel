@@ -37,6 +37,20 @@
       expect(this.slider.navigation).to.be.false;
     });
 
+    /**
+     * JS methods
+     */
+    it('has a next() method', function() {
+      expect(this.slider.next).to.be.defined;
+    });
+
+    it('has a previous() method', function() {
+      expect(this.slider.previous).to.be.defined;
+    });
+
+    it('has an update() method', function() {
+      expect(this.slider.update).to.be.defined;
+    });
 
     /**
      * CSS properties
