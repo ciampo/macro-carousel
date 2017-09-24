@@ -19,17 +19,22 @@
      */
     it('slides-per-view default value is 1', function() {
       expect(this.slider.slidesPerView).to.equal(1);
-      expect(this.slider.getAttribute('slide-per-view')).to.equal('1');
     });
 
     it('selected default value is 0', function() {
       expect(this.slider.selected).to.equal(0);
-      expect(this.slider.getAttribute('selected')).to.equal('0');
     });
 
     it('loop default value is false', function() {
       expect(this.slider.loop).to.be.false;
-      expect(this.slider.getAttribute('loop')).to.be.null;
+    });
+
+    it('pagination default value is false', function() {
+      expect(this.slider.pagination).to.be.false;
+    });
+
+    it('navigation default value is false', function() {
+      expect(this.slider.navigation).to.be.false;
     });
 
 
