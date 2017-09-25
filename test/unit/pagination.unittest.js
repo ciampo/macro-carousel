@@ -50,7 +50,7 @@
               });
 
           done();
-        }.bind(this), 2000);
+        }.bind(this), 1000);
       });
     });
 
@@ -68,8 +68,9 @@
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
       });
 
-      it('should have pagination indicators always reflecting the selected slide', function(done) {
-        this.slider.paginationWrapper.querySelectorAll('input[type=radio]')
+      it('should always mirror the selected slide', function(done) {
+        this.slider.paginationWrapper
+            .querySelectorAll('input[type=radio]')
             .forEach(function(r, i) {
               if (i !== 0) {
                 expect(r.checked).to.be.false;
@@ -81,7 +82,8 @@
         setTimeout(function() {
           this.slider.selected = 2;
 
-          this.slider.paginationWrapper.querySelectorAll('input[type=radio]')
+          this.slider.paginationWrapper
+              .querySelectorAll('input[type=radio]')
               .forEach(function(r, i) {
                 if (i !== 2) {
                   expect(r.checked).to.be.false;
@@ -90,24 +92,67 @@
                 }
               });
 
-          done();
-        }.bind(this), 2000);
+          setTimeout(function() {
+            this.slider.next();
+
+            this.slider.paginationWrapper
+                .querySelectorAll('input[type=radio]')
+                .forEach(function(r, i) {
+                  if (i !== 3) {
+                    expect(r.checked).to.be.false;
+                  } else {
+                    expect(r.checked).to.be.true;
+                  }
+                });
+
+            done();
+          }.bind(this), 1000);
+        }.bind(this), 1000);
       });
 
-      // check that the selected pagination indicator always reflects the currently selected view
-      // Expect indicator is with 0
-      // go next
-      // check indicator
-      // set selected to 5
-      // check indicator
+      it('should update the pagination indicators when the light DOM changes', function(done) {
+        var lastSlide = document.createElement('div');
+        this.slider.appendChild(lastSlide);
 
-      // make sure that changes in the dom are triggering updates in the pagination
-      // add slide, check pagination indicator count
-      // select last slide, check selected. remove last slide, check that selected updated to the current last slide
+        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(6);
 
-      // Check pagination indicator is on selecte = 0, then disable pagination, check that the dom is removed
+        setTimeout(function() {
+          this.slider.selected = 5;
 
+          this.slider.paginationWrapper
+              .querySelectorAll('input[type=radio]')
+              .forEach(function(r, i) {
+                if (i !== 5) {
+                  expect(r.checked).to.be.false;
+                } else {
+                  expect(r.checked).to.be.true;
+                }
+              });
+
+          setTimeout(function() {
+            lastSlide.parentElement.removeChild(lastSlide);
+
+            expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
+
+            this.slider.paginationWrapper
+                .querySelectorAll('input[type=radio]')
+                .forEach(function(r, i) {
+                  if (i !== 4) {
+                    expect(r.checked).to.be.false;
+                  } else {
+                    expect(r.checked).to.be.true;
+                  }
+                });
+
+            done();
+          }.bind(this), 1000);
+        }.bind(this), 1000);
+      });
+
+      it('should remove the pagination indicators if pagination is disabled', function() {
+        this.slider.pagination = false;
+        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
+      });
     });
-
   });
 })();
