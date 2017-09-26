@@ -1,16 +1,18 @@
 // Try to set a different value (not booleans) for the pagination prop
 
+// check that navigation buttons are vertically aligned and at the sides?
+
 // clicking a pagination indicator selectes that view (is it e2e?)
 
-(function() {
+(() => {
   const expect = chai.expect;
 
-  describe('x-slider — navigation buttons', function() {
+  describe('x-slider — navigation buttons', () => {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async function() {
+    beforeEach(async () => {
       this.container.innerHTML = `
-      <x-slider>
+      <x-slider selected="2">
         <div>Slide 1</div>
         <div>Slide 2</div>
         <div>Slide 3</div>
@@ -18,60 +20,82 @@
         <div>Slide 5</div>
       </x-slider>`;
       return wcutils.waitForElement('x-slider')
-        .then(_ => {
+        .then(() => {
           this.slider = this.container.querySelector('x-slider');
           this.navigationWrapper = this.slider.shadowRoot.querySelector('#navigation');
         });
     });
 
-    describe('navigation disabled', function() {
-      it('navigation is false', function() {
+    describe('navigation disabled', () => {
+      it('navigation is false', () => {
         expect(this.slider.navigation).to.be.false;
         expect(this.slider.getAttribute('navigation')).to.be.null;
       });
 
-      it('should not add navigation buttons', function() {
+      it('should not add navigation buttons', () => {
         expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
-      });
-
-      it('should add 2 navigation buttons if navigation is enabled later on', function(done) {
-        setTimeout(function() {
-          this.slider.pagination = true;
-          expect(this.slider.navigationWrapper.childElementCount).to.be.equal(2);
-
-          const prev = this.slider.navigationWrapper.querySelector('#previous');
-          const next = this.slider.navigationWrapper.querySelector('#next');
-
-          expect(prev.disabled).to.be.true;
-          expect(prev.disables).to.be.false;
-
-          done();
-        }.bind(this), 1000);
       });
     });
 
-    describe('navigation enabled', function() {
-      beforeEach(function() {
+    describe('navigation enabled', () => {
+      beforeEach(() => {
         this.slider.navigation = true;
+
+        this.prevButton = this.slider.navigationWrapper.querySelector('#previous');
+        this.nextButton = this.slider.navigationWrapper.querySelector('#next');
       });
 
-      it('navigation is true', function() {
+      it('navigation is true', () => {
         expect(this.slider.navigation).to.be.true;
         expect(this.slider.getAttribute('navigation')).to.not.be.null;
       });
 
-      it('should have 2 navigation buttons', function() {
+      it('should have 2 navigation buttons', () => {
         expect(this.slider.navigationWrapper.childElementCount).to.be.equal(2);
+        expect(this.prevButton).to.exist;
+        expect(this.nextButton).to.exist;
       });
 
-      // prev should be disabled when first slide is selected
-      // next should be disabled when last slide is selected
-      // otherwise both enabled
+      it('should enable prev and next if the selected slide is neither the first nor the last', () => {
+        expect(this.prevButton.disabled).to.be.false;
+        expect(this.nextButton.disabled).to.be.false;
+      });
 
-      // prev and next disabled attrs should update as the light DOM changes
+      it('should disable prev if the first slide is selected', () => {
+        this.slider.selected = 0;
 
-      it('should remove the navigation buttons if navigation is disabled', function() {
+        expect(this.prevButton.disabled).to.be.true;
+        expect(this.nextButton.disabled).to.be.false;
+      });
+
+      it('should disable next if the last slide is selected', () => {
+        this.slider.selected = 4;
+
+        expect(this.prevButton.disabled).to.be.false;
+        expect(this.nextButton.disabled).to.be.true;
+      });
+
+      it('should enable/disable the navigation buttons if the light DOM changes', done => {
+        this.slider.selected = 4;
+
+        const lastSlide = document.createElement('div');
+        this.slider.appendChild(lastSlide);
+
+        expect(this.prevButton.disabled).to.be.false;
+        expect(this.nextButton.disabled).to.be.false;
+
+        setTimeout(() => {
+          lastSlide.parentElement.removeChild(lastSlide);
+
+          expect(this.prevButton.disabled).to.be.false;
+          expect(this.nextButton.disabled).to.be.true;
+        }, 1000);
+
+      });
+
+      it('should remove the navigation buttons if navigation is disabled', () => {
         this.slider.navigation = false;
+
         expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
       });
     });

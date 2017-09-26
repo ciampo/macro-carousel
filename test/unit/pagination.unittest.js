@@ -33,27 +33,6 @@
       it('should not add pagination indicators', () => {
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
       });
-
-      it('should add pagination indicators if pagination is enabled later on', done => {
-        setTimeout(() => {
-          const newSelected = 3;
-
-          this.slider.pagination = true;
-          this.slider.selected = newSelected;
-          expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
-
-          this.slider.paginationWrapper.querySelectorAll('input[type=radio]')
-              .forEach((r, i) => {
-                if (i !== newSelected) {
-                  expect(r.checked).to.be.false;
-                } else {
-                  expect(r.checked).to.be.true;
-                }
-              });
-
-          done();
-        }, 1000);
-      });
     });
 
     describe('pagination enabled', () => {
