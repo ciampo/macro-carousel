@@ -283,7 +283,10 @@ class XSlider extends HTMLElement {
 
     // Update the number of bullet points
     if (this._paginationWrapper.childElementCount !== this._slides.length) {
-      // Remove bullet points (TODO: optimise).
+      // Remove bullet points
+      // TODO: optimise by:
+      // - keeping a reference to the radio buttons (useful for removing ev listeners)
+      // - add/remove only what necessary
       while (this._paginationWrapper.firstChild) {
         this._paginationWrapper.firstChild.removeEventListener('change', this);
         this._paginationWrapper.removeChild(this._paginationWrapper.firstChild);
@@ -295,7 +298,7 @@ class XSlider extends HTMLElement {
         radio.setAttribute('type', 'radio');
         radio.setAttribute('name', 'x-slider-pagination');
         radio.setAttribute('value', i);
-        radio.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        radio.setAttribute('aria-label', `Go to view ${i + 1}`);
         radio.checked = i === currentSlide;
         radio.addEventListener('change', this);
 
@@ -332,7 +335,6 @@ class XSlider extends HTMLElement {
   /**
    * Called when any pagination bullet point is selected.
    * @param {Event} e The 'change' event fired by the radio input.
-   * @memberof XSlider
    */
   _onPaginationChange(e) {
     this.selected = e.target.getAttribute('value');
