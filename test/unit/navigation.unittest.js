@@ -75,22 +75,27 @@
         expect(this.nextButton.disabled).to.be.true;
       });
 
-      it('should enable/disable the navigation buttons if the light DOM changes', done => {
-        this.slider.selected = 4;
-
+      it('should enable/disable the navigation buttons if the light DOM changes', function(done) {
+        const prev = this.prevButton;
+        const next = this.nextButton;
         const lastSlide = document.createElement('div');
+
+        this.slider.selected = 4;
         this.slider.appendChild(lastSlide);
 
-        expect(this.prevButton.disabled).to.be.false;
-        expect(this.nextButton.disabled).to.be.false;
+        setTimeout(function() {
+          expect(prev.disabled).to.be.false;
+          expect(next.disabled).to.be.false;
 
-        setTimeout(() => {
           lastSlide.parentElement.removeChild(lastSlide);
 
-          expect(this.prevButton.disabled).to.be.false;
-          expect(this.nextButton.disabled).to.be.true;
-        }, 1000);
+          setTimeout(function() {
+            expect(prev.disabled).to.be.false;
+            expect(next.disabled).to.be.true;
 
+            done();
+          });
+        });
       });
 
       it('should remove the navigation buttons if navigation is disabled', function() {

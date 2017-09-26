@@ -60,10 +60,10 @@
               }
             });
 
-        setTimeout(() => {
-          const newSelected = 2;
-          this.slider.selected = newSelected;
+        const newSelected = 2;
+        this.slider.selected = newSelected;
 
+        setTimeout(function() {
           this.slider.paginationWrapper
               .querySelectorAll('input[type=radio]')
               .forEach((r, i) => {
@@ -74,9 +74,9 @@
                 }
               });
 
-          setTimeout(() => {
-            this.slider.next();
+          this.slider.next();
 
+          setTimeout(function() {
             this.slider.paginationWrapper
                 .querySelectorAll('input[type=radio]')
                 .forEach((r, i) => {
@@ -112,9 +112,9 @@
                 }
               });
 
-          setTimeout(() => {
-            lastSlide.parentElement.removeChild(lastSlide);
+          lastSlide.parentElement.removeChild(lastSlide);
 
+          setTimeout(function() {
             expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
 
             this.slider.paginationWrapper
