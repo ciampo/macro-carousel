@@ -70,8 +70,10 @@ template.innerHTML = `
     </div>
   </div>
 
-  <button id="previous" aria-label="To previous slide"><</button>
-  <button id="next" aria-label="To next slide">></button>
+  <div id="navigation">
+    <button id="previous" aria-label="To previous slide"><</button>
+    <button id="next" aria-label="To next slide">></button>
+  </div>
 
   <div id="pagination"></div>
 `;

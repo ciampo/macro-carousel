@@ -1,18 +1,79 @@
-// invoking next() and prev() effectively changes the selected view
+// Try to set a different value (not booleans) for the pagination prop
 
-// wrap around if loop is true, don't wrap around if loop is false
+// clicking a pagination indicator selectes that view (is it e2e?)
 
-// check if navigation buttons are disabled when loop is false, and always on when loop is true (try changing the loop attribute and navigatin with prev/next/selected during tests)
+(function() {
+  const expect = chai.expect;
 
-// check that views always have the correct translation value (w/ loop, w/o loop)
-// (try changing the loop attribute and navigatin with prev/next/selected during tests)
+  describe('x-slider — navigation buttons', function() {
+    before(wcutils.before());
+    after(wcutils.after());
+    beforeEach(async function() {
+      this.container.innerHTML = `
+      <x-slider>
+        <div>Slide 1</div>
+        <div>Slide 2</div>
+        <div>Slide 3</div>
+        <div>Slide 4</div>
+        <div>Slide 5</div>
+      </x-slider>`;
+      return wcutils.waitForElement('x-slider')
+        .then(_ => {
+          this.slider = this.container.querySelector('x-slider');
+          this.navigationWrapper = this.slider.shadowRoot.querySelector('#navigation');
+        });
+    });
 
-// check that loop can be set only if there are at least 2 views
+    describe('navigation disabled', function() {
+      it('navigation is false', function() {
+        expect(this.slider.navigation).to.be.false;
+        expect(this.slider.getAttribute('navigation')).to.be.null;
+      });
 
-// make sure that changes in the dom are triggering updates in the pagination
+      it('should not add navigation buttons', function() {
+        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
+      });
 
-// try setting random values for selected
+      it('should add 2 navigation buttons if navigation is enabled later on', function(done) {
+        setTimeout(function() {
+          this.slider.pagination = true;
+          expect(this.slider.navigationWrapper.childElementCount).to.be.equal(2);
 
-// try setting random values for loop
+          const prev = this.slider.navigationWrapper.querySelector('#previous');
+          const next = this.slider.navigationWrapper.querySelector('#next');
 
-// clicking a navigation button goes to prev/next (is it e2e?)
+          expect(prev.disabled).to.be.true;
+          expect(prev.disables).to.be.false;
+
+          done();
+        }.bind(this), 1000);
+      });
+    });
+
+    describe('navigation enabled', function() {
+      beforeEach(function() {
+        this.slider.navigation = true;
+      });
+
+      it('navigation is true', function() {
+        expect(this.slider.navigation).to.be.true;
+        expect(this.slider.getAttribute('navigation')).to.not.be.null;
+      });
+
+      it('should have 2 navigation buttons', function() {
+        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(2);
+      });
+
+      // prev should be disabled when first slide is selected
+      // next should be disabled when last slide is selected
+      // otherwise both enabled
+
+      // prev and next disabled attrs should update as the light DOM changes
+
+      it('should remove the navigation buttons if navigation is disabled', function() {
+        this.slider.navigation = false;
+        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
+      });
+    });
+  });
+})();
