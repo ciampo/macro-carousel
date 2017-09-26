@@ -32,8 +32,8 @@
         expect(this.slider.getAttribute('navigation')).to.be.null;
       });
 
-      it('should not add navigation buttons', () => {
-        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
+      it('should not add navigation buttons', function() {
+        expect(this.navigationWrapper.childElementCount).to.be.equal(0);
       });
     });
 
@@ -41,8 +41,8 @@
       beforeEach(function() {
         this.slider.navigation = true;
 
-        this.prevButton = this.slider.navigationWrapper.querySelector('#previous');
-        this.nextButton = this.slider.navigationWrapper.querySelector('#next');
+        this.prevButton = this.navigationWrapper.querySelector('#previous');
+        this.nextButton = this.navigationWrapper.querySelector('#next');
       });
 
       it('navigation is true', function() {
@@ -50,8 +50,8 @@
         expect(this.slider.getAttribute('navigation')).to.not.be.null;
       });
 
-      it('should have 2 navigation buttons', () => {
-        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(2);
+      it('should have 2 navigation buttons', function() {
+        expect(this.navigationWrapper.childElementCount).to.be.equal(2);
         expect(this.prevButton).to.exist;
         expect(this.nextButton).to.exist;
       });
@@ -96,7 +96,7 @@
       it('should remove the navigation buttons if navigation is disabled', function() {
         this.slider.navigation = false;
 
-        expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);
+        expect(this.navigationWrapper.childElementCount).to.be.equal(0);
       });
     });
   });
