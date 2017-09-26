@@ -70,10 +70,7 @@ template.innerHTML = `
     </div>
   </div>
 
-  <div id="navigation">
-    <button id="previous" aria-label="To previous slide"><</button>
-    <button id="next" aria-label="To next slide">></button>
-  </div>
+  <div id="navigation"></div>
 
   <div id="pagination"></div>
 `;
@@ -83,7 +80,7 @@ template.innerHTML = `
  */
 class XSlider extends HTMLElement {
   static get observedAttributes() {
-    return ['selected', 'loop'];
+    return ['selected', 'loop', 'navigation'];
   }
 
   /**
@@ -103,8 +100,9 @@ class XSlider extends HTMLElement {
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
     this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
-    this._prevButton = this.shadowRoot.querySelector('#previous');
-    this._nextButton = this.shadowRoot.querySelector('#next');
+    this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
+    this._prevButton = undefined;
+    this._nextButton = undefined;
   }
 
   /**
@@ -119,6 +117,7 @@ class XSlider extends HTMLElement {
     // Setup the component.
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
+    this._upgradeProperty('navigation');
 
     this._slideTo(this.selected);
     this._updatePagination();
@@ -134,8 +133,6 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    this._prevButton.addEventListener('click', this);
-    this._nextButton.addEventListener('click', this);
   }
 
   /**
@@ -151,9 +148,9 @@ class XSlider extends HTMLElement {
       this._onPaginationChange(e);
     } else if (e.target === this._slidesSlot) {
       this._onSlotChange();
-    } else if (e.target === this._prevButton) {
+    } else if (this.navigation && e.target === this._prevButton) {
       this.previous();
-    } else if (e.target === this._nextButton) {
+    } else if (this.navigation && e.target === this._nextButton) {
       this.next();
     }
   }
@@ -165,8 +162,11 @@ class XSlider extends HTMLElement {
    */
   disconnectedCallback() {
     this._slidesSlot.removeEventListener('slotchange', this);
-    this._prevButton.removeEventListener('click', this);
-    this._nextButton.removeEventListener('click', this);
+
+    if (this.navigation) {
+      this._prevButton.removeEventListener('click', this);
+      this._nextButton.removeEventListener('click', this);
+    }
 
     const pagination = this.shadowRoot
         .querySelectorAll('input[name="x-slider-pagination"]');
@@ -213,6 +213,9 @@ class XSlider extends HTMLElement {
       case 'loop':
         this._updateNavigation();
         break;
+      case 'navigation':
+        this._updateNavigation();
+        break;
     }
   }
 
@@ -251,6 +254,26 @@ class XSlider extends HTMLElement {
    */
   get loop() {
     return this.hasAttribute('loop');
+  }
+
+  /**
+   * Reflects the property to its corresponding attribute.
+   * @param {boolean} flag True to show navigation buttons, false to disable it.
+   */
+  set navigation(flag) {
+    if (flag) {
+      this.setAttribute('navigation', '');
+    } else {
+      this.removeAttribute('navigation');
+    }
+  }
+
+  /**
+   * Gets the property's value from the corresponding attribute.
+   * @return {boolean} True if navigation buttons are shown, false otherwise.
+   */
+  get navigation() {
+    return this.hasAttribute('navigation');
   }
 
   /**
@@ -313,22 +336,52 @@ class XSlider extends HTMLElement {
   }
 
   _updateNavigation() {
-    if (!this._prevButton || !this._nextButton ||
-        !this._slides || this._slides.length === 0) {
+    if (!this._navigationWrapper || !this._slides ||
+        this._slides.length === 0) {
       return;
     }
 
-    const currentSlide = this.selected;
+    if (!this.navigation ||
+        (this.navigation && this._navigationWrapper.childElementCount !== 2)) {
+      // remove all children of nav wrapper and their ev listeners
+      while (this._navigationWrapper.firstChild) {
+        this._navigationWrapper.firstChild.removeEventListener('click', this);
+        this._navigationWrapper.removeChild(this._navigationWrapper.firstChild);
 
-    if (!this.loop && currentSlide === 0) {
-      this._prevButton.setAttribute('disabled', '');
-    } else {
-      this._prevButton.removeAttribute('disabled');
+        this._prevButton = undefined;
+        this._nextButton = undefined;
+      }
     }
-    if (!this.loop && currentSlide === this._slides.length - 1) {
-      this._nextButton.setAttribute('disabled', '');
-    } else {
-      this._nextButton.removeAttribute('disabled');
+
+    if (this.navigation) {
+      if (this._navigationWrapper.childElementCount !== 2) {
+        // add buttons and add ev listeners
+        this._prevButton = document.createElement('button');
+        this._prevButton.setAttribute('aria-label', 'To previous view');
+        this._prevButton.setAttribute('id', 'previous');
+        this._prevButton.textContent = '<';
+        this._prevButton.addEventListener('click', this);
+        this._navigationWrapper.appendChild(this._prevButton);
+
+        this._nextButton = document.createElement('button');
+        this._nextButton.setAttribute('aria-label', 'To next view');
+        this._nextButton.setAttribute('id', 'next');
+        this._nextButton.textContent = '>';
+        this._nextButton.addEventListener('click', this);
+        this._navigationWrapper.appendChild(this._nextButton);
+      }
+
+      // update disabled
+      if (!this.loop && this.selected === 0) {
+        this._prevButton.setAttribute('disabled', '');
+      } else {
+        this._prevButton.removeAttribute('disabled');
+      }
+      if (!this.loop && this.selected === this._slides.length - 1) {
+        this._nextButton.setAttribute('disabled', '');
+      } else {
+        this._nextButton.removeAttribute('disabled');
+      }
     }
   }
 
