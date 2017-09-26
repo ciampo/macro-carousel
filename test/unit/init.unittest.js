@@ -8,18 +8,18 @@
 (function() {
   const expect = chai.expect;
 
-  describe('x-slider', function() {
+  describe('x-slider', () => {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async function() {
+    beforeEach(async () => {
       this.container.innerHTML = `<x-slider></x-slider>`;
       return wcutils.waitForElement('x-slider')
-        .then(_ => {
+        .then(() => {
           this.slider = this.container.querySelector('x-slider');
         });
     });
 
-    it('should be successfully registered as a XSlider', function() {
+    it('should be successfully registered as a XSlider', () => {
       expect(this.slider.constructor.name).to.equal('XSlider');
     });
   });

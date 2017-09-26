@@ -5,10 +5,10 @@
 (function() {
   const expect = chai.expect;
 
-  describe('x-slider — pagination indicators', function() {
+  describe('x-slider — pagination indicators', () => {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async function() {
+    beforeEach(async () => {
       this.container.innerHTML = `
       <x-slider>
         <div>Slide 1</div>
@@ -18,31 +18,33 @@
         <div>Slide 5</div>
       </x-slider>`;
       return wcutils.waitForElement('x-slider')
-        .then(_ => {
+        .then(() => {
           this.slider = this.container.querySelector('x-slider');
           this.paginationWrapper = this.slider.shadowRoot.querySelector('#pagination');
         });
     });
 
-    describe('pagination disabled', function() {
-      it('pagination is false', function() {
+    describe('pagination disabled', () => {
+      it('pagination is false', () => {
         expect(this.slider.pagination).to.be.false;
         expect(this.slider.getAttribute('pagination')).to.be.null;
       });
 
-      it('should not add pagination indicators', function() {
+      it('should not add pagination indicators', () => {
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
       });
 
-      it('should add pagination indicators if pagination is enabled later on', function(done) {
-        setTimeout(function() {
+      it('should add pagination indicators if pagination is enabled later on', done => {
+        setTimeout(() => {
+          const newSelected = 3;
+
           this.slider.pagination = true;
-          this.slider.selected = 3;
+          this.slider.selected = newSelected;
           expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
 
           this.slider.paginationWrapper.querySelectorAll('input[type=radio]')
-              .forEach(function(r, i) {
-                if (i !== 3) {
+              .forEach((r, i) => {
+                if (i !== newSelected) {
                   expect(r.checked).to.be.false;
                 } else {
                   expect(r.checked).to.be.true;
@@ -50,28 +52,28 @@
               });
 
           done();
-        }.bind(this), 1000);
+        }, 1000);
       });
     });
 
-    describe('pagination enabled', function() {
-      beforeEach(function() {
+    describe('pagination enabled', () => {
+      beforeEach(() => {
         this.slider.pagination = true;
       });
 
-      it('pagination is true', function() {
+      it('pagination is true', () => {
         expect(this.slider.pagination).to.be.true;
         expect(this.slider.getAttribute('pagination')).to.not.be.null;
       });
 
-      it('should create as many pagination indicators as the number of slides', function() {
+      it('should create as many pagination indicators as the number of slides', () => {
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
       });
 
-      it('should always mirror the selected slide', function(done) {
+      it('should always mirror the selected slide', done => {
         this.slider.paginationWrapper
             .querySelectorAll('input[type=radio]')
-            .forEach(function(r, i) {
+            .forEach((r, i)  => {
               if (i !== 0) {
                 expect(r.checked).to.be.false;
               } else {
@@ -79,12 +81,13 @@
               }
             });
 
-        setTimeout(function() {
-          this.slider.selected = 2;
+        setTimeout(() => {
+          const newSelected = 2;
+          this.slider.selected = newSelected;
 
           this.slider.paginationWrapper
               .querySelectorAll('input[type=radio]')
-              .forEach(function(r, i) {
+              .forEach((r, i) => {
                 if (i !== 2) {
                   expect(r.checked).to.be.false;
                 } else {
@@ -92,13 +95,13 @@
                 }
               });
 
-          setTimeout(function() {
+          setTimeout(() => {
             this.slider.next();
 
             this.slider.paginationWrapper
                 .querySelectorAll('input[type=radio]')
-                .forEach(function(r, i) {
-                  if (i !== 3) {
+                .forEach((r, i) => {
+                  if (i !== newSelected + 1) {
                     expect(r.checked).to.be.false;
                   } else {
                     expect(r.checked).to.be.true;
@@ -106,38 +109,39 @@
                 });
 
             done();
-          }.bind(this), 1000);
-        }.bind(this), 1000);
+          }, 1000);
+        }, 1000);
       });
 
-      it('should update the pagination indicators when the light DOM changes', function(done) {
-        var lastSlide = document.createElement('div');
+      it('should update the pagination indicators when the light DOM changes', done => {
+        const lastSlide = document.createElement('div');
         this.slider.appendChild(lastSlide);
 
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(6);
 
-        setTimeout(function() {
-          this.slider.selected = 5;
+        setTimeout(() => {
+          const newSelected = 5;
+          this.slider.selected = newSelected;
 
           this.slider.paginationWrapper
               .querySelectorAll('input[type=radio]')
-              .forEach(function(r, i) {
-                if (i !== 5) {
+              .forEach((r, i) => {
+                if (i !== newSelected) {
                   expect(r.checked).to.be.false;
                 } else {
                   expect(r.checked).to.be.true;
                 }
               });
 
-          setTimeout(function() {
+          setTimeout(() => {
             lastSlide.parentElement.removeChild(lastSlide);
 
             expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
 
             this.slider.paginationWrapper
                 .querySelectorAll('input[type=radio]')
-                .forEach(function(r, i) {
-                  if (i !== 4) {
+                .forEach((r, i) => {
+                  if (i !== newSelected - 1) {
                     expect(r.checked).to.be.false;
                   } else {
                     expect(r.checked).to.be.true;
@@ -145,11 +149,11 @@
                 });
 
             done();
-          }.bind(this), 1000);
-        }.bind(this), 1000);
+          }, 1000);
+        }, 1000);
       });
 
-      it('should remove the pagination indicators if pagination is disabled', function() {
+      it('should remove the pagination indicators if pagination is disabled', () => {
         this.slider.pagination = false;
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
       });
