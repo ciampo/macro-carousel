@@ -8,10 +8,10 @@
 (function() {
   const expect = chai.expect;
 
-  describe('x-slider', () => {
+  describe('x-slider', function() {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async () => {
+    beforeEach(async function() {
       this.container.innerHTML = `<x-slider></x-slider>`;
       return wcutils.waitForElement('x-slider')
         .then(() => {
@@ -19,7 +19,7 @@
         });
     });
 
-    it('should be successfully registered as a XSlider', () => {
+    it('should be successfully registered as a XSlider', function() {
       expect(this.slider.constructor.name).to.equal('XSlider');
     });
   });

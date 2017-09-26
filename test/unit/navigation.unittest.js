@@ -4,13 +4,13 @@
 
 // clicking a pagination indicator selectes that view (is it e2e?)
 
-(() => {
+(function() {
   const expect = chai.expect;
 
-  describe('x-slider — navigation buttons', () => {
+  describe('x-slider — navigation buttons', function() {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async () => {
+    beforeEach(async function() {
       this.container.innerHTML = `
       <x-slider selected="2">
         <div>Slide 1</div>
@@ -26,8 +26,8 @@
         });
     });
 
-    describe('navigation disabled', () => {
-      it('navigation is false', () => {
+    describe('navigation disabled', function() {
+      it('navigation is false', function() {
         expect(this.slider.navigation).to.be.false;
         expect(this.slider.getAttribute('navigation')).to.be.null;
       });
@@ -37,15 +37,15 @@
       });
     });
 
-    describe('navigation enabled', () => {
-      beforeEach(() => {
+    describe('navigation enabled', function() {
+      beforeEach(function() {
         this.slider.navigation = true;
 
         this.prevButton = this.slider.navigationWrapper.querySelector('#previous');
         this.nextButton = this.slider.navigationWrapper.querySelector('#next');
       });
 
-      it('navigation is true', () => {
+      it('navigation is true', function() {
         expect(this.slider.navigation).to.be.true;
         expect(this.slider.getAttribute('navigation')).to.not.be.null;
       });
@@ -56,19 +56,19 @@
         expect(this.nextButton).to.exist;
       });
 
-      it('should enable prev and next if the selected slide is neither the first nor the last', () => {
+      it('should enable prev and next if the selected slide is neither the first nor the last', function() {
         expect(this.prevButton.disabled).to.be.false;
         expect(this.nextButton.disabled).to.be.false;
       });
 
-      it('should disable prev if the first slide is selected', () => {
+      it('should disable prev if the first slide is selected', function() {
         this.slider.selected = 0;
 
         expect(this.prevButton.disabled).to.be.true;
         expect(this.nextButton.disabled).to.be.false;
       });
 
-      it('should disable next if the last slide is selected', () => {
+      it('should disable next if the last slide is selected', function() {
         this.slider.selected = 4;
 
         expect(this.prevButton.disabled).to.be.false;
@@ -93,7 +93,7 @@
 
       });
 
-      it('should remove the navigation buttons if navigation is disabled', () => {
+      it('should remove the navigation buttons if navigation is disabled', function() {
         this.slider.navigation = false;
 
         expect(this.slider.navigationWrapper.childElementCount).to.be.equal(0);

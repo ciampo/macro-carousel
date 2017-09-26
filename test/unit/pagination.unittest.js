@@ -5,10 +5,10 @@
 (function() {
   const expect = chai.expect;
 
-  describe('x-slider — pagination indicators', () => {
+  describe('x-slider — pagination indicators', function() {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async () => {
+    beforeEach(async function() {
       this.container.innerHTML = `
       <x-slider>
         <div>Slide 1</div>
@@ -24,32 +24,32 @@
         });
     });
 
-    describe('pagination disabled', () => {
-      it('pagination is false', () => {
+    describe('pagination disabled', function() {
+      it('pagination is false', function() {
         expect(this.slider.pagination).to.be.false;
         expect(this.slider.getAttribute('pagination')).to.be.null;
       });
 
-      it('should not add pagination indicators', () => {
+      it('should not add pagination indicators', function() {
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
       });
     });
 
-    describe('pagination enabled', () => {
-      beforeEach(() => {
+    describe('pagination enabled', function() {
+      beforeEach(function() {
         this.slider.pagination = true;
       });
 
-      it('pagination is true', () => {
+      it('pagination is true', function() {
         expect(this.slider.pagination).to.be.true;
         expect(this.slider.getAttribute('pagination')).to.not.be.null;
       });
 
-      it('should create as many pagination indicators as the number of slides', () => {
+      it('should create as many pagination indicators as the number of slides', function() {
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
       });
 
-      it('should always mirror the selected slide', done => {
+      it('should always mirror the selected slide', function(done) {
         this.slider.paginationWrapper
             .querySelectorAll('input[type=radio]')
             .forEach((r, i)  => {
@@ -88,17 +88,17 @@
                 });
 
             done();
-          }, 1000);
-        }, 1000);
+          }.bind(this));
+        }.bind(this));
       });
 
-      it('should update the pagination indicators when the light DOM changes', done => {
+      it('should update the pagination indicators when the light DOM changes', function(done) {
         const lastSlide = document.createElement('div');
         this.slider.appendChild(lastSlide);
 
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(6);
 
-        setTimeout(() => {
+        setTimeout(function() {
           const newSelected = 5;
           this.slider.selected = newSelected;
 
@@ -128,11 +128,11 @@
                 });
 
             done();
-          }, 1000);
-        }, 1000);
+          }.bind(this));
+        }.bind(this));
       });
 
-      it('should remove the pagination indicators if pagination is disabled', () => {
+      it('should remove the pagination indicators if pagination is disabled', function() {
         this.slider.pagination = false;
         expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
       });
