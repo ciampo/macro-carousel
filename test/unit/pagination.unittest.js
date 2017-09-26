@@ -15,7 +15,7 @@
         <div>Slide 2</div>
         <div>Slide 3</div>
         <div>Slide 4</div>
-        <div id="last-slide">Slide 5</div>
+        <div>Slide 5</div>
       </x-slider>`;
       return wcutils.waitForElement('x-slider')
         .then(_ => {
