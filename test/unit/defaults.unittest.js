@@ -80,6 +80,21 @@
       expect(color).to.be.equal('#000');
     });
 
+    it('--x-slider-pagination-size default value is 12px', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-pagination-size');
+      expect(color).to.be.equal('12px');
+    });
+
+    it('--x-slider-pagination-gap default value is 8px', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-pagination-gap');
+      expect(color).to.be.equal('8px');
+    });
+
+    it('--x-slider-pagination-height default value is 32px', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-pagination-height');
+      expect(color).to.be.equal('32px');
+    });
+
     it('--x-slider-navigation-color default value is #000', function() {
       const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-navigation-color');
       expect(color).to.be.equal('#000');
