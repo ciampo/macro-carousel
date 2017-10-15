@@ -192,6 +192,16 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * "Forces" an update by sliding the current view in, and updating
+   * navigation and pagination.
+   */
+  update() {
+    this._slideTo(this.selected);
+    this._updatePagination();
+    this._updateNavigation();
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
@@ -214,12 +224,15 @@ class XSlider extends HTMLElement {
         this._updatePagination();
         this._updateNavigation();
         break;
+
       case 'loop':
         this._updateNavigation();
         break;
+
       case 'navigation':
         this._updateNavigation();
         break;
+
       case 'pagination':
         this._updatePagination();
         break;
