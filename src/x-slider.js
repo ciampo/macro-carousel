@@ -53,6 +53,45 @@ template.innerHTML = `
       height: var(--x-slider-pagination-height);
     }
 
+    #pagination button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 32px;
+      height: 32px;
+
+      border: none;
+
+      background: none;
+
+      font-size: 0;
+
+      cursor: pointer;
+
+      opacity: .8;
+    }
+
+    #pagination button::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+
+      border-radius: 50%;
+
+      background-color: var(--x-slider-pagination-color);
+    }
+
+    #pagination button:hover,
+    #pagination button:focus,
+    #pagination button[disabled] {
+      opacity: 1;
+    }
+
+    #pagination button[disabled]::after {
+      background-color: var(--x-slider-pagination-color-selected);
+    }
+
     ::slotted(*) {
       flex: 1 0 100%;
     }
@@ -160,7 +199,7 @@ class XSlider extends HTMLElement {
    */
   handleEvent(e) {
     if (this._paginationIndicators.find(el => el === e.target)) {
-      this._onPaginationChange(e);
+      this._onPaginationClicked(e);
     } else if (e.target === this._slidesSlot) {
       this._onSlotChange();
     } else if (this.navigation && e.target === this._prevButton) {
@@ -185,7 +224,7 @@ class XSlider extends HTMLElement {
 
     if (this.pagination) {
       this._paginationIndicators.forEach(p => {
-        p.removeEventListener('change', this);
+        p.removeEventListener('click', this);
       });
     }
   }
@@ -264,7 +303,7 @@ class XSlider extends HTMLElement {
    */
   get selected() {
     const value = this.getAttribute('selected');
-    return value === null ? 0 : parseInt(value);
+    return value === null ? 0 : parseInt(value, 10);
   }
 
   /**
@@ -357,7 +396,7 @@ class XSlider extends HTMLElement {
         this._paginationWrapper.childElementCount !== this._slides.length)) {
       // Remove all children of pag wrapper and their ev listeners
       this._paginationIndicators.forEach(el => {
-        el.removeEventListener('change', this);
+        el.removeEventListener('click', this);
         this._paginationWrapper.removeChild(el);
       });
       this._paginationIndicators.length = 0;
@@ -368,22 +407,20 @@ class XSlider extends HTMLElement {
       if (this._paginationWrapper.childElementCount !== this._slides.length) {
         const frag = document.createDocumentFragment();
         this._slides.forEach((s, i) => {
-          const radio = document.createElement('input');
-          radio.setAttribute('type', 'radio');
-          radio.setAttribute('name', 'x-slider-pagination-indicators');
-          radio.setAttribute('value', i);
-          radio.setAttribute('aria-label', `Go to view ${i + 1}`);
-          radio.addEventListener('change', this);
+          const btn = document.createElement('button');
+          btn.textContent = i;
+          btn.setAttribute('aria-label', `Go to view ${i + 1}`);
+          btn.addEventListener('click', this);
 
-          frag.appendChild(radio);
-          this._paginationIndicators.push(radio);
+          frag.appendChild(btn);
+          this._paginationIndicators.push(btn);
         });
         this._paginationWrapper.appendChild(frag);
       }
 
-      // Update `checked`
-      this._paginationIndicators.forEach((radio, i) => {
-        radio.checked = i === this.selected;
+      // Update `disabled`
+      this._paginationIndicators.forEach((btn, i) => {
+        btn.disabled = i === this.selected;
       });
     }
   }
@@ -436,8 +473,9 @@ class XSlider extends HTMLElement {
    * Called when any pagination bullet point is selected.
    * @param {Event} e The 'change' event fired by the radio input.
    */
-  _onPaginationChange(e) {
-    this.selected = e.target.getAttribute('value');
+  _onPaginationClicked(e) {
+    this.selected = parseInt(e.target.textContent, 10);
+    this._updatePagination();
   }
 
   /**
