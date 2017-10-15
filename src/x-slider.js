@@ -371,17 +371,11 @@ class XSlider extends HTMLElement {
         this._navigationWrapper.appendChild(this._nextButton);
       }
 
-      // update disabled
-      if (!this.loop && this.selected === 0) {
-        this._prevButton.setAttribute('disabled', '');
-      } else {
-        this._prevButton.removeAttribute('disabled');
-      }
-      if (!this.loop && this.selected === this._slides.length - 1) {
-        this._nextButton.setAttribute('disabled', '');
-      } else {
-        this._nextButton.removeAttribute('disabled');
-      }
+      // update `disabled`
+      this._prevButton.disabled =
+          !this.loop && this.selected === 0;
+      this._nextButton.disabled =
+          !this.loop && this.selected === this._slides.length - 1;
     }
   }
 
