@@ -14,6 +14,13 @@ template.innerHTML = `
 
       contain: content;
 
+      --x-slider-transition-duration: 0.5s;
+      --x-slider-transition-timing-function: ease-in-out;
+      --x-slider-navigation-color: #000;
+
+      --x-slider-gap: 16px;
+      --x-slider-pagination-color: #999;
+      --x-slider-pagination-color-selected: #000;
       --x-slider-pagination-height: 2rem;
     }
 
@@ -35,7 +42,9 @@ template.innerHTML = `
     :host([transitioning]) #slidesWrapper {
       will-change: transform;
 
-      transition: .5s transform ease-in-out;
+      transition-property: transform;
+      transition-duration: var(--x-slider-transition-duration);
+      transition-timing-function: var(--x-slider-transition-timing-function);
     }
 
     #pagination {
@@ -53,6 +62,8 @@ template.innerHTML = `
       position: absolute;
       top: calc(50% - var(--x-slider-pagination-height) / 2);
       transform: translateY(-50%);
+
+      color: var(--x-slider-navigation-color);
     }
 
     #previous {
