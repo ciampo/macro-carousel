@@ -31,7 +31,7 @@
       });
 
       it('should not add pagination indicators', function() {
-        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
+        expect(this.paginationWrapper.childElementCount).to.be.equal(0);
       });
     });
 
@@ -46,17 +46,17 @@
       });
 
       it('should create as many pagination indicators as the number of slides', function() {
-        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
+        expect(this.paginationWrapper.childElementCount).to.be.equal(5);
       });
 
       it('should always mirror the selected slide', function(done) {
-        this.slider.paginationWrapper
-            .querySelectorAll('input[type=radio]')
+        this.paginationWrapper
+            .querySelectorAll('button')
             .forEach((r, i)  => {
               if (i !== 0) {
-                expect(r.checked).to.be.false;
+                expect(r.disabled).to.be.false;
               } else {
-                expect(r.checked).to.be.true;
+                expect(r.disabled).to.be.true;
               }
             });
 
@@ -64,26 +64,26 @@
         this.slider.selected = newSelected;
 
         setTimeout(function() {
-          this.slider.paginationWrapper
-              .querySelectorAll('input[type=radio]')
+          this.paginationWrapper
+              .querySelectorAll('button')
               .forEach((r, i) => {
                 if (i !== 2) {
-                  expect(r.checked).to.be.false;
+                  expect(r.disabled).to.be.false;
                 } else {
-                  expect(r.checked).to.be.true;
+                  expect(r.disabled).to.be.true;
                 }
               });
 
           this.slider.next();
 
           setTimeout(function() {
-            this.slider.paginationWrapper
-                .querySelectorAll('input[type=radio]')
+            this.paginationWrapper
+                .querySelectorAll('button')
                 .forEach((r, i) => {
                   if (i !== newSelected + 1) {
-                    expect(r.checked).to.be.false;
+                    expect(r.disabled).to.be.false;
                   } else {
-                    expect(r.checked).to.be.true;
+                    expect(r.disabled).to.be.true;
                   }
                 });
 
@@ -96,34 +96,35 @@
         const lastSlide = document.createElement('div');
         this.slider.appendChild(lastSlide);
 
-        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(6);
 
         setTimeout(function() {
+          expect(this.paginationWrapper.childElementCount).to.be.equal(6);
+
           const newSelected = 5;
           this.slider.selected = newSelected;
 
-          this.slider.paginationWrapper
-              .querySelectorAll('input[type=radio]')
+          this.paginationWrapper
+              .querySelectorAll('button')
               .forEach((r, i) => {
                 if (i !== newSelected) {
-                  expect(r.checked).to.be.false;
+                  expect(r.disabled).to.be.false;
                 } else {
-                  expect(r.checked).to.be.true;
+                  expect(r.disabled).to.be.true;
                 }
               });
 
           lastSlide.parentElement.removeChild(lastSlide);
 
           setTimeout(function() {
-            expect(this.slider.paginationWrapper.childElementCount).to.be.equal(5);
+            expect(this.paginationWrapper.childElementCount).to.be.equal(5);
 
-            this.slider.paginationWrapper
-                .querySelectorAll('input[type=radio]')
+            this.paginationWrapper
+                .querySelectorAll('button')
                 .forEach((r, i) => {
                   if (i !== newSelected - 1) {
-                    expect(r.checked).to.be.false;
+                    expect(r.disabled).to.be.false;
                   } else {
-                    expect(r.checked).to.be.true;
+                    expect(r.disabled).to.be.true;
                   }
                 });
 
@@ -134,7 +135,7 @@
 
       it('should remove the pagination indicators if pagination is disabled', function() {
         this.slider.pagination = false;
-        expect(this.slider.paginationWrapper.childElementCount).to.be.equal(0);
+        expect(this.paginationWrapper.childElementCount).to.be.equal(0);
       });
     });
   });
