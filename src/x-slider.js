@@ -80,7 +80,7 @@ template.innerHTML = `
  */
 class XSlider extends HTMLElement {
   static get observedAttributes() {
-    return ['selected', 'loop', 'navigation'];
+    return ['selected', 'loop', 'navigation', 'pagination'];
   }
 
   /**
@@ -99,7 +99,10 @@ class XSlider extends HTMLElement {
     // Grab references to elements in the shadow DOM.
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
+
     this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+    this._paginationIndicators = [];
+
     this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
     this._prevButton = undefined;
     this._nextButton = undefined;
@@ -118,6 +121,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
     this._upgradeProperty('navigation');
+    this._upgradeProperty('pagination');
 
     this._slideTo(this.selected);
     this._updatePagination();
@@ -144,7 +148,7 @@ class XSlider extends HTMLElement {
    * @param {Event} e Any event.
    */
   handleEvent(e) {
-    if (e.target.name === 'x-slider-pagination') {
+    if (this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationChange(e);
     } else if (e.target === this._slidesSlot) {
       this._onSlotChange();
@@ -168,11 +172,11 @@ class XSlider extends HTMLElement {
       this._nextButton.removeEventListener('click', this);
     }
 
-    const pagination = this.shadowRoot
-        .querySelectorAll('input[name="x-slider-pagination"]');
-    pagination.forEach(p => {
-      p.removeEventListener('change', this);
-    });
+    if (this.pagination) {
+      this._paginationIndicators.forEach(p => {
+        p.removeEventListener('change', this);
+      });
+    }
   }
 
   /**
@@ -215,6 +219,9 @@ class XSlider extends HTMLElement {
         break;
       case 'navigation':
         this._updateNavigation();
+        break;
+      case 'pagination':
+        this._updatePagination();
         break;
     }
   }
@@ -277,6 +284,26 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * Reflects the property to its corresponding attribute.
+   * @param {boolean} flag True to show pagination indicators, false to disable it.
+   */
+  set pagination(flag) {
+    if (flag) {
+      this.setAttribute('pagination', '');
+    } else {
+      this.removeAttribute('pagination');
+    }
+  }
+
+  /**
+   * Gets the property's value from the corresponding attribute.
+   * @return {boolean} True if pagination indicators are shown, false otherwise.
+   */
+  get pagination() {
+    return this.hasAttribute('pagination');
+  }
+
+  /**
    * Called when the content of #slidesSlot changes.
    * Updates the slider to the new number of slides.
    */
@@ -294,7 +321,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Updates the pagination to relect the current number of slides,
-   * and highlights the bullet point correponsing to the selected slide.
+   * and highlights the pagination indicator correponsing to the selected slide.
    */
   _updatePagination() {
     if (!this._paginationWrapper || !this._slides ||
@@ -302,35 +329,37 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const currentSlide = this.selected;
-
-    // Update the number of bullet points
-    if (this._paginationWrapper.childElementCount !== this._slides.length) {
-      // Remove bullet points
-      // TODO: optimise by:
-      // - keeping a reference to the radio buttons (useful for removing ev listeners)
-      // - add/remove only what necessary
-      while (this._paginationWrapper.firstChild) {
-        this._paginationWrapper.firstChild.removeEventListener('change', this);
-        this._paginationWrapper.removeChild(this._paginationWrapper.firstChild);
-      }
-      // Add bullet points.
-      const frag = document.createDocumentFragment();
-      this._slides.forEach((s, i) => {
-        const radio = document.createElement('input');
-        radio.setAttribute('type', 'radio');
-        radio.setAttribute('name', 'x-slider-pagination');
-        radio.setAttribute('value', i);
-        radio.setAttribute('aria-label', `Go to view ${i + 1}`);
-        radio.checked = i === currentSlide;
-        radio.addEventListener('change', this);
-
-        frag.appendChild(radio);
+    if (!this.pagination || (this.pagination &&
+        this._paginationWrapper.childElementCount !== this._slides.length)) {
+      // Remove all children of pag wrapper and their ev listeners
+      this._paginationIndicators.forEach(el => {
+        el.removeEventListener('change', this);
+        this._paginationWrapper.removeChild(el);
       });
-      this._paginationWrapper.appendChild(frag);
-    } else {
-      Array.from(this._paginationWrapper.childNodes).forEach((radio, i) => {
-        radio.checked = i === currentSlide;
+      this._paginationIndicators.length = 0;
+    }
+
+    if (this.pagination) {
+      // Create dom for pagination indicators
+      if (this._paginationWrapper.childElementCount !== this._slides.length) {
+        const frag = document.createDocumentFragment();
+        this._slides.forEach((s, i) => {
+          const radio = document.createElement('input');
+          radio.setAttribute('type', 'radio');
+          radio.setAttribute('name', 'x-slider-pagination-indicators');
+          radio.setAttribute('value', i);
+          radio.setAttribute('aria-label', `Go to view ${i + 1}`);
+          radio.addEventListener('change', this);
+
+          frag.appendChild(radio);
+          this._paginationIndicators.push(radio);
+        });
+        this._paginationWrapper.appendChild(frag);
+      }
+
+      // Update `checked`
+      this._paginationIndicators.forEach((radio, i) => {
+        radio.checked = i === this.selected;
       });
     }
   }
