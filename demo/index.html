@@ -40,14 +40,24 @@
     }
   </style>
 
-  <script src="../src/x-slider.js"></script>
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 </head>
 <body>
-  <x-slider selected="2" loop>
+  <x-slider selected="2" loop navigation pagination>
     <article class="slide">Slide 1</article>
     <article class="slide">Slide 2</article>
     <article class="slide">Slide 3</article>
     <article class="slide">Slide 4</article>
   </x-slider>
+
+  <script>
+    window.addEventListener('WebComponentsReady', function() {
+      const script = document.createElement('script');
+      script.src = '../src/x-slider.js';
+
+      document.head.appendChild(script);
+    });
+
+  </script>
 </body>
 </html>
