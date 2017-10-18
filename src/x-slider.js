@@ -128,7 +128,13 @@ template.innerHTML = `
  */
 class XSlider extends HTMLElement {
   static get observedAttributes() {
-    return ['selected', 'loop', 'navigation', 'pagination'];
+    return [
+      'selected',
+      'loop',
+      'navigation',
+      'pagination',
+      'slides-per-view',
+    ];
   }
 
   /**
@@ -170,6 +176,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('loop');
     this._upgradeProperty('navigation');
     this._upgradeProperty('pagination');
+    this._upgradeProperty('slidesPerView');
 
     this.update();
 
@@ -243,6 +250,7 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
+    // TODO: recompute layout and selected
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
@@ -255,18 +263,18 @@ class XSlider extends HTMLElement {
           return;
         }
 
-        const parsed = parseInt(newValue, 10);
+        const parsedSelected = parseInt(newValue, 10);
 
         // Accept only numbers between `0` and `this._slides.length - 1`.
-        if (!Number.isFinite(parsed) ||
-            parsed >= this._slides.length ||
-            parsed < 0) {
+        if (!Number.isFinite(parsedSelected) ||
+            parsedSelected >= this._slides.length ||
+            parsedSelected < 0) {
           this.selected = oldValue;
           return;
         }
 
         // Show the new selected slide and update pagination.
-        this._slideTo(parsed);
+        this._slideTo(parsedSelected);
         this._updatePagination();
         this._updateNavigation();
         break;
@@ -380,6 +388,23 @@ class XSlider extends HTMLElement {
    */
   get pagination() {
     return this.hasAttribute('pagination');
+  }
+
+  /**
+   * Reflects the property to its corresponding attribute.
+   * @param {number} index The number of slides seen at once in the slider.
+   */
+  set slidesPerView(index) {
+    this.setAttribute('slides-per-view', index);
+  }
+
+  /**
+   * Gets the property's value from the corresponding attribute.
+   * @return {number} The number of slides seen at once in the slider.
+   */
+  get slidesPerView() {
+    const value = this.getAttribute('slides-per-view');
+    return value === null ? 1 : parseInt(value, 10);
   }
 
   /**
