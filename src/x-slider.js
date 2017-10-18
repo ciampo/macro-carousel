@@ -171,9 +171,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('navigation');
     this._upgradeProperty('pagination');
 
-    this._slideTo(this.selected);
-    this._updatePagination();
-    this._updateNavigation();
+    this.update();
 
     // Enable transitions only after the initial setup.
     // Double rAF is necessary to wait for 'selected' to take effect.
@@ -284,12 +282,32 @@ class XSlider extends HTMLElement {
       case 'pagination':
         this._updatePagination();
         break;
+
+      case 'slides-per-view':
+        if (!this._slides || this._slides.length === 0) {
+          return;
+        }
+
+        const parsedSlidesPerView = parseInt(newValue, 10);
+
+        // Accept only numbers between `1` and `this._slides.length`.
+        if (!Number.isFinite(parsedSlidesPerView) ||
+            parsedSlidesPerView > this._slides.length ||
+            parsedSlidesPerView < 1) {
+          this.slidesPerView = oldValue;
+          return;
+        }
+
+        // TODO: recompute layout and selected
+        this._updatePagination();
+        this._updateNavigation();
+        break;
     }
   }
 
   /**
    * Reflects the property to its corresponding attribute.
-   * @param {number} i The 0-based index of the selected slide.
+   * @param {number} index The 0-based index of the selected slide.
    */
   set selected(index) {
     this.setAttribute('selected', index);
@@ -375,9 +393,7 @@ class XSlider extends HTMLElement {
       this.selected = this._slides.length - 1;
     }
 
-    this._slideTo(this.selected);
-    this._updatePagination();
-    this._updateNavigation();
+    this.update();
   }
 
   /**
