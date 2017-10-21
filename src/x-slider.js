@@ -193,26 +193,6 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Defining handleEvent allows to pass `this` as the callback to every
-   * `addEventListener` and `removeEventListener`. This avoids the need of
-   * binding every function. See
-   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
-   *
-   * @param {Event} e Any event.
-   */
-  handleEvent(e) {
-    if (this._paginationIndicators.find(el => el === e.target)) {
-      this._onPaginationClicked(e);
-    } else if (e.target === this._slidesSlot) {
-      this._onSlotChange();
-    } else if (this.navigation && e.target === this._prevButton) {
-      this.previous();
-    } else if (this.navigation && e.target === this._nextButton) {
-      this.next();
-    }
-  }
-
-  /**
    * Fires when the element is removed from the DOM.
    * It's a good place to do clean up work like releasing references and
    * removing event listeners.
@@ -229,6 +209,27 @@ class XSlider extends HTMLElement {
       this._paginationIndicators.forEach(p => {
         p.removeEventListener('click', this);
       });
+    }
+  }
+
+  /**
+   * Defining handleEvent allows to pass `this` as the callback to every
+   * `addEventListener` and `removeEventListener`. This avoids the need of
+   * binding every function. See
+   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
+   *
+   * @param {Event} e Any event.
+   */
+  handleEvent(e) {
+    if (this.pagination &&
+        this._paginationIndicators.find(el => el === e.target)) {
+      this._onPaginationClicked(e);
+    } else if (e.target === this._slidesSlot) {
+      this._onSlotChange();
+    } else if (this.navigation && e.target === this._prevButton) {
+      this.previous();
+    } else if (this.navigation && e.target === this._nextButton) {
+      this.next();
     }
   }
 
