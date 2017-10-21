@@ -21,6 +21,8 @@
       height: 200px;
 
       text-transform: uppercase;
+
+      --x-slider-gap: 1rem;
     }
 
     .slide:nth-child(n) {
@@ -43,7 +45,12 @@
   <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 </head>
 <body>
-  <x-slider selected="2" loop navigation pagination>
+  <x-slider
+      selected="1"
+      loop
+      navigation
+      pagination
+      slides-per-view="2">
     <article class="slide">Slide 1</article>
     <article class="slide">Slide 2</article>
     <article class="slide">Slide 3</article>
