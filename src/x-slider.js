@@ -165,6 +165,9 @@ class XSlider extends HTMLElement {
 
     this._slides = undefined;
     this._lastViewIndex = -1;
+
+    this._wrapperWidth = 0;
+    this._resizeTimer = undefined;
   }
 
   /**
@@ -195,6 +198,7 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
+    window.addEventListener('resize', this);
   }
 
   /**
@@ -204,6 +208,7 @@ class XSlider extends HTMLElement {
    */
   disconnectedCallback() {
     this._slidesSlot.removeEventListener('slotchange', this);
+    window.removeEventListener('resize', this);
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -226,7 +231,9 @@ class XSlider extends HTMLElement {
    * @param {Event} e Any event.
    */
   handleEvent(e) {
-    if (this.pagination &&
+    if (e.target === window) {
+      this._onResize();
+    } else if (this.pagination &&
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
     } else if (e.target === this._slidesSlot) {
@@ -256,6 +263,7 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
+    this._computeWrapperWidth();
     this._computeSlidesPerViewLayout();
     this._slideTo(this.selected);
     this._updatePagination();
@@ -418,6 +426,18 @@ class XSlider extends HTMLElement {
     this.update();
   }
 
+  _onResize() {
+    // Debouncing resize.
+    clearTimeout(this._resizeTimer);
+    this._resizeTimer = setTimeout(() => {
+      this.update();
+    }, 250);
+  }
+
+  _computeWrapperWidth() {
+    this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
+  }
+
   /**
    * Updates the pagination indicators (depending on the current value of
    * `pagination`) to reflect the current number of views and the selected view.
@@ -575,15 +595,14 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    // TODO: cache wrapper width, find a more performant way?
     const parsedGap = parseInt(
         getComputedStyle(this._slides[0])['margin-right'], 10);
     const gap = !Number.isFinite(parsedGap) ? 0 : parsedGap;
+    const slideWidth = (this._wrapperWidth - (this.slidesPerView - 1) * gap) /
+        this.slidesPerView;
 
-    const w = this._slidesWrapper.getBoundingClientRect().width;
-    const sw = (w - (this.slidesPerView - 1) * gap) / this.slidesPerView;
     this._slidesWrapper.style.transform =
-        `translateX(${- targetView * (sw + gap)}px)`;
+        `translateX(${- targetView * (slideWidth + gap)}px)`;
   }
 }
 
