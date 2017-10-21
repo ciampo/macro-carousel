@@ -14,6 +14,8 @@ template.innerHTML = `
 
       contain: content;
 
+      --x-slider-gap: 16px;
+
       --x-slider-transition-duration: 0.5s;
       --x-slider-transition-timing-function: ease-in-out;
 
@@ -25,8 +27,7 @@ template.innerHTML = `
       --x-slider-pagination-gap: 8px;
       --x-slider-pagination-height: 32px;
 
-
-      --x-slider-gap: 16px;
+      --x-slider__internal__slides-per-view: 1;
     }
 
     :host([hidden]) {
@@ -40,8 +41,6 @@ template.innerHTML = `
     #slidesWrapper {
       display: flex;
       align-items: stretch;
-
-      background-color: #ccc;
     }
 
     :host([transitioning]) #slidesWrapper {
@@ -91,7 +90,10 @@ template.innerHTML = `
     }
 
     ::slotted(*) {
-      flex: 1 0 100%;
+      /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
+      flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
+          var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+      margin-right: var(--x-slider-gap);
     }
 
     #previous,
@@ -160,6 +162,9 @@ class XSlider extends HTMLElement {
     this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
     this._prevButton = undefined;
     this._nextButton = undefined;
+
+    this._slides = undefined;
+    this._lastViewIndex = -1;
   }
 
   /**
@@ -251,7 +256,7 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
-    // TODO: recompute layout and selected
+    this._computeSlidesPerViewLayout();
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
@@ -266,18 +271,16 @@ class XSlider extends HTMLElement {
 
         const parsedSelected = parseInt(newValue, 10);
 
-        // Accept only numbers between `0` and `this._slides.length - 1`.
+        // Accept only numbers between `0` and `this._lastViewIndex`.
         if (!Number.isFinite(parsedSelected) ||
-            parsedSelected >= this._slides.length ||
+            parsedSelected > this._lastViewIndex ||
             parsedSelected < 0) {
           this.selected = oldValue;
           return;
         }
 
         // Show the new selected slide and update pagination.
-        this._slideTo(parsedSelected);
-        this._updatePagination();
-        this._updateNavigation();
+        this.update();
         break;
 
       case 'loop':
@@ -299,17 +302,14 @@ class XSlider extends HTMLElement {
 
         const parsedSlidesPerView = parseInt(newValue, 10);
 
-        // Accept only numbers between `1` and `this._slides.length`.
+        // Accept only numbers greater than `1`.
         if (!Number.isFinite(parsedSlidesPerView) ||
-            parsedSlidesPerView > this._slides.length ||
             parsedSlidesPerView < 1) {
           this.slidesPerView = oldValue;
           return;
         }
 
-        // TODO: recompute layout and selected
-        this._updatePagination();
-        this._updateNavigation();
+        this.update();
         break;
     }
   }
@@ -415,16 +415,12 @@ class XSlider extends HTMLElement {
   _onSlotChange() {
     this._slides = this._getSlides();
 
-    if (this.selected >= this._slides.length) {
-      this.selected = this._slides.length - 1;
-    }
-
     this.update();
   }
 
   /**
-   * Updates the pagination to relect the current number of slides,
-   * and highlights the pagination indicator correponsing to the selected slide.
+   * Updates the pagination indicators (depending on the current value of
+   * `pagination`) to reflect the current number of views and the selected view.
    */
   _updatePagination() {
     if (!this._paginationWrapper || !this._slides ||
@@ -433,7 +429,8 @@ class XSlider extends HTMLElement {
     }
 
     if (!this.pagination || (this.pagination &&
-        this._paginationWrapper.childElementCount !== this._slides.length)) {
+        this._paginationWrapper.childElementCount !==
+        this._lastViewIndex + 1)) {
       // Remove all children of pag wrapper and their ev listeners
       this._paginationIndicators.forEach(el => {
         el.removeEventListener('click', this);
@@ -444,9 +441,10 @@ class XSlider extends HTMLElement {
 
     if (this.pagination) {
       // Create dom for pagination indicators
-      if (this._paginationWrapper.childElementCount !== this._slides.length) {
+      if (this._paginationWrapper.childElementCount !==
+          this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
-        this._slides.forEach((s, i) => {
+        for (let i = 0; i <= this._lastViewIndex; i++) {
           const btn = document.createElement('button');
           btn.textContent = i;
           btn.setAttribute('aria-label', `Go to view ${i + 1}`);
@@ -454,17 +452,21 @@ class XSlider extends HTMLElement {
 
           frag.appendChild(btn);
           this._paginationIndicators.push(btn);
-        });
+        }
         this._paginationWrapper.appendChild(frag);
       }
 
-      // Update `disabled`
+      // Update `disabled` to highlight the selected slide.
       this._paginationIndicators.forEach((btn, i) => {
         btn.disabled = i === this.selected;
       });
     }
   }
 
+  /**
+   * Updates the navigation buttons (prev/next) depending on the value of
+   * `navigation`, `loop` and the currently selected view.
+   */
   _updateNavigation() {
     if (!this._navigationWrapper || !this._slides ||
         this._slides.length === 0) {
@@ -505,7 +507,7 @@ class XSlider extends HTMLElement {
       this._prevButton.disabled =
           !this.loop && this.selected === 0;
       this._nextButton.disabled =
-          !this.loop && this.selected === this._slides.length - 1;
+          !this.loop && this.selected === this._lastViewIndex;
     }
   }
 
@@ -515,7 +517,6 @@ class XSlider extends HTMLElement {
    */
   _onPaginationClicked(e) {
     this.selected = parseInt(e.target.textContent, 10);
-    this._updatePagination();
   }
 
   /**
@@ -536,7 +537,7 @@ class XSlider extends HTMLElement {
     if (this.selected > 0) {
       this.selected -= 1;
     } else if (this.loop) {
-      this.selected = this._slides.length - 1;
+      this.selected = this._lastViewIndex;
     }
   }
 
@@ -546,23 +547,43 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   next() {
-    if (this.selected < this._slides.length - 1) {
+    if (this.selected < this._lastViewIndex) {
       this.selected += 1;
     } else if (this.loop) {
       this.selected = 0;
     }
   }
 
+  _computeSlidesPerViewLayout() {
+    // Used to compute the slides's width.
+    this.style.setProperty('--x-slider__internal__slides-per-view',
+        this.slidesPerView);
+
+    // Recompute the index of the last view (aka max value for `selected`).
+    this._lastViewIndex = Math.max(0, this._slides.length - this.slidesPerView);
+    if (this.selected > this._lastViewIndex) {
+      this.selected = this._lastViewIndex;
+    }
+  }
+
   /**
    * Translates the slider to show the target slide.
-   * @param {number} targetSlide The slide to slide to.
+   * @param {number} targetView The view to slide to.
    */
-  _slideTo(targetSlide) {
+  _slideTo(targetView) {
     if (!this._slidesWrapper) {
       return;
     }
 
-    this._slidesWrapper.style.transform = `translateX(${- targetSlide * 100}%)`;
+    // TODO: cache wrapper width, find a more performant way?
+    const parsedGap = parseInt(
+        getComputedStyle(this._slides[0])['margin-right'], 10);
+    const gap = !Number.isFinite(parsedGap) ? 0 : parsedGap;
+
+    const w = this._slidesWrapper.getBoundingClientRect().width;
+    const sw = (w - (this.slidesPerView - 1) * gap) / this.slidesPerView;
+    this._slidesWrapper.style.transform =
+        `translateX(${- targetView * (sw + gap)}px)`;
   }
 }
 
