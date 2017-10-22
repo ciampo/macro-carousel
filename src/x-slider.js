@@ -167,6 +167,7 @@ class XSlider extends HTMLElement {
     this._lastViewIndex = -1;
 
     this._wrapperWidth = 0;
+    this._slidesGap = 0;
     this._resizeTimer = undefined;
   }
 
@@ -263,7 +264,7 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
-    this._computeWrapperWidth();
+    this._computeSizes();
     this._computeSlidesPerViewLayout();
     this._slideTo(this.selected);
     this._updatePagination();
@@ -434,8 +435,14 @@ class XSlider extends HTMLElement {
     }, 250);
   }
 
-  _computeWrapperWidth() {
+  _computeSizes() {
+    // Wrapper width.
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
+
+    // Slides gap.
+    const parsedGap = parseInt(
+        getComputedStyle(this._slides[0])['margin-right'], 10);
+    this._slidesGap = !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 
   /**
@@ -587,7 +594,7 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Translates the slider to show the target slide.
+   * Translates the slider to show the target view.
    * @param {number} targetView The view to slide to.
    */
   _slideTo(targetView) {
@@ -595,14 +602,12 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
-    const gap = !Number.isFinite(parsedGap) ? 0 : parsedGap;
-    const slideWidth = (this._wrapperWidth - (this.slidesPerView - 1) * gap) /
+    const slideWidth = (this._wrapperWidth -
+        (this.slidesPerView - 1) * this._slidesGap) /
         this.slidesPerView;
 
     this._slidesWrapper.style.transform =
-        `translateX(${- targetView * (slideWidth + gap)}px)`;
+        `translateX(${- targetView * (slideWidth + this._slidesGap)}px)`;
   }
 }
 
