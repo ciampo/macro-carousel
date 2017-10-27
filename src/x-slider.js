@@ -36,6 +36,11 @@ template.innerHTML = `
 
     #externalWrapper {
       overflow: hidden;
+
+      /*
+        https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+      */
+      touch-action: pan-y pinch-zoom;
     }
 
     #slidesWrapper {
@@ -152,7 +157,8 @@ class XSlider extends HTMLElement {
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    // Grab references to elements in the shadow DOM.
+    // References to DOM nodes.
+    this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
 
@@ -164,11 +170,19 @@ class XSlider extends HTMLElement {
     this._nextButton = undefined;
 
     this._slides = undefined;
+
+    // State
     this._lastViewIndex = -1;
 
+    // Layout related
     this._wrapperWidth = 0;
     this._slidesGap = 0;
+    this._slidesWidth = 0;
     this._resizeTimer = undefined;
+
+    // Touch / drag
+    this._pointerActive = false;
+    this._pointerId = undefined;
   }
 
   /**
@@ -199,7 +213,22 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this);
+    window.addEventListener('resize', this,
+        this._supportsPassiveEvt ? {passive: true} : false);
+
+    // fixes weird safari 10 bug where preventDefault is prevented
+    // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
+    window.addEventListener('touchmove', function() {});
+    this._externalWrapper.addEventListener('touchstart', this);
+    this._externalWrapper.addEventListener('touchmove', this,
+        this._supportsPassiveEvt ? {passive: false} : false);
+    this._externalWrapper.addEventListener('touchend', this);
+    this._externalWrapper.addEventListener('touchcancel', this);
+    this._externalWrapper.addEventListener('mousedown', this);
+    this._externalWrapper.addEventListener('mousemove', this,
+        this._supportsPassiveEvt ? {passive: false} : false);
+    this._externalWrapper.addEventListener('mouseup', this);
+    this._externalWrapper.addEventListener('mouseleave', this);
   }
 
   /**
@@ -210,6 +239,15 @@ class XSlider extends HTMLElement {
   disconnectedCallback() {
     this._slidesSlot.removeEventListener('slotchange', this);
     window.removeEventListener('resize', this);
+
+    this._externalWrapper.removeEventListener('touchstart', this);
+    this._externalWrapper.removeEventListener('touchmove', this);
+    this._externalWrapper.removeEventListener('touchend', this);
+    this._externalWrapper.removeEventListener('touchcancel', this);
+    this._externalWrapper.removeEventListener('mousedown', this);
+    this._externalWrapper.removeEventListener('mousemove', this);
+    this._externalWrapper.removeEventListener('mouseup', this);
+    this._externalWrapper.removeEventListener('mouseleave', this);
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -232,17 +270,34 @@ class XSlider extends HTMLElement {
    * @param {Event} e Any event.
    */
   handleEvent(e) {
-    if (e.target === window) {
+    // Window resize
+    if (e.target === window && e.type === 'resize') {
       this._onResize();
+
+    // Slot change
+    } else if (e.target === this._slidesSlot) {
+      this._onSlotChange();
+
+    // Pagination indicators
     } else if (this.pagination &&
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
-    } else if (e.target === this._slidesSlot) {
-      this._onSlotChange();
+
+    // Navigation (prev / next button)
     } else if (this.navigation && e.target === this._prevButton) {
       this.previous();
     } else if (this.navigation && e.target === this._nextButton) {
       this.next();
+
+    // Touch / drag
+    } else if (e.type === 'touchstart' || e.type === 'mousedown') {
+      this._onPointerDown(this._normalizeEvent(e));
+    } else if (e.type === 'touchmove' || e.type === 'mousemove') {
+      this._onPointerMove(this._normalizeEvent(e));
+    } else if (e.type === 'touchend' || e.type === 'mouseup') {
+      this._onPointerEnd(this._normalizeEvent(e));
+    } else if (e.type === 'touchcancel' || e.type === 'mouseleave') {
+      this._stopPointerTracking();
     }
   }
 
@@ -436,13 +491,9 @@ class XSlider extends HTMLElement {
   }
 
   _computeSizes() {
-    // Wrapper width.
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
-
-    // Slides gap.
-    const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
-    this._slidesGap = !Number.isFinite(parsedGap) ? 0 : parsedGap;
+    this._slidesGap = this._getSlidesGap();
+    this._slidesWidth = this._getSlidesWidth();
   }
 
   /**
@@ -602,12 +653,122 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const slideWidth = (this._wrapperWidth -
-        (this.slidesPerView - 1) * this._slidesGap) /
-        this.slidesPerView;
+    this._slidesWrapper.style.transform = `translateX(
+        ${- targetView * (this._slidesWidth + this._slidesGap)}px)`;
+  }
 
-    this._slidesWrapper.style.transform =
-        `translateX(${- targetView * (slideWidth + this._slidesGap)}px)`;
+  /**
+   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+   */
+  _supportsPassiveEvt() {
+    if (typeof this._passiveEvt === 'undefined') {
+      this._passiveEvt = false;
+      try {
+        const opts = Object.defineProperty({}, 'passive', {
+          get: () => {
+            this._passiveEvt = true;
+          },
+        });
+        window.addEventListener('test', null, opts);
+      } catch (e) {}
+    }
+
+    return this._passiveEvt;
+  }
+
+  _normalizeEvent(ev) {
+    // touch
+    if (ev.type === 'touchstart' ||
+        ev.type === 'touchmove' ||
+        ev.type === 'touchend') {
+      const touch = ev.targetTouches[0] || ev.changedTouches[0];
+      return {
+        x: touch.clientX,
+        y: touch.clientY,
+        id: touch.identifier,
+        event: ev,
+      };
+
+    // mouse
+    } else {
+        return {
+          x: ev.clientX,
+          y: ev.clientY,
+          id: null,
+          event: ev,
+        };
+    }
+  }
+
+  _onPointerDown(e) {
+    if (!this._pointerActive) {
+      this._pointerActive = true;
+      this._pointerId = e.id;
+      this._firstTouch = {
+        x: e.x,
+        y: e.y,
+        translateX: this._getWrapperTranslateX(),
+      };
+    }
+  }
+
+  _onPointerMove(e) {
+    if (this._pointerActive && e.id === this._pointerId) {
+      const deltaX = e.x - this._firstTouch.x;
+      const deltaY = e.y - this._firstTouch.y;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        e.event.preventDefault();
+      }
+
+      this.removeAttribute('transitioning');
+
+      this._slidesWrapper.style.transform =
+        `translateX(${this._firstTouch.translateX + deltaX}px)`;
+    }
+  }
+
+  _onPointerEnd(e) {
+    if (this._pointerActive && e.id === this._pointerId) {
+      this._stopPointerTracking();
+    }
+  }
+
+  _stopPointerTracking() {
+    this._pointerActive = false;
+    this._pointerId = undefined;
+
+    this.setAttribute('transitioning', '');
+
+    const fullSlideWidth = this._slidesWidth + this._slidesGap;
+    const maxValue = this._lastViewIndex * fullSlideWidth;
+
+    const wrapperTranslateX = Math.abs(
+        Math.max(-maxValue, Math.min(0, this._getWrapperTranslateX())));
+    const modulo = wrapperTranslateX % fullSlideWidth;
+    const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
+
+    if (modulo >= fullSlideWidth / 2) {
+      this.selected = divided + 1;
+    } else {
+      this.selected = divided;
+    }
+  }
+
+  _getWrapperTranslateX() {
+    const matrix = getComputedStyle(this._slidesWrapper).transform
+        .replace(/[^0-9\-.,]/g, '').split(',');
+    return parseInt(matrix[12] || matrix[4], 10);
+  }
+
+  _getSlidesWidth() {
+    return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
+        this.slidesPerView;
+  }
+
+  _getSlidesGap() {
+    const parsedGap = parseInt(
+        getComputedStyle(this._slides[0])['margin-right'], 10);
+    return !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 }
 
