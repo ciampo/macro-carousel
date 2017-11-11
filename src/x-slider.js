@@ -179,11 +179,20 @@ class XSlider extends HTMLElement {
     this._wrapperWidth = 0;
     this._slidesGap = 0;
     this._slidesWidth = 0;
+    this._wrapperTranslateX = undefined;
     this._resizeTimer = undefined;
 
     // Touch / drag
     this._pointerActive = false;
     this._pointerId = undefined;
+    this._pointerFirstX = undefined;
+    this._pointerFirstY = undefined;
+    this._pointerLastX = undefined;
+    this._pointerLastY = undefined;
+    this._pointerCurrentX = undefined;
+    this._pointerCurrentY = undefined;
+    this._trackingPoints = [];
+    this._dragTicking = false;
   }
 
   /**
@@ -221,15 +230,7 @@ class XSlider extends HTMLElement {
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
     this._externalWrapper.addEventListener('touchstart', this);
-    this._externalWrapper.addEventListener('touchmove', this,
-        this._supportsPassiveEvt ? {passive: false} : false);
-    this._externalWrapper.addEventListener('touchend', this);
-    this._externalWrapper.addEventListener('touchcancel', this);
     this._externalWrapper.addEventListener('mousedown', this);
-    this._externalWrapper.addEventListener('mousemove', this,
-        this._supportsPassiveEvt ? {passive: false} : false);
-    this._externalWrapper.addEventListener('mouseup', this);
-    this._externalWrapper.addEventListener('mouseleave', this);
   }
 
   /**
@@ -242,13 +243,7 @@ class XSlider extends HTMLElement {
     window.removeEventListener('resize', this);
 
     this._externalWrapper.removeEventListener('touchstart', this);
-    this._externalWrapper.removeEventListener('touchmove', this);
-    this._externalWrapper.removeEventListener('touchend', this);
-    this._externalWrapper.removeEventListener('touchcancel', this);
     this._externalWrapper.removeEventListener('mousedown', this);
-    this._externalWrapper.removeEventListener('mousemove', this);
-    this._externalWrapper.removeEventListener('mouseup', this);
-    this._externalWrapper.removeEventListener('mouseleave', this);
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -654,8 +649,13 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    this._slidesWrapper.style.transform = `translateX(
-        ${- targetView * (this._slidesWidth + this._slidesGap)}px)`;
+    this._setWrapperTranslateX(
+        - targetView * (this._slidesWidth + this._slidesGap));
+  }
+
+  _setWrapperTranslateX(tx) {
+    this._slidesWrapper.style.transform = `translateX(${tx}px)`;
+    this._wrapperTranslateX = tx;
   }
 
   /**
@@ -705,27 +705,62 @@ class XSlider extends HTMLElement {
     if (!this._pointerActive) {
       this._pointerActive = true;
       this._pointerId = e.id;
-      this._firstTouch = {
-        x: e.x,
-        y: e.y,
-        translateX: this._getWrapperTranslateX(),
-      };
+      this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
+      this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.x;
+
+      this._trackingPoints = [];
+      this._addTrackingPoint(this._pointerLastX);
+
+      // Move
+      this._externalWrapper.addEventListener('touchmove', this,
+          this._supportsPassiveEvt ? {passive: false} : false);
+      this._externalWrapper.addEventListener('mousemove', this,
+          this._supportsPassiveEvt ? {passive: false} : false);
+      // Up
+      this._externalWrapper.addEventListener('mouseup', this);
+      this._externalWrapper.addEventListener('touchend', this);
+      // Leave
+      this._externalWrapper.addEventListener('mouseleave', this);
+      this._externalWrapper.addEventListener('touchcancel', this);
     }
   }
 
   _onPointerMove(e) {
     if (this._pointerActive && e.id === this._pointerId) {
-      const deltaX = e.x - this._firstTouch.x;
-      const deltaY = e.y - this._firstTouch.y;
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Always update the current value of the pointer.
+      // Once per frame, it gets consumed and becomes the last value.
+      this._pointerCurrentX = e.x;
+      this._pointerCurrentY = e.y;
+
+      // Prevent default only if dragging horizontally.
+      if (Math.abs(this._pointerCurrentX - this._pointerFirstX) >
+          Math.abs(this._pointerCurrentY - this._pointerFirstY)) {
         e.event.preventDefault();
       }
 
+      this._addTrackingPoint(this._pointerLastX);
+
       this.removeAttribute('transitioning');
 
-      this._slidesWrapper.style.transform =
-        `translateX(${this._firstTouch.translateX + deltaX}px)`;
+      this._requestDragTick();
     }
+  }
+
+  _requestDragTick() {
+    if (!this._dragTicking) {
+      requestAnimationFrame(this._updateDrag.bind(this));
+    }
+    this._dragTicking = true;
+  }
+
+  _updateDrag() {
+    // Current position + the amount of drag happened since the last rAF.
+    this._setWrapperTranslateX(this._wrapperTranslateX +
+        this._pointerCurrentX - this._pointerLastX);
+
+    this._pointerLastX = this._pointerCurrentX;
+    this._pointerLastY = this._pointerCurrentY;
+    this._dragTicking = false;
   }
 
   _onPointerEnd(e) {
@@ -738,13 +773,23 @@ class XSlider extends HTMLElement {
     this._pointerActive = false;
     this._pointerId = undefined;
 
+    this._addTrackingPoint(this._pointerLastX);
+
+    this._externalWrapper.removeEventListener('touchmove', this);
+    this._externalWrapper.removeEventListener('mousemove', this);
+    this._externalWrapper.removeEventListener('touchend', this);
+    this._externalWrapper.removeEventListener('mouseup', this);
+    this._externalWrapper.removeEventListener('touchcancel', this);
+    this._externalWrapper.removeEventListener('mouseleave', this);
+
+    // TODO: start decelerating
     this.setAttribute('transitioning', '');
 
     const fullSlideWidth = this._slidesWidth + this._slidesGap;
     const maxValue = this._lastViewIndex * fullSlideWidth;
 
     const wrapperTranslateX = Math.abs(
-        Math.max(-maxValue, Math.min(0, this._getWrapperTranslateX())));
+        Math.max(-maxValue, Math.min(0, this._wrapperTranslateX)));
     const modulo = wrapperTranslateX % fullSlideWidth;
     const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
 
@@ -755,10 +800,17 @@ class XSlider extends HTMLElement {
     }
   }
 
-  _getWrapperTranslateX() {
-    const matrix = getComputedStyle(this._slidesWrapper).transform
-        .replace(/[^0-9\-.,]/g, '').split(',');
-    return parseInt(matrix[12] || matrix[4], 10);
+  _addTrackingPoint(x) {
+    const time = Date.now();
+    // Keep only data from the last 100ms
+    while (this._trackingPoints.length > 0) {
+      if (time - this._trackingPoints[0].time <= 100) {
+        break;
+      }
+      this._trackingPoints.shift();
+    }
+
+    this._trackingPoints.push({x, time});
   }
 
   _getSlidesWidth() {
