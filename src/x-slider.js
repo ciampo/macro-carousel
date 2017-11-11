@@ -70,6 +70,7 @@ template.innerHTML = `
       width: var(--x-slider-pagination-size);
       height: var(--x-slider-pagination-size);
 
+      padding: 0;
       margin: 0 calc(var(--x-slider-pagination-gap) / 2);
 
       border: none;
