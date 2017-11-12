@@ -395,6 +395,7 @@ class XSlider extends HTMLElement {
   /**
    * The 0-based index of the selected slide.
    * @type {number}
+   * @default 0
    */
   set selected(index) {
     this.setAttribute('selected', index);
@@ -408,6 +409,7 @@ class XSlider extends HTMLElement {
   /**
    * Whether the slider is looping (e.g wrapping around).
    * @type {boolean}
+   * @default false
    */
   set loop(flag) {
     if (flag) {
@@ -424,6 +426,7 @@ class XSlider extends HTMLElement {
   /**
    * Whether the navigation buttons (prev/next) are shown.
    * @type {boolean}
+   * @default false
    */
   set navigation(flag) {
     if (flag) {
@@ -440,6 +443,7 @@ class XSlider extends HTMLElement {
   /**
    * Whether the pagination indicators are shown.
    * @type {boolean}
+   * @default false
    */
   set pagination(flag) {
     if (flag) {
@@ -456,6 +460,7 @@ class XSlider extends HTMLElement {
   /**
    * The number of slides seen at once in the slider
    * @type {number}
+   * @default 1
    */
   set slidesPerView(index) {
     this.setAttribute('slides-per-view', index);
@@ -807,23 +812,11 @@ class XSlider extends HTMLElement {
     }
   }
 
-  _requestDragTick() {
-    if (!this._dragTicking) {
-      requestAnimationFrame(this._updateDrag.bind(this));
-    }
-    this._dragTicking = true;
-  }
-
-  _updateDrag() {
-    // Current position + the amount of drag happened since the last rAF.
-    this._setWrapperTranslateX(this._wrapperTranslateX +
-        this._pointerCurrentX - this._pointerLastX);
-
-    this._pointerLastX = this._pointerCurrentX;
-    this._pointerLastY = this._pointerCurrentY;
-    this._dragTicking = false;
-  }
-
+  /**
+   * Stops the tracking of pointer events, resets the dragging logic,
+   * and possibly starts the deceleration.
+   * @private
+   */
   _stopPointerTracking() {
     this._pointerActive = false;
     this._pointerId = undefined;
@@ -855,6 +848,11 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Stores the last 100ms worth of tracking data from pointer events.
+   * @param {number} x The x coordinate value to strore
+   * @private
+   */
   _addTrackingPoint(x) {
     const time = Date.now();
     // Keep only data from the last 100ms
@@ -868,11 +866,46 @@ class XSlider extends HTMLElement {
     this._trackingPoints.push({x, time});
   }
 
+  /**
+   * Updates the UI once per animation frame.
+   * @private
+   */
+  _requestDragTick() {
+    if (!this._dragTicking) {
+      requestAnimationFrame(this._updateDrag.bind(this));
+    }
+    this._dragTicking = true;
+  }
+
+  /**
+   * Updates the UI while the user is dragging the slides.
+   * @private
+   */
+  _updateDrag() {
+    // Current position + the amount of drag happened since the last rAF.
+    this._setWrapperTranslateX(this._wrapperTranslateX +
+        this._pointerCurrentX - this._pointerLastX);
+
+    this._pointerLastX = this._pointerCurrentX;
+    this._pointerLastY = this._pointerCurrentY;
+    this._dragTicking = false;
+  }
+
+  /**
+   * Computes the width of one slide given the layout constraint.
+   * @returns {number} The width of one slide.
+   * @private
+   */
   _getSlidesWidth() {
     return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
         this.slidesPerView;
   }
 
+  /**
+   * Computes the slide gap value from CSS.
+   * @returns {number} The width of the gap between slides.
+   * @private
+   */
   _getSlidesGap() {
     const parsedGap = parseInt(
         getComputedStyle(this._slides[0])['margin-right'], 10);
