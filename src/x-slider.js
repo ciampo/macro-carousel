@@ -132,9 +132,13 @@ template.innerHTML = `
 `;
 
 /**
- * XSlider definition.
+ * A slider/carousel Web Component.
  */
 class XSlider extends HTMLElement {
+  /**
+   * An array of the observed attributes.
+   * @static
+   */
   static get observedAttributes() {
     return [
       'selected',
@@ -146,13 +150,16 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Runs anytime a new instance is created (in HTML or JS).
-   * The construtor is a good place to create shadow DOM, though you should
-   * avoid touching any attributes or light DOM children as they may not
-   * be available yet.
+   * Creates a new instance of XSlider.
    * @constructor
    */
   constructor() {
+    /*
+     * Runs anytime a new instance is created (in HTML or JS).
+     * The construtor is a good place to create shadow DOM, though you should
+     * avoid touching any attributes or light DOM children as they may not
+     * be available yet.
+     */
     super();
 
     this.attachShadow({mode: 'open'});
@@ -199,6 +206,7 @@ class XSlider extends HTMLElement {
    * Fires when the element is inserted into the DOM.
    * It's a good place to set the initial `role`, `tabindex`, internal state,
    * and install event listeners.
+   * @private
    */
   connectedCallback() {
     // Get Light Dom.
@@ -237,6 +245,7 @@ class XSlider extends HTMLElement {
    * Fires when the element is removed from the DOM.
    * It's a good place to do clean up work like releasing references and
    * removing event listeners.
+   * @private
    */
   disconnectedCallback() {
     this._slidesSlot.removeEventListener('slotchange', this);
@@ -264,6 +273,7 @@ class XSlider extends HTMLElement {
    * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
    *
    * @param {Event} e Any event.
+   * @private
    */
   handleEvent(e) {
     // Window resize
@@ -301,6 +311,7 @@ class XSlider extends HTMLElement {
    * Used for upgrading properties in case this element is upgraded lazily.
    * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
    * @param {any} prop
+   * @private
    */
   _upgradeProperty(prop) {
     if (this.hasOwnProperty(prop)) {
@@ -322,6 +333,13 @@ class XSlider extends HTMLElement {
     this._updateNavigation();
   }
 
+  /**
+   * Called whenever an observedAttribute's value changes.
+   * @param {string} name The attribute's local name.
+   * @param {*} oldValue The attribute's previous value.
+   * @param {*} newValue The attribute's new value.
+   * @private
+   */
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
@@ -375,25 +393,21 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Reflects the property to its corresponding attribute.
-   * @param {number} index The 0-based index of the selected slide.
+   * The 0-based index of the selected slide.
+   * @type {number}
    */
   set selected(index) {
     this.setAttribute('selected', index);
   }
 
-  /**
-   * Gets the property's value from the corresponding attribute.
-   * @return {number} The 0-based index of the selected slide.
-   */
   get selected() {
     const value = this.getAttribute('selected');
     return value === null ? 0 : parseInt(value, 10);
   }
 
   /**
-   * Reflects the property to its corresponding attribute.
-   * @param {boolean} flag True to make the slider loop, false to disable it.
+   * Whether the slider is looping (e.g wrapping around).
+   * @type {boolean}
    */
   set loop(flag) {
     if (flag) {
@@ -403,17 +417,13 @@ class XSlider extends HTMLElement {
     }
   }
 
-  /**
-   * Gets the property's value from the corresponding attribute.
-   * @return {boolean} True if the slider is looping, false otherwise.
-   */
   get loop() {
     return this.hasAttribute('loop');
   }
 
   /**
-   * Reflects the property to its corresponding attribute.
-   * @param {boolean} flag True to show navigation buttons, false to disable it.
+   * Whether the navigation buttons (prev/next) are shown.
+   * @type {boolean}
    */
   set navigation(flag) {
     if (flag) {
@@ -423,17 +433,13 @@ class XSlider extends HTMLElement {
     }
   }
 
-  /**
-   * Gets the property's value from the corresponding attribute.
-   * @return {boolean} True if navigation buttons are shown, false otherwise.
-   */
   get navigation() {
     return this.hasAttribute('navigation');
   }
 
   /**
-   * Reflects the property to its corresponding attribute.
-   * @param {boolean} flag True to show pagination indicators, false to disable it.
+   * Whether the pagination indicators are shown.
+   * @type {boolean}
    */
   set pagination(flag) {
     if (flag) {
@@ -443,34 +449,26 @@ class XSlider extends HTMLElement {
     }
   }
 
-  /**
-   * Gets the property's value from the corresponding attribute.
-   * @return {boolean} True if pagination indicators are shown, false otherwise.
-   */
   get pagination() {
     return this.hasAttribute('pagination');
   }
 
   /**
-   * Reflects the property to its corresponding attribute.
-   * @param {number} index The number of slides seen at once in the slider.
+   * The number of slides seen at once in the slider
+   * @type {number}
    */
   set slidesPerView(index) {
     this.setAttribute('slides-per-view', index);
   }
 
-  /**
-   * Gets the property's value from the corresponding attribute.
-   * @return {number} The number of slides seen at once in the slider.
-   */
   get slidesPerView() {
     const value = this.getAttribute('slides-per-view');
     return value === null ? 1 : parseInt(value, 10);
   }
 
   /**
-   * Called when the content of #slidesSlot changes.
-   * Updates the slider to the new number of slides.
+   * Updates the slider to react to DOM changes in #slidesSlot.
+   * @private
    */
   _onSlotChange() {
     this._slides = this._getSlides();
@@ -478,6 +476,10 @@ class XSlider extends HTMLElement {
     this.update();
   }
 
+  /**
+   * Updated the UI when the window resizes.
+   * @private
+   */
   _onResize() {
     // Debouncing resize.
     clearTimeout(this._resizeTimer);
@@ -486,6 +488,10 @@ class XSlider extends HTMLElement {
     }, 250);
   }
 
+  /**
+   * Computes a few value needed to lay out the UI.
+   * @private
+   */
   _computeSizes() {
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
     this._slidesGap = this._getSlidesGap();
@@ -495,6 +501,7 @@ class XSlider extends HTMLElement {
   /**
    * Updates the pagination indicators (depending on the current value of
    * `pagination`) to reflect the current number of views and the selected view.
+   * @private
    */
   _updatePagination() {
     if (!this._paginationWrapper || !this._slides ||
@@ -540,6 +547,7 @@ class XSlider extends HTMLElement {
   /**
    * Updates the navigation buttons (prev/next) depending on the value of
    * `navigation`, `loop` and the currently selected view.
+   * @private
    */
   _updateNavigation() {
     if (!this._navigationWrapper || !this._slides ||
@@ -588,6 +596,7 @@ class XSlider extends HTMLElement {
   /**
    * Called when any pagination bullet point is selected.
    * @param {Event} e The 'change' event fired by the radio input.
+   * @private
    */
   _onPaginationClicked(e) {
     this.selected = parseInt(e.target.textContent, 10);
@@ -596,6 +605,7 @@ class XSlider extends HTMLElement {
   /**
    * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
    * @returns {Array<HTMLElement>} The elements found in #slidesSlot.
+   * @private
    */
   _getSlides() {
     return this._slidesSlot.assignedNodes()
@@ -628,6 +638,10 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Updates the internal CSS variable used to lay out the slides.
+   * @private
+   */
   _computeSlidesPerViewLayout() {
     // Used to compute the slides's width.
     this.style.setProperty('--x-slider__internal__slides-per-view',
@@ -643,6 +657,7 @@ class XSlider extends HTMLElement {
   /**
    * Translates the slider to show the target view.
    * @param {number} targetView The view to slide to.
+   * @private
    */
   _slideTo(targetView) {
     if (!this._slidesWrapper) {
@@ -653,13 +668,21 @@ class XSlider extends HTMLElement {
         - targetView * (this._slidesWidth + this._slidesGap));
   }
 
+  /**
+   * Updates the wrapper's translateX property (ie. shows a different view).
+   * @param {number} tx The value (in px) for the wrapper's translateX property.
+   * @private
+   */
   _setWrapperTranslateX(tx) {
     this._slidesWrapper.style.transform = `translateX(${tx}px)`;
     this._wrapperTranslateX = tx;
   }
 
   /**
+   * Detects browser support for passive event listeners. See
    * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+   * @returns {boolean} True if the browser support passive event listeners.
+   * @private
    */
   _supportsPassiveEvt() {
     if (typeof this._passiveEvt === 'undefined') {
@@ -677,6 +700,21 @@ class XSlider extends HTMLElement {
     return this._passiveEvt;
   }
 
+  /**
+   * A normalised object representing either a touch event or a mouse event.
+   * @typedef {object} NormalisedPointerEvent
+   * @property {number} x The x coordinate.
+   * @property {number} y The y coordinate.
+   * @property {?number} id The pointer identifier.
+   * @property {MouseEvent|TouchEvent} event The original event object.
+   */
+
+  /**
+   * Normalises touch and mouse events into an object with the same properties.
+   * @param {MouseEvent|TouchEvent} ev The mouse or touch event.
+   * @returns {NormalisedPointerEvent}
+   * @private
+   */
   _normalizeEvent(ev) {
     // touch
     if (ev.type === 'touchstart' ||
@@ -701,6 +739,11 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Begins to track pointer events in order to drag the wrapper.
+   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @private
+   */
   _onPointerDown(e) {
     if (!this._pointerActive) {
       this._pointerActive = true;
@@ -725,7 +768,14 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Tracks the pointer movement and reflects it to the UI.
+   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @private
+   */
   _onPointerMove(e) {
+    // Checking the pointer id avoids running the same code twice
+    // in case of touch screens.
     if (this._pointerActive && e.id === this._pointerId) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
@@ -746,6 +796,17 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Stops the pointer tracking.
+   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @private
+   */
+  _onPointerEnd(e) {
+    if (this._pointerActive && e.id === this._pointerId) {
+      this._stopPointerTracking();
+    }
+  }
+
   _requestDragTick() {
     if (!this._dragTicking) {
       requestAnimationFrame(this._updateDrag.bind(this));
@@ -761,12 +822,6 @@ class XSlider extends HTMLElement {
     this._pointerLastX = this._pointerCurrentX;
     this._pointerLastY = this._pointerCurrentY;
     this._dragTicking = false;
-  }
-
-  _onPointerEnd(e) {
-    if (this._pointerActive && e.id === this._pointerId) {
-      this._stopPointerTracking();
-    }
   }
 
   _stopPointerTracking() {
