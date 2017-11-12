@@ -136,20 +136,6 @@ template.innerHTML = `
  */
 class XSlider extends HTMLElement {
   /**
-   * An array of the observed attributes.
-   * @static
-   */
-  static get observedAttributes() {
-    return [
-      'selected',
-      'loop',
-      'navigation',
-      'pagination',
-      'slides-per-view',
-    ];
-  }
-
-  /**
    * Creates a new instance of XSlider.
    * @constructor
    */
@@ -321,6 +307,11 @@ class XSlider extends HTMLElement {
     }
   }
 
+
+  // ===========================================================================
+  // Public methods (update, previous, next)
+  // ===========================================================================
+
   /**
    * "Forces" an update by sliding the current view in, and updating
    * navigation and pagination.
@@ -331,6 +322,52 @@ class XSlider extends HTMLElement {
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
+  }
+
+  /**
+   * Selects the slide preceding the currently selected one.
+   * If the currently selected slide is the first slide and the loop
+   * functionality is disabled, nothing happens.
+   */
+  previous() {
+    if (this.selected > 0) {
+      this.selected -= 1;
+    } else if (this.loop) {
+      this.selected = this._lastViewIndex;
+    }
+  }
+
+  /**
+   * Selects the slide following the currently selected one.
+   * If the currently selected slide is the last slide and the loop
+   * functionality is disabled, nothing happens.
+   */
+  next() {
+    if (this.selected < this._lastViewIndex) {
+      this.selected += 1;
+    } else if (this.loop) {
+      this.selected = 0;
+    }
+  }
+
+
+  // ===========================================================================
+  // Attributes / properties (selected, loop, navigation, pagination,
+  // slides-per-view)
+  // ===========================================================================
+
+  /**
+   * An array of the observed attributes.
+   * @static
+   */
+  static get observedAttributes() {
+    return [
+      'selected',
+      'loop',
+      'navigation',
+      'pagination',
+      'slides-per-view',
+    ];
   }
 
   /**
@@ -471,15 +508,10 @@ class XSlider extends HTMLElement {
     return value === null ? 1 : parseInt(value, 10);
   }
 
-  /**
-   * Updates the slider to react to DOM changes in #slidesSlot.
-   * @private
-   */
-  _onSlotChange() {
-    this._slides = this._getSlides();
 
-    this.update();
-  }
+  // ===========================================================================
+  // Layout-related
+  // ===========================================================================
 
   /**
    * Updated the UI when the window resizes.
@@ -501,6 +533,67 @@ class XSlider extends HTMLElement {
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
     this._slidesGap = this._getSlidesGap();
     this._slidesWidth = this._getSlidesWidth();
+  }
+
+  /**
+   * Computes the width of one slide given the layout constraint.
+   * @returns {number} The width of one slide.
+   * @private
+   */
+  _getSlidesWidth() {
+    return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
+        this.slidesPerView;
+  }
+
+  /**
+   * Computes the slide gap value from CSS.
+   * @returns {number} The width of the gap between slides.
+   * @private
+   */
+  _getSlidesGap() {
+    const parsedGap = parseInt(
+        getComputedStyle(this._slides[0])['margin-right'], 10);
+    return !Number.isFinite(parsedGap) ? 0 : parsedGap;
+  }
+
+  /**
+   * Updates the internal CSS variable used to lay out the slides.
+   * @private
+   */
+  _computeSlidesPerViewLayout() {
+    // Used to compute the slides's width.
+    this.style.setProperty('--x-slider__internal__slides-per-view',
+        this.slidesPerView);
+
+    // Recompute the index of the last view (aka max value for `selected`).
+    this._lastViewIndex = Math.max(0, this._slides.length - this.slidesPerView);
+    if (this.selected > this._lastViewIndex) {
+      this.selected = this._lastViewIndex;
+    }
+  }
+
+  /**
+   * Updates the wrapper's translateX property (ie. shows a different view).
+   * @param {number} tx The value (in px) for the wrapper's translateX property.
+   * @private
+   */
+  _setWrapperTranslateX(tx) {
+    this._slidesWrapper.style.transform = `translateX(${tx}px)`;
+    this._wrapperTranslateX = tx;
+  }
+
+  /**
+   * Translates the slider to show the target view.
+   * @param {number} targetView The view to slide to.
+   * @private
+   */
+  _slideTo(targetView) {
+    if (!this._slidesWrapper) {
+      return;
+    }
+
+    this._setWrapperTranslateX(
+        - targetView * (this._slidesWidth + this._slidesGap));
   }
 
   /**
@@ -547,6 +640,15 @@ class XSlider extends HTMLElement {
         btn.disabled = i === this.selected;
       });
     }
+  }
+
+  /**
+   * Called when any pagination bullet point is selected.
+   * @param {Event} e The 'change' event fired by the radio input.
+   * @private
+   */
+  _onPaginationClicked(e) {
+    this.selected = parseInt(e.target.textContent, 10);
   }
 
   /**
@@ -598,14 +700,10 @@ class XSlider extends HTMLElement {
     }
   }
 
-  /**
-   * Called when any pagination bullet point is selected.
-   * @param {Event} e The 'change' event fired by the radio input.
-   * @private
-   */
-  _onPaginationClicked(e) {
-    this.selected = parseInt(e.target.textContent, 10);
-  }
+
+  // ===========================================================================
+  // Slides slot
+  // ===========================================================================
 
   /**
    * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
@@ -618,92 +716,19 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Selects the slide preceding the currently selected one.
-   * If the currently selected slide is the first slide and the loop
-   * functionality is disabled, nothing happens.
-   */
-  previous() {
-    if (this.selected > 0) {
-      this.selected -= 1;
-    } else if (this.loop) {
-      this.selected = this._lastViewIndex;
-    }
-  }
-
-  /**
-   * Selects the slide following the currently selected one.
-   * If the currently selected slide is the last slide and the loop
-   * functionality is disabled, nothing happens.
-   */
-  next() {
-    if (this.selected < this._lastViewIndex) {
-      this.selected += 1;
-    } else if (this.loop) {
-      this.selected = 0;
-    }
-  }
-
-  /**
-   * Updates the internal CSS variable used to lay out the slides.
+   * Updates the slider to react to DOM changes in #slidesSlot.
    * @private
    */
-  _computeSlidesPerViewLayout() {
-    // Used to compute the slides's width.
-    this.style.setProperty('--x-slider__internal__slides-per-view',
-        this.slidesPerView);
+  _onSlotChange() {
+    this._slides = this._getSlides();
 
-    // Recompute the index of the last view (aka max value for `selected`).
-    this._lastViewIndex = Math.max(0, this._slides.length - this.slidesPerView);
-    if (this.selected > this._lastViewIndex) {
-      this.selected = this._lastViewIndex;
-    }
+    this.update();
   }
 
-  /**
-   * Translates the slider to show the target view.
-   * @param {number} targetView The view to slide to.
-   * @private
-   */
-  _slideTo(targetView) {
-    if (!this._slidesWrapper) {
-      return;
-    }
 
-    this._setWrapperTranslateX(
-        - targetView * (this._slidesWidth + this._slidesGap));
-  }
-
-  /**
-   * Updates the wrapper's translateX property (ie. shows a different view).
-   * @param {number} tx The value (in px) for the wrapper's translateX property.
-   * @private
-   */
-  _setWrapperTranslateX(tx) {
-    this._slidesWrapper.style.transform = `translateX(${tx}px)`;
-    this._wrapperTranslateX = tx;
-  }
-
-  /**
-   * Detects browser support for passive event listeners. See
-   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
-   * @returns {boolean} True if the browser support passive event listeners.
-   * @private
-   */
-  _supportsPassiveEvt() {
-    if (typeof this._passiveEvt === 'undefined') {
-      this._passiveEvt = false;
-      try {
-        const opts = Object.defineProperty({}, 'passive', {
-          get: () => {
-            this._passiveEvt = true;
-          },
-        });
-        window.addEventListener('test', null, opts);
-      } catch (e) {}
-    }
-
-    return this._passiveEvt;
-  }
+  // ===========================================================================
+  // Pointer events + drag
+  // ===========================================================================
 
   /**
    * A normalised object representing either a touch event or a mouse event.
@@ -891,25 +916,31 @@ class XSlider extends HTMLElement {
     this._dragTicking = false;
   }
 
-  /**
-   * Computes the width of one slide given the layout constraint.
-   * @returns {number} The width of one slide.
-   * @private
-   */
-  _getSlidesWidth() {
-    return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
-        this.slidesPerView;
-  }
+
+  // ===========================================================================
+  // Misc
+  // ===========================================================================
 
   /**
-   * Computes the slide gap value from CSS.
-   * @returns {number} The width of the gap between slides.
+   * Detects browser support for passive event listeners. See
+   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+   * @returns {boolean} True if the browser support passive event listeners.
    * @private
    */
-  _getSlidesGap() {
-    const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
-    return !Number.isFinite(parsedGap) ? 0 : parsedGap;
+  _supportsPassiveEvt() {
+    if (typeof this._passiveEvt === 'undefined') {
+      this._passiveEvt = false;
+      try {
+        const opts = Object.defineProperty({}, 'passive', {
+          get: () => {
+            this._passiveEvt = true;
+          },
+        });
+        window.addEventListener('test', null, opts);
+      } catch (e) {}
+    }
+
+    return this._passiveEvt;
   }
 }
 
