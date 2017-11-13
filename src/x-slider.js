@@ -46,11 +46,11 @@ template.innerHTML = `
     #slidesWrapper {
       display: flex;
       align-items: stretch;
+
+      will-change: transform;
     }
 
     :host([transitioning]) #slidesWrapper {
-      will-change: transform;
-
       transition-property: transform;
       transition-duration: var(--x-slider-transition-duration);
       transition-timing-function: var(--x-slider-transition-timing-function);
