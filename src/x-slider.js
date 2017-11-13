@@ -855,22 +855,24 @@ class XSlider extends HTMLElement {
     this._externalWrapper.removeEventListener('touchcancel', this);
     this._externalWrapper.removeEventListener('mouseleave', this);
 
+    this._startDecelerating();
+
     // TODO: start decelerating
-    this.setAttribute('transitioning', '');
+    // this.setAttribute('transitioning', '');
 
-    const fullSlideWidth = this._slidesWidth + this._slidesGap;
-    const maxValue = this._lastViewIndex * fullSlideWidth;
+    // const fullSlideWidth = this._slidesWidth + this._slidesGap;
+    // const maxValue = this._lastViewIndex * fullSlideWidth;
 
-    const wrapperTranslateX = Math.abs(
-        Math.max(-maxValue, Math.min(0, this._wrapperTranslateX)));
-    const modulo = wrapperTranslateX % fullSlideWidth;
-    const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
+    // const wrapperTranslateX = Math.abs(
+    //     Math.max(-maxValue, Math.min(0, this._wrapperTranslateX)));
+    // const modulo = wrapperTranslateX % fullSlideWidth;
+    // const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
 
-    if (modulo >= fullSlideWidth / 2) {
-      this.selected = divided + 1;
-    } else {
-      this.selected = divided;
-    }
+    // if (modulo >= fullSlideWidth / 2) {
+    //   this.selected = divided + 1;
+    // } else {
+    //   this.selected = divided;
+    // }
   }
 
   /**
@@ -916,6 +918,32 @@ class XSlider extends HTMLElement {
     this._dragTicking = false;
   }
 
+  _startDecelerating() {
+    const lastPoint = this._trackingPoints[this._trackingPoints.length - 1];
+    const firstPoint = this._trackingPoints[0];
+    const diffX = (lastPoint.x - firstPoint.x) || 0;
+    const diffT = (lastPoint.time - firstPoint.time) || 0;
+
+    this._decelVelocity = Math.max(-40, Math.min(40, diffX));
+
+    requestAnimationFrame(this._decelerationStep.bind(this));
+
+    if (diffT === 0) {
+      console.log('WTF?');
+      return;
+    }
+  }
+
+  _decelerationStep() {
+    this._setWrapperTranslateX(this._wrapperTranslateX +
+      this._decelVelocity);
+
+    this._decelVelocity /= 1.2;
+
+    if (Math.abs(this._decelVelocity) > 1) {
+      requestAnimationFrame(this._decelerationStep.bind(this));
+    }
+  }
 
   // ===========================================================================
   // Misc
