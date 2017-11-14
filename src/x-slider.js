@@ -191,7 +191,6 @@ class XSlider extends HTMLElement {
     this._friction = 0.74;
     this._attraction = 0.025;
     this._decelVelocity = undefined;
-    this._decelTarget = undefined;
     this._decelerating = false;
   }
 
@@ -590,17 +589,25 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * Computes the view's position along the x axis.
+   * @param {number} viewIndex
+   * @private
+   */
+  _getViewPosition(viewIndex) {
+    return - viewIndex * (this._slidesWidth + this._slidesGap);
+  }
+
+  /**
    * Translates the slider to show the target view.
    * @param {number} targetView The view to slide to.
    * @private
    */
   _slideTo(targetView) {
-    if (!this._slidesWrapper) {
+    if (!this._slidesWrapper || this._decelerating) {
       return;
     }
 
-    this._setWrapperTranslateX(
-        - targetView * (this._slidesWidth + this._slidesGap));
+    this._setWrapperTranslateX(this._getViewPosition(targetView));
   }
 
   /**
@@ -914,6 +921,8 @@ class XSlider extends HTMLElement {
    * @private
    */
   _startDecelerating() {
+    this._decelerating = true;
+
     const lastPoint = this._trackingPoints[this._trackingPoints.length - 1];
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
@@ -927,13 +936,23 @@ class XSlider extends HTMLElement {
         Math.min(maxVel, Math.abs(diffX)));
 
     // Compute the target position to snap to.
-    this._decelTarget = this._decelVelocity > 0 ?
-        this.selected - 1 : this.selected + 1;
-    this._decelTarget = Math.max(0,
-        Math.min(this._lastViewIndex, this._decelTarget));
-    console.info('TODO: make slides loop properly!');
+    if (this._decelVelocity > 0) {
+      this.previous();
+    } else if (this._decelVelocity < 0) {
+      this.next();
+    } else {
+      const distToCurrent = Math.abs(this._wrapperTranslateX) -
+          Math.abs(this._getViewPosition(this.selected));
 
-    this._decelerating = true;
+      if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
+        if (distToCurrent > 0) {
+          this.next();
+        } else {
+          this.previous();
+        }
+      }
+    }
+
     requestAnimationFrame(this._decelerationStep.bind(this));
   }
 
@@ -946,7 +965,7 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const snapX = - this._decelTarget * (this._slidesWidth + this._slidesGap);
+    const snapX = this._getViewPosition(this.selected);
 
     // Apply attraction: it moves the slider towards the target.
     // Attraction is bigger when the slide is further away.
@@ -966,7 +985,6 @@ class XSlider extends HTMLElement {
       this._setWrapperTranslateX(snapX);
       this._decelerating = false;
       this.setAttribute('transitioning', '');
-      this.selected = this._decelTarget;
     }
   }
 
