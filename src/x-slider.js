@@ -186,6 +186,13 @@ class XSlider extends HTMLElement {
     this._pointerCurrentY = undefined;
     this._trackingPoints = [];
     this._dragTicking = false;
+    this._maxDecelVelocity = 50;
+    this._minDecelVelocity = 10;
+    this._friction = 0.74;
+    this._attraction = 0.025;
+    this._decelVelocity = undefined;
+    this._decelTarget = undefined;
+    this._decelerating = false;
   }
 
   /**
@@ -532,7 +539,7 @@ class XSlider extends HTMLElement {
   _computeSizes() {
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
     this._slidesGap = this._getSlidesGap();
-    this._slidesWidth = this._getSlidesWidth();
+    this._slidesWidth = this._getSlideWidth();
   }
 
   /**
@@ -540,7 +547,7 @@ class XSlider extends HTMLElement {
    * @returns {number} The width of one slide.
    * @private
    */
-  _getSlidesWidth() {
+  _getSlideWidth() {
     return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
         this.slidesPerView;
   }
@@ -776,6 +783,7 @@ class XSlider extends HTMLElement {
    */
   _onPointerDown(e) {
     if (!this._pointerActive) {
+      this._decelerating = false;
       this._pointerActive = true;
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
@@ -856,23 +864,6 @@ class XSlider extends HTMLElement {
     this._externalWrapper.removeEventListener('mouseleave', this);
 
     this._startDecelerating();
-
-    // TODO: start decelerating
-    // this.setAttribute('transitioning', '');
-
-    // const fullSlideWidth = this._slidesWidth + this._slidesGap;
-    // const maxValue = this._lastViewIndex * fullSlideWidth;
-
-    // const wrapperTranslateX = Math.abs(
-    //     Math.max(-maxValue, Math.min(0, this._wrapperTranslateX)));
-    // const modulo = wrapperTranslateX % fullSlideWidth;
-    // const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
-
-    // if (modulo >= fullSlideWidth / 2) {
-    //   this.selected = divided + 1;
-    // } else {
-    //   this.selected = divided;
-    // }
   }
 
   /**
@@ -918,30 +909,64 @@ class XSlider extends HTMLElement {
     this._dragTicking = false;
   }
 
+  /**
+   * Computes the initial parameters of the deceleration.
+   * @private
+   */
   _startDecelerating() {
     const lastPoint = this._trackingPoints[this._trackingPoints.length - 1];
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
-    const diffT = (lastPoint.time - firstPoint.time) || 0;
 
-    this._decelVelocity = Math.max(-40, Math.min(40, diffX));
+    // Compute the initial deceleration velocity.
+    const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
+    const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
+        maxVel);
+    // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
+    this._decelVelocity = diffX / Math.abs(diffX) * Math.max(minVel,
+        Math.min(maxVel, Math.abs(diffX)));
 
+    // Compute the target position to snap to.
+    this._decelTarget = this._decelVelocity > 0 ?
+        this.selected - 1 : this.selected + 1;
+    this._decelTarget = Math.max(0,
+        Math.min(this._lastViewIndex, this._decelTarget));
+    console.info('TODO: make slides loop properly!');
+
+    this._decelerating = true;
     requestAnimationFrame(this._decelerationStep.bind(this));
-
-    if (diffT === 0) {
-      console.log('WTF?');
-      return;
-    }
   }
 
+  /**
+   * Animates the slider while updating the deceleration velocity.
+   * @private
+   */
   _decelerationStep() {
-    this._setWrapperTranslateX(this._wrapperTranslateX +
-      this._decelVelocity);
+    if (!this._decelerating) {
+      return;
+    }
 
-    this._decelVelocity /= 1.2;
+    const snapX = - this._decelTarget * (this._slidesWidth + this._slidesGap);
 
-    if (Math.abs(this._decelVelocity) > 1) {
+    // Apply attraction: it moves the slider towards the target.
+    // Attraction is bigger when the slide is further away.
+    this._decelVelocity += this._attraction * (snapX - this._wrapperTranslateX);
+    // Apply friction: friction slows down the slider.
+    this._decelVelocity *= this._friction;
+
+    let newPosition = this._wrapperTranslateX + this._decelVelocity;
+    newPosition = this._decelVelocity > 0 ? Math.min(newPosition, snapX) :
+        newPosition = Math.max(newPosition, snapX);
+
+    this._setWrapperTranslateX(newPosition);
+
+    if (Math.abs(snapX - newPosition) >= 1) {
       requestAnimationFrame(this._decelerationStep.bind(this));
+    } else {
+      this._setWrapperTranslateX(snapX);
+      this._decelerating = false;
+      this.setAttribute('transitioning', '');
+      this.selected = this._decelTarget;
     }
   }
 
