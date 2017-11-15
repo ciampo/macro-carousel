@@ -16,8 +16,8 @@ template.innerHTML = `
 
       --x-slider-gap: 16px;
 
-      --x-slider-transition-duration: 0.5s;
-      --x-slider-transition-timing-function: ease-in-out;
+      --x-slider-transition-duration: 0.6s;
+      --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
       --x-slider-navigation-color: #000;
 
@@ -186,10 +186,10 @@ class XSlider extends HTMLElement {
     this._pointerCurrentY = undefined;
     this._trackingPoints = [];
     this._dragTicking = false;
-    this._maxDecelVelocity = 50;
+    this._maxDecelVelocity = 30;
     this._minDecelVelocity = 10;
     this._friction = 0.74;
-    this._attraction = 0.025;
+    this._attraction = 0.022;
     this._decelVelocity = undefined;
     this._decelerating = false;
   }
@@ -941,24 +941,29 @@ class XSlider extends HTMLElement {
 
     // Compute whether the target to snap to is the current slide or a
     // previous / next one.
-    // TODO: if the velocity is quite high and the potential target slide is
-    // quite close, consider selecting a further away slide.
+    // TODO: Generalise skippingn one slide—e.g try more slide-per view.
+    // idea: use current position to determine virtual new selected, then use
+    // velocity to move -1/0/+1 ?
+    const distToCurrent = Math.abs(this._wrapperTranslateX) -
+        Math.abs(this._getViewPosition(this.selected));
+
     if (this._decelVelocity > 0) {
+      if (this._decelVelocity > (this._slidesWidth + distToCurrent) / 2) {
+        this.previous();
+      }
       this.previous();
     } else if (this._decelVelocity < 0) {
+      if (this._decelVelocity < (distToCurrent - this._slidesWidth) / 2) {
+        this.next();
+      }
       this.next();
-    } else {
-      const distToCurrent = Math.abs(this._wrapperTranslateX) -
-          Math.abs(this._getViewPosition(this.selected));
+    } else if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
       // If still but at leat 1/3 through the slide, select the previous/next
       // slide.
-      if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
-        // If not swiping, but far enough from the current slide.
-        if (distToCurrent > 0) {
-          this.next();
-        } else {
-          this.previous();
-        }
+      if (distToCurrent > 0) {
+        this.next();
+      } else {
+        this.previous();
       }
     }
 
