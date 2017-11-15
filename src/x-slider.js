@@ -927,15 +927,22 @@ class XSlider extends HTMLElement {
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
 
-    // Compute the initial deceleration velocity.
-    const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
-    const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
-        maxVel);
-    // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
-    this._decelVelocity = diffX / Math.abs(diffX) * Math.max(minVel,
-        Math.min(maxVel, Math.abs(diffX)));
+    if (diffX === 0) {
+      this._decelVelocity = 0;
+    } else {
+      // Compute the initial deceleration velocity.
+      const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
+      const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
+          maxVel);
+      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
+      this._decelVelocity = diffX / Math.abs(diffX) *
+          Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
+    }
 
-    // Compute the target position to snap to.
+    // Compute whether the target to snap to is the current slide or a
+    // previous / next one.
+    // TODO: if the velocity is quite high and the potential target slide is
+    // quite close, consider selecting a further away slide.
     if (this._decelVelocity > 0) {
       this.previous();
     } else if (this._decelVelocity < 0) {
@@ -943,8 +950,10 @@ class XSlider extends HTMLElement {
     } else {
       const distToCurrent = Math.abs(this._wrapperTranslateX) -
           Math.abs(this._getViewPosition(this.selected));
-
+      // If still but at leat 1/3 through the slide, select the previous/next
+      // slide.
       if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
+        // If not swiping, but far enough from the current slide.
         if (distToCurrent > 0) {
           this.next();
         } else {
