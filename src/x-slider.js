@@ -17,7 +17,7 @@ template.innerHTML = `
       --x-slider-gap: 16px;
 
       --x-slider-transition-duration: 0.6s;
-      --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);
 
       --x-slider-navigation-color: #000;
 
@@ -65,6 +65,8 @@ template.innerHTML = `
       justify-content: center;
 
       height: var(--x-slider-pagination-height);
+
+      contain: strict;
     }
 
     #pagination button {
