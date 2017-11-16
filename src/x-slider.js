@@ -36,6 +36,7 @@ template.innerHTML = `
 
     #externalWrapper {
       overflow: hidden;
+      contain: paint;
 
       /*
         https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
