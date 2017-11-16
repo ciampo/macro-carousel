@@ -357,10 +357,20 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   previous() {
-    if (this.selected > 0) {
-      this.selected -= 1;
+    this.selected = this._computePrevious(this.selected);
+  }
+
+  /**
+   * Computes the previous index.
+   * @param {number} i The index of reference used to compure the previous.
+   * @return {number} The previous index with respect to the input.
+   * @private
+   */
+  _computePrevious(i) {
+    if (i > 0) {
+      return i - 1;
     } else if (this.loop) {
-      this.selected = this._lastViewIndex;
+      return this._lastViewIndex;
     }
   }
 
@@ -370,10 +380,20 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   next() {
-    if (this.selected < this._lastViewIndex) {
-      this.selected += 1;
+    this.selected = this._computeNext(this.selected);
+  }
+
+  /**
+   * Computes the previous index.
+   * @param {number} i The index of reference used to compure the next.
+   * @return {number} The next index with respect to the input.
+   * @private
+   */
+  _computeNext(i) {
+    if (i < this._lastViewIndex) {
+      return i + 1;
     } else if (this.loop) {
-      this.selected = 0;
+      return 0;
     }
   }
 
