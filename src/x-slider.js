@@ -1,3 +1,10 @@
+// TODO drag:
+// - drag cursor
+// - perf improvements
+// - loop
+// - limits for when there is no loop
+
+
 (function() {
 /**
  * Markup and styles.
