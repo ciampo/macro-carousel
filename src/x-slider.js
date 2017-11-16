@@ -627,7 +627,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _setWrapperTranslateX(tx) {
-    this._slidesWrapper.style.transform = `translateX(${tx}px)`;
+    this._slidesWrapper.style.transform = `translate3d(${tx}px, 0, 0)`;
     this._wrapperTranslateX = tx;
   }
 
