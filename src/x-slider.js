@@ -190,7 +190,7 @@ class XSlider extends HTMLElement {
     this._trackingPoints = [];
     this._dragTicking = false;
     this._maxDecelVelocity = 30;
-    this._minDecelVelocity = 10;
+    this._minDecelVelocity = 15;
     this._friction = 0.74;
     this._attraction = 0.022;
     this._decelVelocity = undefined;
@@ -950,14 +950,14 @@ class XSlider extends HTMLElement {
         Math.abs(this._getViewPosition(this.selected));
 
     if (this._decelVelocity > 0) {
-      if (this._decelVelocity > (this._slidesWidth + distToCurrent) / 2) {
-        this.previous();
-      }
+      // if (this._decelVelocity > (this._slidesWidth + distToCurrent) / 2) {
+      //   this.previous();
+      // }
       this.previous();
     } else if (this._decelVelocity < 0) {
-      if (this._decelVelocity < (distToCurrent - this._slidesWidth) / 2) {
-        this.next();
-      }
+      // if (this._decelVelocity < (distToCurrent - this._slidesWidth) / 2) {
+      //   this.next();
+      // }
       this.next();
     } else if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
       // If still but at leat 1/3 through the slide, select the previous/next
