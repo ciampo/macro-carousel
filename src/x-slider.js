@@ -234,6 +234,18 @@ class XSlider extends HTMLElement {
     window.addEventListener('touchmove', function() {});
     this._externalWrapper.addEventListener('touchstart', this);
     this._externalWrapper.addEventListener('mousedown', this);
+
+    // Move
+    this._externalWrapper.addEventListener('touchmove', this,
+        this._supportsPassiveEvt ? {passive: false} : false);
+    this._externalWrapper.addEventListener('mousemove', this,
+        this._supportsPassiveEvt ? {passive: false} : false);
+    // Up
+    this._externalWrapper.addEventListener('mouseup', this);
+    this._externalWrapper.addEventListener('touchend', this);
+    // Leave
+    this._externalWrapper.addEventListener('mouseleave', this);
+    this._externalWrapper.addEventListener('touchcancel', this);
   }
 
   /**
@@ -248,6 +260,12 @@ class XSlider extends HTMLElement {
 
     this._externalWrapper.removeEventListener('touchstart', this);
     this._externalWrapper.removeEventListener('mousedown', this);
+    this._externalWrapper.removeEventListener('touchmove', this);
+    this._externalWrapper.removeEventListener('mousemove', this);
+    this._externalWrapper.removeEventListener('touchend', this);
+    this._externalWrapper.removeEventListener('mouseup', this);
+    this._externalWrapper.removeEventListener('touchcancel', this);
+    this._externalWrapper.removeEventListener('mouseleave', this);
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -801,18 +819,6 @@ class XSlider extends HTMLElement {
 
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
-
-      // Move
-      this._externalWrapper.addEventListener('touchmove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
-      this._externalWrapper.addEventListener('mousemove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
-      // Up
-      this._externalWrapper.addEventListener('mouseup', this);
-      this._externalWrapper.addEventListener('touchend', this);
-      // Leave
-      this._externalWrapper.addEventListener('mouseleave', this);
-      this._externalWrapper.addEventListener('touchcancel', this);
     }
   }
 
@@ -865,13 +871,6 @@ class XSlider extends HTMLElement {
     this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
-
-    this._externalWrapper.removeEventListener('touchmove', this);
-    this._externalWrapper.removeEventListener('mousemove', this);
-    this._externalWrapper.removeEventListener('touchend', this);
-    this._externalWrapper.removeEventListener('mouseup', this);
-    this._externalWrapper.removeEventListener('touchcancel', this);
-    this._externalWrapper.removeEventListener('mouseleave', this);
 
     this._startDecelerating();
   }
