@@ -2,7 +2,7 @@
 // - autoprefixer
 // - split template (CSS/HTML) from JS
 // - perf improvements
-// - loop
+// - loop (and find a logic for view positions—going lower than 0 or beyond lastViewIndex)
 // - limits for when there is no loop
 // - consider using pointer events
 // - consider adding touch events only if touch is supported?
@@ -991,13 +991,11 @@ class XSlider extends HTMLElement {
           Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
     }
 
-    // Compute the new selected slide. This is going to be where the
-    // deceleration animation snaps to.
     const distanceTravelled = this._pointerLastX - this._pointerFirstX;
 
-    // This would be the new value of the selected slide based on where
-    // the user has dragged so far. The initial value is in preparation to
-    // the following loop.
+    // `newSelected` would be the new index of the selected slide,
+    // based on where the user has dragged so far.
+    // The initial value of newSelected is in preparation to the following loop.
     let newSelected = distanceTravelled < 0 ? -1 : this._slides.length;
     this._slidesPosition.forEach((slidePos, slideIndex) => {
       if (distanceTravelled < 0 && this._wrapperTranslateX < slidePos) {
@@ -1009,22 +1007,20 @@ class XSlider extends HTMLElement {
       }
     });
 
-    if (this._decelVelocity > 0) {
-      this.selected = this._computePrevious(newSelected);
-    } else if (this._decelVelocity < 0) {
-      this.selected = this._computeNext(newSelected);
+    if (this._decelVelocity !== 0) {
+      // Depending on the direction of the user's drag, go previous/next.
+      this.selected = this._decelVelocity > 0 ?
+          this._computePrevious(newSelected) :
+          this._computeNext(newSelected);
     } else {
+      // If the user's pointer was not moving, check the position: if at least
+      // 1/3 through the slide, select the previous/next slide.
       const distToCurrent = Math.abs(this._wrapperTranslateX) -
           Math.abs(this._getViewPosition(this.selected));
-
       if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
-        // If still but at leat 1/3 through the slide, select the previous/next
-        // slide.
-        if (distToCurrent > 0) {
-          this.selected = this._computeNext(newSelected);
-        } else {
-          this.selected = this._computePrevious(newSelected);
-        }
+        this.selected = distToCurrent > 0 ?
+            this._computeNext(newSelected) :
+            this._computePrevious(newSelected);
       }
     }
 
