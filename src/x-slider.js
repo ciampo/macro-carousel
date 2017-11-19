@@ -195,6 +195,7 @@ class XSlider extends HTMLElement {
     this._wrapperWidth = 0;
     this._slidesGap = 0;
     this._slidesWidth = 0;
+    this._slidesPosition = undefined;
     this._wrapperTranslateX = undefined;
     this._resizeTimer = undefined;
 
@@ -347,6 +348,7 @@ class XSlider extends HTMLElement {
   update() {
     this._computeSizes();
     this._computeSlidesPerViewLayout();
+    this._computeSlidesPositions();
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
@@ -623,6 +625,15 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * Calculates the position of each slide within the wrapper.
+   * @private
+   */
+  _computeSlidesPositions() {
+    this._slidesPosition = this._slides
+        .map((s, i) => - i * (this._slidesWidth + this._slidesGap));
+  }
+
+  /**
    * Updates the wrapper's translateX property (ie. shows a different view).
    * @param {number} tx The value (in px) for the wrapper's translateX property.
    * @private
@@ -638,7 +649,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _getViewPosition(viewIndex) {
-    return - viewIndex * (this._slidesWidth + this._slidesGap);
+    return this._slidesPosition[viewIndex];
   }
 
   /**
@@ -988,16 +999,15 @@ class XSlider extends HTMLElement {
     // the user has dragged so far. The initial value is in preparation to
     // the following loop.
     let newSelected = distanceTravelled < 0 ? -1 : this._slides.length;
-    this._slides.map((s, i) => this._getViewPosition(i))
-        .forEach((sp, si) => {
-          if (distanceTravelled < 0 && this._wrapperTranslateX < sp) {
-            // Moving to the right.
-            newSelected = Math.max(si, newSelected);
-          } else if (distanceTravelled > 0 && this._wrapperTranslateX > sp) {
-            // Moving to the left.
-            newSelected = Math.min(si, newSelected);
-          }
-        });
+    this._slidesPosition.forEach((slidePos, slideIndex) => {
+      if (distanceTravelled < 0 && this._wrapperTranslateX < slidePos) {
+        // Moving to the right.
+        newSelected = Math.max(slideIndex, newSelected);
+      } else if (distanceTravelled > 0 && this._wrapperTranslateX > slidePos) {
+        // Moving to the left.
+        newSelected = Math.min(slideIndex, newSelected);
+      }
+    });
 
     if (this._decelVelocity > 0) {
       this.selected = this._computePrevious(newSelected);
@@ -1084,6 +1094,7 @@ class XSlider extends HTMLElement {
    * @param {boolean} isPassive Whether the event is passive or not.
    * @returns {Object|boolean} Based on browser support, returns either an
    * object representing the options (including passive), or a boolean.
+   * @private
    */
   _passiveOptions(isPassive) {
     return this._supportsPassiveEvt ? {passive: isPassive} : false;
