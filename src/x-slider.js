@@ -246,8 +246,7 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this,
-        this._supportsPassiveEvt ? {passive: true} : false);
+    window.addEventListener('resize', this, this._passiveOptions(true));
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -844,10 +843,8 @@ class XSlider extends HTMLElement {
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      window.addEventListener('touchmove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
-      window.addEventListener('mousemove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
+      window.addEventListener('touchmove', this, this._passiveOptions(false));
+      window.addEventListener('mousemove', this, this._passiveOptions(false));
       window.addEventListener('mouseup', this);
       window.addEventListener('touchend', this);
       window.addEventListener('touchcancel', this);
@@ -1080,6 +1077,16 @@ class XSlider extends HTMLElement {
     }
 
     return this._passiveEvt;
+  }
+
+  /**
+   * Returns the event options (including passive if the browser supports it)
+   * @param {boolean} isPassive Whether the event is passive or not.
+   * @returns {Object|boolean} Based on browser support, returns either an
+   * object representing the options (including passive), or a boolean.
+   */
+  _passiveOptions(isPassive) {
+    return this._supportsPassiveEvt ? {passive: isPassive} : false;
   }
 }
 
