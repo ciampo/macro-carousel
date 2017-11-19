@@ -1,13 +1,3 @@
-// TODO drag:
-// - autoprefixer
-// - split template (CSS/HTML) from JS
-// - perf improvements
-// - loop (and find a logic for view positions—going lower than 0 or beyond lastViewIndex)
-// - limits for when there is no loop
-// - consider using pointer events
-// - consider adding touch events only if touch is supported?
-
-
 (function() {
 /**
  * Markup and styles.
