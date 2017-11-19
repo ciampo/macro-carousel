@@ -1010,17 +1010,17 @@ class XSlider extends HTMLElement {
     if (this._decelVelocity !== 0) {
       // Depending on the direction of the user's drag, go previous/next.
       this.selected = this._decelVelocity > 0 ?
-          this._computePrevious(newSelected) :
-          this._computeNext(newSelected);
+          this._computePrevious(Math.max(newSelected, 1)) :
+          this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
     } else {
       // If the user's pointer was not moving, check the position: if at least
       // 1/3 through the slide, select the previous/next slide.
-      const distToCurrent = Math.abs(this._wrapperTranslateX) -
-          Math.abs(this._getViewPosition(this.selected));
+      const distToCurrent = this._wrapperTranslateX -
+          this._getViewPosition(this.selected);
       if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
         this.selected = distToCurrent > 0 ?
-            this._computeNext(newSelected) :
-            this._computePrevious(newSelected);
+            this._computePrevious(Math.max(newSelected, 1)) :
+            this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
       }
     }
 
