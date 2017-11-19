@@ -1,5 +1,6 @@
 // TODO drag:
-// - drag cursor
+// - autoprefixer
+// - split template (CSS/HTML) from JS
 // - perf improvements
 // - loop
 // - limits for when there is no loop
@@ -49,6 +50,16 @@ template.innerHTML = `
         https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
       */
       touch-action: pan-y pinch-zoom;
+
+      cursor: -moz-grab;
+      cursor: -webkit-grab;
+      cursor: grab;
+    }
+
+    :host([pointer-down]) #externalWrapper {
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+      cursor: grabbing;
     }
 
     #slidesWrapper {
@@ -848,6 +859,8 @@ class XSlider extends HTMLElement {
 
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
+
+      this.setAttribute('pointer-down', '');
     }
   }
 
@@ -900,6 +913,8 @@ class XSlider extends HTMLElement {
     this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
+
+    this.removeAttribute('pointer-down');
 
     this._startDecelerating();
   }
