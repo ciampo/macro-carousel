@@ -4,12 +4,13 @@
   "description": "Slider as a vanilla Web Component",
   "main": "src/x-slider.js",
   "scripts": {
-    "start": "python -m SimpleHTTPServer | open http://localhost:8000/demo/",
+    "start": "node_modules/.bin/rollup -c rollup-dev.config.js --watch",
     "test-lint": "eslint src test *.js",
     "test-unit": "karma start",
     "test-e2e": "node run-e2e-tests.js",
     "test": "npm run test-lint && npm run test-unit && npm run test-e2e",
-    "docs": "rm -rf docs/ && jsdoc -d docs src/x-slider.js"
+    "docs": "rm -rf docs/ && jsdoc -d docs src/x-slider.js",
+    "build": "npm run docs && node_modules/.bin/rollup -c rollup-prod.config.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,6 @@
     "@webcomponents/webcomponentsjs": "^1.0.14",
     "chai": "^4.1.2",
     "chromedriver": "^2.32.0",
-    "css-loader": "^0.28.7",
     "eslint": "^4.6.1",
     "eslint-config-google": "^0.9.1",
     "express": "^4.15.4",
@@ -42,9 +42,14 @@
     "karma-safari-launcher": "^1.0.0",
     "mocha": "^3.5.0",
     "mz": "^2.6.0",
+    "rollup": "^0.51.8",
+    "rollup-plugin-html": "^0.2.1",
+    "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-serve": "^0.4.2",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-uglify": "^2.0.1",
     "selenium-assistant": "^5.1.1",
     "selenium-webdriver": "^3.5.0",
-    "uglifyjs-webpack-plugin": "^1.1.0",
-    "webpack": "^3.8.1"
+    "uglify-es": "^3.1.10"
   }
 }

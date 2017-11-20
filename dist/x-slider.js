@@ -1,182 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: x-slider.js</title>
+(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
+(function () {
+'use strict';
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
+var styles = ":host {\n  position: relative;\n\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n\n  contain: content;\n\n  --x-slider-gap: 16px;\n\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);\n\n  --x-slider-navigation-color: #000;\n\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  touch-action: pan-y pinch-zoom;\n\n  cursor: -moz-grab;\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([pointer-down]) #externalWrapper {\n  cursor: -moz-grabbing;\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: flex;\n  align-items: stretch;\n\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  transition-property: transform;\n  transition-duration: var(--x-slider-transition-duration);\n  transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  align-self: center;\n\n  display: flex;\n  align-items: center;\n  justify-content: center;\n\n  height: var(--x-slider-pagination-height);\n\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n\n  border: none;\n  border-radius: 50%;\n\n  background-color: var(--x-slider-pagination-color);\n\n  font-size: 0;\n\n  cursor: pointer;\n\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  transform: translateY(-50%);\n\n  color: var(--x-slider-navigation-color);\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
 
-<body>
+var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\" class=\"dabest\"></div>";
 
-<div id="main">
-
-    <h1 class="page-title">Source: x-slider.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>(function() {
 /**
  * Markup and styles.
  */
 const template = document.createElement('template');
 template.innerHTML = `
-  &lt;style>
-    :host {
-      position: relative;
-
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-
-      contain: content;
-
-      --x-slider-gap: 16px;
-
-      --x-slider-transition-duration: 0.5s;
-      --x-slider-transition-timing-function: ease-in-out;
-
-      --x-slider-navigation-color: #000;
-
-      --x-slider-pagination-color: #999;
-      --x-slider-pagination-color-selected: #000;
-      --x-slider-pagination-size: 12px;
-      --x-slider-pagination-gap: 8px;
-      --x-slider-pagination-height: 32px;
-
-      --x-slider__internal__slides-per-view: 1;
-    }
-
-    :host([hidden]) {
-      display: none
-    }
-
-    #externalWrapper {
-      overflow: hidden;
-
-      /*
-        https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
-      */
-      touch-action: pan-y pinch-zoom;
-    }
-
-    #slidesWrapper {
-      display: flex;
-      align-items: stretch;
-    }
-
-    :host([transitioning]) #slidesWrapper {
-      will-change: transform;
-
-      transition-property: transform;
-      transition-duration: var(--x-slider-transition-duration);
-      transition-timing-function: var(--x-slider-transition-timing-function);
-    }
-
-    #pagination {
-      align-self: center;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      height: var(--x-slider-pagination-height);
-    }
-
-    #pagination button {
-      width: var(--x-slider-pagination-size);
-      height: var(--x-slider-pagination-size);
-
-      padding: 0;
-      margin: 0 calc(var(--x-slider-pagination-gap) / 2);
-
-      border: none;
-      border-radius: 50%;
-
-      background-color: var(--x-slider-pagination-color);
-
-      font-size: 0;
-
-      cursor: pointer;
-
-      opacity: .8;
-    }
-
-    #pagination button:hover,
-    #pagination button:focus,
-    #pagination button[disabled] {
-      opacity: 1;
-    }
-
-    #pagination button[disabled] {
-      background-color: var(--x-slider-pagination-color-selected);
-    }
-
-    ::slotted(*) {
-      /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
-      flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
-          var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
-      margin-right: var(--x-slider-gap);
-    }
-
-    #previous,
-    #next {
-      position: absolute;
-      top: calc(50% - var(--x-slider-pagination-height) / 2);
-      transform: translateY(-50%);
-
-      color: var(--x-slider-navigation-color);
-    }
-
-    #previous {
-      left: 0;
-    }
-
-    #next {
-      right: 0;
-    }
-  &lt;/style>
-
-  &lt;div id="externalWrapper">
-    &lt;div id="slidesWrapper">
-      &lt;slot id="slidesSlot">&lt;p>No content available&lt;/p>&lt;/slot>
-    &lt;/div>
-  &lt;/div>
-
-  &lt;div id="navigation">&lt;/div>
-
-  &lt;div id="pagination">&lt;/div>
+  <style>${styles}</style>
+  ${html}
 `;
 
 /**
  * A slider/carousel Web Component.
  */
 class XSlider extends HTMLElement {
-  /**
-   * An array of the observed attributes.
-   * @static
-   */
-  static get observedAttributes() {
-    return [
-      'selected',
-      'loop',
-      'navigation',
-      'pagination',
-      'slides-per-view',
-    ];
-  }
-
   /**
    * Creates a new instance of XSlider.
    * @constructor
@@ -214,6 +56,7 @@ class XSlider extends HTMLElement {
     this._wrapperWidth = 0;
     this._slidesGap = 0;
     this._slidesWidth = 0;
+    this._slidesPosition = undefined;
     this._wrapperTranslateX = undefined;
     this._resizeTimer = undefined;
 
@@ -228,6 +71,12 @@ class XSlider extends HTMLElement {
     this._pointerCurrentY = undefined;
     this._trackingPoints = [];
     this._dragTicking = false;
+    this._maxDecelVelocity = 30;
+    this._minDecelVelocity = 15;
+    this._friction = 0.74;
+    this._attraction = 0.022;
+    this._decelVelocity = undefined;
+    this._decelerating = false;
   }
 
   /**
@@ -259,8 +108,7 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this,
-        this._supportsPassiveEvt ? {passive: true} : false);
+    window.addEventListener('resize', this, this._passiveOptions(true));
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -305,7 +153,7 @@ class XSlider extends HTMLElement {
    */
   handleEvent(e) {
     // Window resize
-    if (e.target === window &amp;&amp; e.type === 'resize') {
+    if (e.target === window && e.type === 'resize') {
       this._onResize();
 
     // Slot change
@@ -313,14 +161,14 @@ class XSlider extends HTMLElement {
       this._onSlotChange();
 
     // Pagination indicators
-    } else if (this.pagination &amp;&amp;
+    } else if (this.pagination &&
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (this.navigation &amp;&amp; e.target === this._prevButton) {
+    } else if (this.navigation && e.target === this._prevButton) {
       this.previous();
-    } else if (this.navigation &amp;&amp; e.target === this._nextButton) {
+    } else if (this.navigation && e.target === this._nextButton) {
       this.next();
 
     // Touch / drag
@@ -330,7 +178,7 @@ class XSlider extends HTMLElement {
       this._onPointerMove(this._normalizeEvent(e));
     } else if (e.type === 'touchend' || e.type === 'mouseup') {
       this._onPointerEnd(this._normalizeEvent(e));
-    } else if (e.type === 'touchcancel' || e.type === 'mouseleave') {
+    } else if (e.type === 'touchcancel') {
       this._stopPointerTracking();
     }
   }
@@ -349,6 +197,11 @@ class XSlider extends HTMLElement {
     }
   }
 
+
+  // ===========================================================================
+  // Public methods (update, previous, next)
+  // ===========================================================================
+
   /**
    * "Forces" an update by sliding the current view in, and updating
    * navigation and pagination.
@@ -356,9 +209,76 @@ class XSlider extends HTMLElement {
   update() {
     this._computeSizes();
     this._computeSlidesPerViewLayout();
+    this._computeSlidesPositions();
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
+  }
+
+  /**
+   * Selects the slide preceding the currently selected one.
+   * If the currently selected slide is the first slide and the loop
+   * functionality is disabled, nothing happens.
+   */
+  previous() {
+    this.selected = this._computePrevious(this.selected);
+  }
+
+  /**
+   * Computes the previous index.
+   * @param {number} i The index of reference used to compure the previous.
+   * @return {number} The previous index with respect to the input.
+   * @private
+   */
+  _computePrevious(i) {
+    if (i > 0) {
+      return i - 1;
+    } else if (this.loop) {
+      return this._lastViewIndex;
+    }
+  }
+
+  /**
+   * Selects the slide following the currently selected one.
+   * If the currently selected slide is the last slide and the loop
+   * functionality is disabled, nothing happens.
+   */
+  next() {
+    this.selected = this._computeNext(this.selected);
+  }
+
+  /**
+   * Computes the previous index.
+   * @param {number} i The index of reference used to compure the next.
+   * @return {number} The next index with respect to the input.
+   * @private
+   */
+  _computeNext(i) {
+    if (i < this._lastViewIndex) {
+      return i + 1;
+    } else if (this.loop) {
+      return 0;
+    }
+  }
+
+
+  // ===========================================================================
+  // Attributes / properties (selected, loop, navigation, pagination,
+  // slides-per-view)
+  // ===========================================================================
+
+  /**
+   * An array of the observed attributes.
+   * @static
+   */
+  static get observedAttributes() {
+    return [
+      'selected',
+      'loop',
+      'navigation',
+      'pagination',
+      'slides-per-view',
+    ];
   }
 
   /**
@@ -380,13 +300,15 @@ class XSlider extends HTMLElement {
         // Accept only numbers between `0` and `this._lastViewIndex`.
         if (!Number.isFinite(parsedSelected) ||
             parsedSelected > this._lastViewIndex ||
-            parsedSelected &lt; 0) {
+            parsedSelected < 0) {
           this.selected = oldValue;
           return;
         }
 
         // Show the new selected slide and update pagination.
-        this.update();
+        this._slideTo(this.selected);
+        this._updatePagination();
+        this._updateNavigation();
         break;
 
       case 'loop':
@@ -410,7 +332,7 @@ class XSlider extends HTMLElement {
 
         // Accept only numbers greater than `1`.
         if (!Number.isFinite(parsedSlidesPerView) ||
-            parsedSlidesPerView &lt; 1) {
+            parsedSlidesPerView < 1) {
           this.slidesPerView = oldValue;
           return;
         }
@@ -499,15 +421,10 @@ class XSlider extends HTMLElement {
     return value === null ? 1 : parseInt(value, 10);
   }
 
-  /**
-   * Updates the slider to react to DOM changes in #slidesSlot.
-   * @private
-   */
-  _onSlotChange() {
-    this._slides = this._getSlides();
 
-    this.update();
-  }
+  // ===========================================================================
+  // Layout-related
+  // ===========================================================================
 
   /**
    * Updated the UI when the window resizes.
@@ -528,147 +445,28 @@ class XSlider extends HTMLElement {
   _computeSizes() {
     this._wrapperWidth = this._slidesWrapper.getBoundingClientRect().width;
     this._slidesGap = this._getSlidesGap();
-    this._slidesWidth = this._getSlidesWidth();
+    this._slidesWidth = this._getSlideWidth();
   }
 
   /**
-   * Updates the pagination indicators (depending on the current value of
-   * `pagination`) to reflect the current number of views and the selected view.
+   * Computes the width of one slide given the layout constraint.
+   * @returns {number} The width of one slide.
    * @private
    */
-  _updatePagination() {
-    if (!this._paginationWrapper || !this._slides ||
-        this._slides.length === 0) {
-      return;
-    }
-
-    if (!this.pagination || (this.pagination &amp;&amp;
-        this._paginationWrapper.childElementCount !==
-        this._lastViewIndex + 1)) {
-      // Remove all children of pag wrapper and their ev listeners
-      this._paginationIndicators.forEach(el => {
-        el.removeEventListener('click', this);
-        this._paginationWrapper.removeChild(el);
-      });
-      this._paginationIndicators.length = 0;
-    }
-
-    if (this.pagination) {
-      // Create dom for pagination indicators
-      if (this._paginationWrapper.childElementCount !==
-          this._lastViewIndex + 1) {
-        const frag = document.createDocumentFragment();
-        for (let i = 0; i &lt;= this._lastViewIndex; i++) {
-          const btn = document.createElement('button');
-          btn.textContent = i;
-          btn.setAttribute('aria-label', `Go to view ${i + 1}`);
-          btn.addEventListener('click', this);
-
-          frag.appendChild(btn);
-          this._paginationIndicators.push(btn);
-        }
-        this._paginationWrapper.appendChild(frag);
-      }
-
-      // Update `disabled` to highlight the selected slide.
-      this._paginationIndicators.forEach((btn, i) => {
-        btn.disabled = i === this.selected;
-      });
-    }
+  _getSlideWidth() {
+    return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
+        this.slidesPerView;
   }
 
   /**
-   * Updates the navigation buttons (prev/next) depending on the value of
-   * `navigation`, `loop` and the currently selected view.
+   * Computes the slide gap value from CSS.
+   * @returns {number} The width of the gap between slides.
    * @private
    */
-  _updateNavigation() {
-    if (!this._navigationWrapper || !this._slides ||
-        this._slides.length === 0) {
-      return;
-    }
-
-    if (!this.navigation ||
-        (this.navigation &amp;&amp; this._navigationWrapper.childElementCount !== 2)) {
-      // remove all children of nav wrapper and their ev listeners
-      while (this._navigationWrapper.firstChild) {
-        this._navigationWrapper.firstChild.removeEventListener('click', this);
-        this._navigationWrapper.removeChild(this._navigationWrapper.firstChild);
-
-        this._prevButton = undefined;
-        this._nextButton = undefined;
-      }
-    }
-
-    if (this.navigation) {
-      if (this._navigationWrapper.childElementCount !== 2) {
-        // add buttons and add ev listeners
-        this._prevButton = document.createElement('button');
-        this._prevButton.setAttribute('aria-label', 'To previous view');
-        this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.textContent = '&lt;';
-        this._prevButton.addEventListener('click', this);
-        this._navigationWrapper.appendChild(this._prevButton);
-
-        this._nextButton = document.createElement('button');
-        this._nextButton.setAttribute('aria-label', 'To next view');
-        this._nextButton.setAttribute('id', 'next');
-        this._nextButton.textContent = '>';
-        this._nextButton.addEventListener('click', this);
-        this._navigationWrapper.appendChild(this._nextButton);
-      }
-
-      // update `disabled`
-      this._prevButton.disabled =
-          !this.loop &amp;&amp; this.selected === 0;
-      this._nextButton.disabled =
-          !this.loop &amp;&amp; this.selected === this._lastViewIndex;
-    }
-  }
-
-  /**
-   * Called when any pagination bullet point is selected.
-   * @param {Event} e The 'change' event fired by the radio input.
-   * @private
-   */
-  _onPaginationClicked(e) {
-    this.selected = parseInt(e.target.textContent, 10);
-  }
-
-  /**
-   * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
-   * @returns {Array&lt;HTMLElement>} The elements found in #slidesSlot.
-   * @private
-   */
-  _getSlides() {
-    return this._slidesSlot.assignedNodes()
-        .filter(n => n.nodeType === Node.ELEMENT_NODE);
-  }
-
-  /**
-   * Selects the slide preceding the currently selected one.
-   * If the currently selected slide is the first slide and the loop
-   * functionality is disabled, nothing happens.
-   */
-  previous() {
-    if (this.selected > 0) {
-      this.selected -= 1;
-    } else if (this.loop) {
-      this.selected = this._lastViewIndex;
-    }
-  }
-
-  /**
-   * Selects the slide following the currently selected one.
-   * If the currently selected slide is the last slide and the loop
-   * functionality is disabled, nothing happens.
-   */
-  next() {
-    if (this.selected &lt; this._lastViewIndex) {
-      this.selected += 1;
-    } else if (this.loop) {
-      this.selected = 0;
-    }
+  _getSlidesGap() {
+    const parsedGap = parseInt(
+        getComputedStyle(this._slides[0])['margin-right'], 10);
+    return !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 
   /**
@@ -688,17 +486,12 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Translates the slider to show the target view.
-   * @param {number} targetView The view to slide to.
+   * Calculates the position of each slide within the wrapper.
    * @private
    */
-  _slideTo(targetView) {
-    if (!this._slidesWrapper) {
-      return;
-    }
-
-    this._setWrapperTranslateX(
-        - targetView * (this._slidesWidth + this._slidesGap));
+  _computeSlidesPositions() {
+    this._slidesPosition = this._slides
+        .map((s, i) => - i * (this._slidesWidth + this._slidesGap));
   }
 
   /**
@@ -707,31 +500,165 @@ class XSlider extends HTMLElement {
    * @private
    */
   _setWrapperTranslateX(tx) {
-    this._slidesWrapper.style.transform = `translateX(${tx}px)`;
+    this._slidesWrapper.style.transform = `translate3d(${tx}px, 0, 0)`;
     this._wrapperTranslateX = tx;
   }
 
   /**
-   * Detects browser support for passive event listeners. See
-   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
-   * @returns {boolean} True if the browser support passive event listeners.
+   * Computes the view's position along the x axis.
+   * @param {number} viewIndex
    * @private
    */
-  _supportsPassiveEvt() {
-    if (typeof this._passiveEvt === 'undefined') {
-      this._passiveEvt = false;
-      try {
-        const opts = Object.defineProperty({}, 'passive', {
-          get: () => {
-            this._passiveEvt = true;
-          },
-        });
-        window.addEventListener('test', null, opts);
-      } catch (e) {}
+  _getViewPosition(viewIndex) {
+    return this._slidesPosition[viewIndex];
+  }
+
+  /**
+   * Translates the slider to show the target view.
+   * @param {number} targetView The view to slide to.
+   * @private
+   */
+  _slideTo(targetView) {
+    if (!this._slidesWrapper || this._decelerating) {
+      return;
     }
 
-    return this._passiveEvt;
+    this._setWrapperTranslateX(this._getViewPosition(targetView));
   }
+
+  /**
+   * Updates the pagination indicators (depending on the current value of
+   * `pagination`) to reflect the current number of views and the selected view.
+   * @private
+   */
+  _updatePagination() {
+    if (!this._paginationWrapper || !this._slides ||
+        this._slides.length === 0) {
+      return;
+    }
+
+    if (!this.pagination || (this.pagination &&
+        this._paginationWrapper.childElementCount !==
+        this._lastViewIndex + 1)) {
+      // Remove all children of pag wrapper and their ev listeners
+      this._paginationIndicators.forEach(el => {
+        el.removeEventListener('click', this);
+        this._paginationWrapper.removeChild(el);
+      });
+      this._paginationIndicators.length = 0;
+    }
+
+    if (this.pagination) {
+      // Create dom for pagination indicators
+      if (this._paginationWrapper.childElementCount !==
+          this._lastViewIndex + 1) {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i <= this._lastViewIndex; i++) {
+          const btn = document.createElement('button');
+          btn.textContent = i;
+          btn.setAttribute('aria-label', `Go to view ${i + 1}`);
+          btn.addEventListener('click', this);
+
+          frag.appendChild(btn);
+          this._paginationIndicators.push(btn);
+        }
+        this._paginationWrapper.appendChild(frag);
+      }
+
+      // Update `disabled` to highlight the selected slide.
+      this._paginationIndicators.forEach((btn, i) => {
+        btn.disabled = i === this.selected;
+      });
+    }
+  }
+
+  /**
+   * Called when any pagination bullet point is selected.
+   * @param {Event} e The 'change' event fired by the radio input.
+   * @private
+   */
+  _onPaginationClicked(e) {
+    this.selected = parseInt(e.target.textContent, 10);
+  }
+
+  /**
+   * Updates the navigation buttons (prev/next) depending on the value of
+   * `navigation`, `loop` and the currently selected view.
+   * @private
+   */
+  _updateNavigation() {
+    if (!this._navigationWrapper || !this._slides ||
+        this._slides.length === 0) {
+      return;
+    }
+
+    if (!this.navigation ||
+        (this.navigation && this._navigationWrapper.childElementCount !== 2)) {
+      // remove all children of nav wrapper and their ev listeners
+      while (this._navigationWrapper.firstChild) {
+        this._navigationWrapper.firstChild.removeEventListener('click', this);
+        this._navigationWrapper.removeChild(this._navigationWrapper.firstChild);
+
+        this._prevButton = undefined;
+        this._nextButton = undefined;
+      }
+    }
+
+    if (this.navigation) {
+      if (this._navigationWrapper.childElementCount !== 2) {
+        // add buttons and add ev listeners
+        this._prevButton = document.createElement('button');
+        this._prevButton.setAttribute('aria-label', 'To previous view');
+        this._prevButton.setAttribute('id', 'previous');
+        this._prevButton.textContent = '<';
+        this._prevButton.addEventListener('click', this);
+        this._navigationWrapper.appendChild(this._prevButton);
+
+        this._nextButton = document.createElement('button');
+        this._nextButton.setAttribute('aria-label', 'To next view');
+        this._nextButton.setAttribute('id', 'next');
+        this._nextButton.textContent = '>';
+        this._nextButton.addEventListener('click', this);
+        this._navigationWrapper.appendChild(this._nextButton);
+      }
+
+      // update `disabled`
+      this._prevButton.disabled =
+          !this.loop && this.selected === 0;
+      this._nextButton.disabled =
+          !this.loop && this.selected === this._lastViewIndex;
+    }
+  }
+
+
+  // ===========================================================================
+  // Slides slot
+  // ===========================================================================
+
+  /**
+   * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
+   * @returns {Array<HTMLElement>} The elements found in #slidesSlot.
+   * @private
+   */
+  _getSlides() {
+    return this._slidesSlot.assignedNodes()
+        .filter(n => n.nodeType === Node.ELEMENT_NODE);
+  }
+
+  /**
+   * Updates the slider to react to DOM changes in #slidesSlot.
+   * @private
+   */
+  _onSlotChange() {
+    this._slides = this._getSlides();
+
+    this.update();
+  }
+
+
+  // ===========================================================================
+  // Pointer events + drag
+  // ===========================================================================
 
   /**
    * A normalised object representing either a touch event or a mouse event.
@@ -779,6 +706,7 @@ class XSlider extends HTMLElement {
    */
   _onPointerDown(e) {
     if (!this._pointerActive) {
+      this._decelerating = false;
       this._pointerActive = true;
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
@@ -787,17 +715,13 @@ class XSlider extends HTMLElement {
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      // Move
-      this._externalWrapper.addEventListener('touchmove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
-      this._externalWrapper.addEventListener('mousemove', this,
-          this._supportsPassiveEvt ? {passive: false} : false);
-      // Up
-      this._externalWrapper.addEventListener('mouseup', this);
-      this._externalWrapper.addEventListener('touchend', this);
-      // Leave
-      this._externalWrapper.addEventListener('mouseleave', this);
-      this._externalWrapper.addEventListener('touchcancel', this);
+      window.addEventListener('touchmove', this, this._passiveOptions(false));
+      window.addEventListener('mousemove', this, this._passiveOptions(false));
+      window.addEventListener('mouseup', this);
+      window.addEventListener('touchend', this);
+      window.addEventListener('touchcancel', this);
+
+      this.setAttribute('pointer-down', '');
     }
   }
 
@@ -809,7 +733,7 @@ class XSlider extends HTMLElement {
   _onPointerMove(e) {
     // Checking the pointer id avoids running the same code twice
     // in case of touch screens.
-    if (this._pointerActive &amp;&amp; e.id === this._pointerId) {
+    if (this._pointerActive && e.id === this._pointerId) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
       this._pointerCurrentX = e.x;
@@ -835,7 +759,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerEnd(e) {
-    if (this._pointerActive &amp;&amp; e.id === this._pointerId) {
+    if (this._pointerActive && e.id === this._pointerId) {
       this._stopPointerTracking();
     }
   }
@@ -851,29 +775,15 @@ class XSlider extends HTMLElement {
 
     this._addTrackingPoint(this._pointerLastX);
 
-    this._externalWrapper.removeEventListener('touchmove', this);
-    this._externalWrapper.removeEventListener('mousemove', this);
-    this._externalWrapper.removeEventListener('touchend', this);
-    this._externalWrapper.removeEventListener('mouseup', this);
-    this._externalWrapper.removeEventListener('touchcancel', this);
-    this._externalWrapper.removeEventListener('mouseleave', this);
+    this.removeAttribute('pointer-down');
 
-    // TODO: start decelerating
-    this.setAttribute('transitioning', '');
+    window.removeEventListener('touchmove', this);
+    window.removeEventListener('mousemove', this);
+    window.removeEventListener('touchend', this);
+    window.removeEventListener('mouseup', this);
+    window.removeEventListener('touchcancel', this);
 
-    const fullSlideWidth = this._slidesWidth + this._slidesGap;
-    const maxValue = this._lastViewIndex * fullSlideWidth;
-
-    const wrapperTranslateX = Math.abs(
-        Math.max(-maxValue, Math.min(0, this._wrapperTranslateX)));
-    const modulo = wrapperTranslateX % fullSlideWidth;
-    const divided = Math.floor(wrapperTranslateX / fullSlideWidth);
-
-    if (modulo >= fullSlideWidth / 2) {
-      this.selected = divided + 1;
-    } else {
-      this.selected = divided;
-    }
+    this._startDecelerating();
   }
 
   /**
@@ -885,7 +795,7 @@ class XSlider extends HTMLElement {
     const time = Date.now();
     // Keep only data from the last 100ms
     while (this._trackingPoints.length > 0) {
-      if (time - this._trackingPoints[0].time &lt;= 100) {
+      if (time - this._trackingPoints[0].time <= 100) {
         break;
       }
       this._trackingPoints.shift();
@@ -920,49 +830,134 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Computes the width of one slide given the layout constraint.
-   * @returns {number} The width of one slide.
+   * Computes the initial parameters of the deceleration.
    * @private
    */
-  _getSlidesWidth() {
-    return (this._wrapperWidth - (this.slidesPerView - 1) * this._slidesGap) /
-        this.slidesPerView;
+  _startDecelerating() {
+    this._decelerating = true;
+
+    const lastPoint = this._trackingPoints[this._trackingPoints.length - 1];
+    const firstPoint = this._trackingPoints[0];
+    const diffX = (lastPoint.x - firstPoint.x) || 0;
+
+    if (diffX === 0) {
+      this._decelVelocity = 0;
+    } else {
+      // Compute the initial deceleration velocity.
+      const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
+      const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
+          maxVel);
+      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
+      this._decelVelocity = diffX / Math.abs(diffX) *
+          Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
+    }
+
+    const distanceTravelled = this._pointerLastX - this._pointerFirstX;
+
+    // `newSelected` would be the new index of the selected slide,
+    // based on where the user has dragged so far.
+    // The initial value of newSelected is in preparation to the following loop.
+    let newSelected = distanceTravelled < 0 ? -1 : this._slides.length;
+    this._slidesPosition.forEach((slidePos, slideIndex) => {
+      if (distanceTravelled < 0 && this._wrapperTranslateX < slidePos) {
+        // Moving to the right.
+        newSelected = Math.max(slideIndex, newSelected);
+      } else if (distanceTravelled > 0 && this._wrapperTranslateX > slidePos) {
+        // Moving to the left.
+        newSelected = Math.min(slideIndex, newSelected);
+      }
+    });
+
+    if (this._decelVelocity !== 0) {
+      // Depending on the direction of the user's drag, go previous/next.
+      this.selected = this._decelVelocity > 0 ?
+          this._computePrevious(Math.max(newSelected, 1)) :
+          this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
+    } else {
+      // If the user's pointer was not moving, check the position: if at least
+      // 1/3 through the slide, select the previous/next slide.
+      const distToCurrent = this._wrapperTranslateX -
+          this._getViewPosition(this.selected);
+      if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
+        this.selected = distToCurrent > 0 ?
+            this._computePrevious(Math.max(newSelected, 1)) :
+            this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
+      }
+    }
+
+    requestAnimationFrame(this._decelerationStep.bind(this));
   }
 
   /**
-   * Computes the slide gap value from CSS.
-   * @returns {number} The width of the gap between slides.
+   * Animates the slider while updating the deceleration velocity.
    * @private
    */
-  _getSlidesGap() {
-    const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
-    return !Number.isFinite(parsedGap) ? 0 : parsedGap;
+  _decelerationStep() {
+    if (!this._decelerating) {
+      return;
+    }
+
+    const snapX = this._getViewPosition(this.selected);
+
+    // Apply attraction: it moves the slider towards the target.
+    // Attraction is bigger when the slide is further away.
+    this._decelVelocity += this._attraction * (snapX - this._wrapperTranslateX);
+    // Apply friction: friction slows down the slider.
+    this._decelVelocity *= this._friction;
+
+    let newPosition = this._wrapperTranslateX + this._decelVelocity;
+    newPosition = this._decelVelocity > 0 ? Math.min(newPosition, snapX) :
+        newPosition = Math.max(newPosition, snapX);
+
+    this._setWrapperTranslateX(newPosition);
+
+    if (Math.abs(snapX - newPosition) >= 1) {
+      requestAnimationFrame(this._decelerationStep.bind(this));
+    } else {
+      this._setWrapperTranslateX(snapX);
+      this._decelerating = false;
+      this.setAttribute('transitioning', '');
+    }
+  }
+
+  // ===========================================================================
+  // Misc
+  // ===========================================================================
+
+  /**
+   * Detects browser support for passive event listeners. See
+   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+   * @returns {boolean} True if the browser support passive event listeners.
+   * @private
+   */
+  _supportsPassiveEvt() {
+    if (typeof this._passiveEvt === 'undefined') {
+      this._passiveEvt = false;
+      try {
+        const opts = Object.defineProperty({}, 'passive', {
+          get: () => {
+            this._passiveEvt = true;
+          },
+        });
+        window.addEventListener('test', null, opts);
+      } catch (e) {}
+    }
+
+    return this._passiveEvt;
+  }
+
+  /**
+   * Returns the event options (including passive if the browser supports it)
+   * @param {boolean} isPassive Whether the event is passive or not.
+   * @returns {Object|boolean} Based on browser support, returns either an
+   * object representing the options (including passive), or a boolean.
+   * @private
+   */
+  _passiveOptions(isPassive) {
+    return this._supportsPassiveEvt ? {passive: isPassive} : false;
   }
 }
 
 window.customElements.define('x-slider', XSlider);
-})();
-</code></pre>
-        </article>
-    </section>
 
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="XSlider.html">XSlider</a></li></ul><h3><a href="global.html">Global</a></h3>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Nov 12 2017 12:15:35 GMT+0000 (GMT)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>
+}());

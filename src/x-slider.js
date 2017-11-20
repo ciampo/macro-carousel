@@ -1,22 +1,12 @@
 import styles from './x-slider.css';
-
-(function() {
+import html from './x-slider.html';
 /**
  * Markup and styles.
  */
 const template = document.createElement('template');
 template.innerHTML = `
   <style>${styles}</style>
-
-  <div id="externalWrapper">
-    <div id="slidesWrapper">
-      <slot id="slidesSlot"><p>No content available</p></slot>
-    </div>
-  </div>
-
-  <div id="navigation"></div>
-
-  <div id="pagination"></div>
+  ${html}
 `;
 
 /**
@@ -963,4 +953,3 @@ class XSlider extends HTMLElement {
 }
 
 window.customElements.define('x-slider', XSlider);
-})();
