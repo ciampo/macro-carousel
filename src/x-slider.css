@@ -1,0 +1,126 @@
+:host {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  contain: content;
+
+  --x-slider-gap: 16px;
+
+  --x-slider-transition-duration: 0.6s;
+  --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);
+
+  --x-slider-navigation-color: #000;
+
+  --x-slider-pagination-color: #999;
+  --x-slider-pagination-color-selected: #000;
+  --x-slider-pagination-size: 12px;
+  --x-slider-pagination-gap: 8px;
+  --x-slider-pagination-height: 32px;
+
+  --x-slider__internal__slides-per-view: 1;
+}
+
+:host([hidden]) {
+  display: none
+}
+
+#externalWrapper {
+  overflow: hidden;
+  contain: paint;
+
+  /*
+    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+  */
+  touch-action: pan-y pinch-zoom;
+
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+:host([pointer-down]) #externalWrapper {
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+#slidesWrapper {
+  display: flex;
+  align-items: stretch;
+
+  will-change: transform;
+}
+
+:host([transitioning]) #slidesWrapper {
+  transition-property: transform;
+  transition-duration: var(--x-slider-transition-duration);
+  transition-timing-function: var(--x-slider-transition-timing-function);
+}
+
+#pagination {
+  align-self: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: var(--x-slider-pagination-height);
+
+  contain: strict;
+}
+
+#pagination button {
+  width: var(--x-slider-pagination-size);
+  height: var(--x-slider-pagination-size);
+
+  padding: 0;
+  margin: 0 calc(var(--x-slider-pagination-gap) / 2);
+
+  border: none;
+  border-radius: 50%;
+
+  background-color: var(--x-slider-pagination-color);
+
+  font-size: 0;
+
+  cursor: pointer;
+
+  opacity: .8;
+}
+
+#pagination button:hover,
+#pagination button:focus,
+#pagination button[disabled] {
+  opacity: 1;
+}
+
+#pagination button[disabled] {
+  background-color: var(--x-slider-pagination-color-selected);
+}
+
+::slotted(*) {
+  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
+  flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
+      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+  margin-right: var(--x-slider-gap);
+}
+
+#previous,
+#next {
+  position: absolute;
+  top: calc(50% - var(--x-slider-pagination-height) / 2);
+  transform: translateY(-50%);
+
+  color: var(--x-slider-navigation-color);
+}
+
+#previous {
+  left: 0;
+}
+
+#next {
+  right: 0;
+}
