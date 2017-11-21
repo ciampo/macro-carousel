@@ -25,7 +25,6 @@ export default {
       include: 'src/*.html',
     }),
     serve({
-      open: true,
       contentBase: '',
       port: 8080,
     }),
