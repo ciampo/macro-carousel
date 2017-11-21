@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 
-var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  color: var(--x-slider-navigation-color);\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
+var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  color: var(--x-slider-navigation-color);\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
 
 var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\" class=\"dabest\"></div>";
 
@@ -91,6 +91,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('loop');
     this._upgradeProperty('navigation');
     this._upgradeProperty('pagination');
+    this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
 
     this.update();
@@ -110,8 +111,6 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
-    this._externalWrapper.addEventListener('touchstart', this);
-    this._externalWrapper.addEventListener('mousedown', this);
   }
 
   /**
@@ -124,8 +123,10 @@ class XSlider extends HTMLElement {
     this._slidesSlot.removeEventListener('slotchange', this);
     window.removeEventListener('resize', this);
 
-    this._externalWrapper.removeEventListener('touchstart', this);
-    this._externalWrapper.removeEventListener('mousedown', this);
+    if (this.drag) {
+      this._externalWrapper.removeEventListener('touchstart', this);
+      this._externalWrapper.removeEventListener('mousedown', this);
+    }
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -210,6 +211,7 @@ class XSlider extends HTMLElement {
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
+    this._updateDrag();
   }
 
   /**
@@ -274,6 +276,7 @@ class XSlider extends HTMLElement {
       'loop',
       'navigation',
       'pagination',
+      'drag',
       'slides-per-view',
     ];
   }
@@ -318,6 +321,10 @@ class XSlider extends HTMLElement {
 
       case 'pagination':
         this._updatePagination();
+        break;
+
+      case 'drag':
+        this._updateDrag();
         break;
 
       case 'slides-per-view':
@@ -402,6 +409,23 @@ class XSlider extends HTMLElement {
 
   get pagination() {
     return this.hasAttribute('pagination');
+  }
+
+  /**
+   * Whether the slides can be dragged with touch/mouse events.
+   * @type {boolean}
+   * @default false
+   */
+  set drag(flag) {
+    if (flag) {
+      this.setAttribute('drag', '');
+    } else {
+      this.removeAttribute('drag');
+    }
+  }
+
+  get drag() {
+    return this.hasAttribute('drag');
   }
 
   /**
@@ -658,6 +682,20 @@ class XSlider extends HTMLElement {
   // ===========================================================================
 
   /**
+   * Add/remove event listeners for pointer interactions.
+   * @private
+   */
+  _updateDrag() {
+    if (this.drag) {
+      this._externalWrapper.addEventListener('touchstart', this);
+      this._externalWrapper.addEventListener('mousedown', this);
+    } else {
+      this._externalWrapper.removeEventListener('touchstart', this);
+      this._externalWrapper.removeEventListener('mousedown', this);
+    }
+  }
+
+  /**
    * A normalised object representing either a touch event or a mouse event.
    * @typedef {object} NormalisedPointerEvent
    * @property {number} x The x coordinate.
@@ -807,7 +845,7 @@ class XSlider extends HTMLElement {
    */
   _requestDragTick() {
     if (!this._dragTicking) {
-      requestAnimationFrame(this._updateDrag.bind(this));
+      requestAnimationFrame(this._updateDragPosition.bind(this));
     }
     this._dragTicking = true;
   }
@@ -816,7 +854,7 @@ class XSlider extends HTMLElement {
    * Updates the UI while the user is dragging the slides.
    * @private
    */
-  _updateDrag() {
+  _updateDragPosition() {
     // Current position + the amount of drag happened since the last rAF.
     this._setWrapperTranslateX(this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX);
