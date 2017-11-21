@@ -10,10 +10,7 @@ var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slo
  * Markup and styles.
  */
 const template = document.createElement('template');
-template.innerHTML = `
-  <style>${styles}</style>
-  ${html}
-`;
+template.innerHTML = `<style>${styles}</style> ${html}`;
 
 /**
  * A slider/carousel Web Component.
