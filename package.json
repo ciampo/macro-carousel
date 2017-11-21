@@ -29,6 +29,7 @@
   "homepage": "https://github.com/ciampo/x-slider#readme",
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^1.0.14",
+    "autoprefixer": "^7.1.6",
     "chai": "^4.1.2",
     "chromedriver": "^2.32.0",
     "eslint": "^4.6.1",
@@ -45,8 +46,9 @@
     "rollup": "^0.51.8",
     "rollup-plugin-html": "^0.2.1",
     "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-postcss": "^0.5.5",
+    "rollup-plugin-sass": "^0.5.3",
     "rollup-plugin-serve": "^0.4.2",
-    "rollup-plugin-string": "^2.0.2",
     "rollup-plugin-uglify": "^2.0.1",
     "selenium-assistant": "^5.1.1",
     "selenium-webdriver": "^3.5.0",

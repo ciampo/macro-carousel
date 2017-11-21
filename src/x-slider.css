@@ -36,8 +36,6 @@
   */
   touch-action: pan-y pinch-zoom;
 
-  cursor: -moz-grab;
-  cursor: -webkit-grab;
   cursor: grab;
 }
 

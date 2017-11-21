@@ -1,5 +1,7 @@
-import string from 'rollup-plugin-string';
 import html from 'rollup-plugin-html';
+import sass from 'rollup-plugin-sass';
+import autoprefixer from 'autoprefixer';
+import postcss from 'postcss';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
@@ -10,7 +12,15 @@ export default {
     format: 'iife',
   },
   plugins: [
-    string({include: 'src/*.css'}),
+    sass({
+      include: 'src/*.css',
+      options: {
+        outputStyle: 'expanded',
+      },
+      processor: css => postcss([autoprefixer({browsers: 'last 2 versions'})])
+        .process(css)
+        .then(result => result.css),
+    }),
     html({
       include: 'src/*.html',
     }),

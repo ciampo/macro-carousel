@@ -1,6 +1,8 @@
-import string from 'rollup-plugin-string';
-import uglify from 'rollup-plugin-uglify';
 import html from 'rollup-plugin-html';
+import sass from 'rollup-plugin-sass';
+import autoprefixer from 'autoprefixer';
+import postcss from 'postcss';
+import uglify from 'rollup-plugin-uglify';
 import {minify} from 'uglify-es';
 
 export default {
@@ -10,7 +12,15 @@ export default {
     format: 'iife',
   },
   plugins: [
-    string({include: 'src/*.css'}),
+    sass({
+      include: 'src/*.css',
+      options: {
+        outputStyle: 'compressed',
+      },
+      processor: css => postcss([autoprefixer({browsers: 'last 2 versions'})])
+        .process(css)
+        .then(result => result.css),
+    }),
     html({
       include: 'src/*.html',
       htmlMinifierOptions: {
