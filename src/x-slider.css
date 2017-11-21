@@ -35,13 +35,13 @@
     https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
   */
   touch-action: pan-y pinch-zoom;
+}
 
+:host([drag]) #externalWrapper {
   cursor: grab;
 }
 
-:host([pointer-down]) #externalWrapper {
-  cursor: -moz-grabbing;
-  cursor: -webkit-grabbing;
+:host([drag][pointer-down]) #externalWrapper {
   cursor: grabbing;
 }
 

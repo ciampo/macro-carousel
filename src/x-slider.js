@@ -85,6 +85,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('loop');
     this._upgradeProperty('navigation');
     this._upgradeProperty('pagination');
+    this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
 
     this.update();
@@ -104,8 +105,6 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
-    this._externalWrapper.addEventListener('touchstart', this);
-    this._externalWrapper.addEventListener('mousedown', this);
   }
 
   /**
@@ -118,8 +117,10 @@ class XSlider extends HTMLElement {
     this._slidesSlot.removeEventListener('slotchange', this);
     window.removeEventListener('resize', this);
 
-    this._externalWrapper.removeEventListener('touchstart', this);
-    this._externalWrapper.removeEventListener('mousedown', this);
+    if (this.drag) {
+      this._externalWrapper.removeEventListener('touchstart', this);
+      this._externalWrapper.removeEventListener('mousedown', this);
+    }
 
     if (this.navigation) {
       this._prevButton.removeEventListener('click', this);
@@ -204,6 +205,7 @@ class XSlider extends HTMLElement {
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
+    this._updateDrag();
   }
 
   /**
@@ -268,6 +270,7 @@ class XSlider extends HTMLElement {
       'loop',
       'navigation',
       'pagination',
+      'drag',
       'slides-per-view',
     ];
   }
@@ -312,6 +315,10 @@ class XSlider extends HTMLElement {
 
       case 'pagination':
         this._updatePagination();
+        break;
+
+      case 'drag':
+        this._updateDrag();
         break;
 
       case 'slides-per-view':
@@ -396,6 +403,23 @@ class XSlider extends HTMLElement {
 
   get pagination() {
     return this.hasAttribute('pagination');
+  }
+
+  /**
+   * Whether the slides can be dragged with touch/mouse events.
+   * @type {boolean}
+   * @default false
+   */
+  set drag(flag) {
+    if (flag) {
+      this.setAttribute('drag', '');
+    } else {
+      this.removeAttribute('drag');
+    }
+  }
+
+  get drag() {
+    return this.hasAttribute('drag');
   }
 
   /**
@@ -652,6 +676,20 @@ class XSlider extends HTMLElement {
   // ===========================================================================
 
   /**
+   * Add/remove event listeners for pointer interactions.
+   * @private
+   */
+  _updateDrag() {
+    if (this.drag) {
+      this._externalWrapper.addEventListener('touchstart', this);
+      this._externalWrapper.addEventListener('mousedown', this);
+    } else {
+      this._externalWrapper.removeEventListener('touchstart', this);
+      this._externalWrapper.removeEventListener('mousedown', this);
+    }
+  }
+
+  /**
    * A normalised object representing either a touch event or a mouse event.
    * @typedef {object} NormalisedPointerEvent
    * @property {number} x The x coordinate.
@@ -801,7 +839,7 @@ class XSlider extends HTMLElement {
    */
   _requestDragTick() {
     if (!this._dragTicking) {
-      requestAnimationFrame(this._updateDrag.bind(this));
+      requestAnimationFrame(this._updateDragPosition.bind(this));
     }
     this._dragTicking = true;
   }
@@ -810,7 +848,7 @@ class XSlider extends HTMLElement {
    * Updates the UI while the user is dragging the slides.
    * @private
    */
-  _updateDrag() {
+  _updateDragPosition() {
     // Current position + the amount of drag happened since the last rAF.
     this._setWrapperTranslateX(this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX);
