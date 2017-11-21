@@ -2,15 +2,25 @@
 (function () {
 'use strict';
 
-var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  color: var(--x-slider-navigation-color);\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
+var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  min-width: 48px;\n  min-height: 48px;\n  padding: 0;\n  color: var(--x-slider-navigation-color);\n  background: none;\n  border: 0;\n  border-radius: 50%;\n  cursor: pointer;\n}\n\n#previous:focus,\n#next:focus {\n  background-color: var(--x-slider-navigation-background-color-focus);\n  outline: none;\n}\n\n#previous:active,\n#next:active {\n  background-color: var(--x-slider-navigation-background-color-active);\n}\n\n#previous[disabled],\n#next[disabled] {\n  opacity: .2;\n}\n\n#previous svg,\n#next svg {\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n  pointer-events: none;\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
 
-var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\" class=\"dabest\"></div>";
+var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\"></div>";
+
+var arrowLeft = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z\"/>\n</svg>";
+
+var arrowRight = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z\"/>\n</svg>";
 
 /**
  * Markup and styles.
  */
-const template = document.createElement('template');
-template.innerHTML = `<style>${styles}</style> ${html}`;
+const sliderTemplate = document.createElement('template');
+sliderTemplate.innerHTML = `<style>${styles}</style> ${html}`;
+
+const arrowRightTemplate = document.createElement('template');
+arrowRightTemplate.innerHTML = `${arrowRight}`;
+
+const arrowLeftTemplate = document.createElement('template');
+arrowLeftTemplate.innerHTML = `${arrowLeft}`;
 
 /**
  * A slider/carousel Web Component.
@@ -30,7 +40,7 @@ class XSlider extends HTMLElement {
     super();
 
     this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
     // References to DOM nodes.
     this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
@@ -631,14 +641,15 @@ class XSlider extends HTMLElement {
         this._prevButton = document.createElement('button');
         this._prevButton.setAttribute('aria-label', 'To previous view');
         this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.textContent = '<';
+        this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
         this._nextButton = document.createElement('button');
         this._nextButton.setAttribute('aria-label', 'To next view');
         this._nextButton.setAttribute('id', 'next');
-        this._nextButton.textContent = '>';
+        this._nextButton.appendChild(
+            arrowRightTemplate.content.cloneNode(true));
         this._nextButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._nextButton);
       }
