@@ -22,7 +22,7 @@ export default {
         .then(result => result.css),
     }),
     html({
-      include: 'src/*.html',
+      include: ['src/*.html', 'src/*.svg'],
     }),
     serve({
       contentBase: '',

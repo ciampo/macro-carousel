@@ -1,10 +1,19 @@
 import styles from './x-slider.css';
 import html from './x-slider.html';
+import arrowLeft from './arrow-left.svg';
+import arrowRight from './arrow-right.svg';
+
 /**
  * Markup and styles.
  */
-const template = document.createElement('template');
-template.innerHTML = `<style>${styles}</style> ${html}`;
+const sliderTemplate = document.createElement('template');
+sliderTemplate.innerHTML = `<style>${styles}</style> ${html}`;
+
+const arrowRightTemplate = document.createElement('template');
+arrowRightTemplate.innerHTML = `${arrowRight}`;
+
+const arrowLeftTemplate = document.createElement('template');
+arrowLeftTemplate.innerHTML = `${arrowLeft}`;
 
 /**
  * A slider/carousel Web Component.
@@ -24,7 +33,7 @@ class XSlider extends HTMLElement {
     super();
 
     this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
     // References to DOM nodes.
     this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
@@ -625,14 +634,15 @@ class XSlider extends HTMLElement {
         this._prevButton = document.createElement('button');
         this._prevButton.setAttribute('aria-label', 'To previous view');
         this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.textContent = '<';
+        this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
         this._nextButton = document.createElement('button');
         this._nextButton.setAttribute('aria-label', 'To next view');
         this._nextButton.setAttribute('id', 'next');
-        this._nextButton.textContent = '>';
+        this._nextButton.appendChild(
+            arrowRightTemplate.content.cloneNode(true));
         this._nextButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._nextButton);
       }

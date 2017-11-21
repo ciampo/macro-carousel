@@ -99,5 +99,19 @@
       const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-navigation-color');
       expect(color).to.be.equal('#000');
     });
+
+    it('--x-slider-navigation-background-color-active default value is #ddd', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-navigation-background-color-active');
+      expect(color).to.be.equal('#ddd');
+    });
+
+    it('--x-slider-navigation-background-color-focus default value is #f0f0f0', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-navigation-background-color-focus');
+      expect(color).to.be.equal('#f0f0f0');
+    });
+    it('--x-slider-navigation-icon-size default value is 24px', function() {
+      const color = wcutils.getCSSCustomProperty(this.slider, '--x-slider-navigation-icon-size');
+      expect(color).to.be.equal('24px');
+    });
   });
 })();
