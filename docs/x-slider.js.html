@@ -1,17 +1,39 @@
-(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
-(function () {
-'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: x-slider.js</title>
 
-var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  color: var(--x-slider-navigation-color);\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
 
-var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\" class=\"dabest\"></div>";
+<body>
 
+<div id="main">
+
+    <h1 class="page-title">Source: x-slider.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import styles from './x-slider.css';
+import html from './x-slider.html';
 /**
  * Markup and styles.
  */
 const template = document.createElement('template');
 template.innerHTML = `
-  <style>${styles}</style>
+  &lt;style>${styles}&lt;/style>
   ${html}
 `;
 
@@ -153,7 +175,7 @@ class XSlider extends HTMLElement {
    */
   handleEvent(e) {
     // Window resize
-    if (e.target === window && e.type === 'resize') {
+    if (e.target === window &amp;&amp; e.type === 'resize') {
       this._onResize();
 
     // Slot change
@@ -161,14 +183,14 @@ class XSlider extends HTMLElement {
       this._onSlotChange();
 
     // Pagination indicators
-    } else if (this.pagination &&
+    } else if (this.pagination &amp;&amp;
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (this.navigation && e.target === this._prevButton) {
+    } else if (this.navigation &amp;&amp; e.target === this._prevButton) {
       this.previous();
-    } else if (this.navigation && e.target === this._nextButton) {
+    } else if (this.navigation &amp;&amp; e.target === this._nextButton) {
       this.next();
 
     // Touch / drag
@@ -254,7 +276,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computeNext(i) {
-    if (i < this._lastViewIndex) {
+    if (i &lt; this._lastViewIndex) {
       return i + 1;
     } else if (this.loop) {
       return 0;
@@ -300,7 +322,7 @@ class XSlider extends HTMLElement {
         // Accept only numbers between `0` and `this._lastViewIndex`.
         if (!Number.isFinite(parsedSelected) ||
             parsedSelected > this._lastViewIndex ||
-            parsedSelected < 0) {
+            parsedSelected &lt; 0) {
           this.selected = oldValue;
           return;
         }
@@ -332,7 +354,7 @@ class XSlider extends HTMLElement {
 
         // Accept only numbers greater than `1`.
         if (!Number.isFinite(parsedSlidesPerView) ||
-            parsedSlidesPerView < 1) {
+            parsedSlidesPerView &lt; 1) {
           this.slidesPerView = oldValue;
           return;
         }
@@ -537,7 +559,7 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    if (!this.pagination || (this.pagination &&
+    if (!this.pagination || (this.pagination &amp;&amp;
         this._paginationWrapper.childElementCount !==
         this._lastViewIndex + 1)) {
       // Remove all children of pag wrapper and their ev listeners
@@ -553,7 +575,7 @@ class XSlider extends HTMLElement {
       if (this._paginationWrapper.childElementCount !==
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
-        for (let i = 0; i <= this._lastViewIndex; i++) {
+        for (let i = 0; i &lt;= this._lastViewIndex; i++) {
           const btn = document.createElement('button');
           btn.textContent = i;
           btn.setAttribute('aria-label', `Go to view ${i + 1}`);
@@ -593,7 +615,7 @@ class XSlider extends HTMLElement {
     }
 
     if (!this.navigation ||
-        (this.navigation && this._navigationWrapper.childElementCount !== 2)) {
+        (this.navigation &amp;&amp; this._navigationWrapper.childElementCount !== 2)) {
       // remove all children of nav wrapper and their ev listeners
       while (this._navigationWrapper.firstChild) {
         this._navigationWrapper.firstChild.removeEventListener('click', this);
@@ -610,7 +632,7 @@ class XSlider extends HTMLElement {
         this._prevButton = document.createElement('button');
         this._prevButton.setAttribute('aria-label', 'To previous view');
         this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.textContent = '<';
+        this._prevButton.textContent = '&lt;';
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
@@ -624,9 +646,9 @@ class XSlider extends HTMLElement {
 
       // update `disabled`
       this._prevButton.disabled =
-          !this.loop && this.selected === 0;
+          !this.loop &amp;&amp; this.selected === 0;
       this._nextButton.disabled =
-          !this.loop && this.selected === this._lastViewIndex;
+          !this.loop &amp;&amp; this.selected === this._lastViewIndex;
     }
   }
 
@@ -637,7 +659,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
-   * @returns {Array<HTMLElement>} The elements found in #slidesSlot.
+   * @returns {Array&lt;HTMLElement>} The elements found in #slidesSlot.
    * @private
    */
   _getSlides() {
@@ -733,7 +755,7 @@ class XSlider extends HTMLElement {
   _onPointerMove(e) {
     // Checking the pointer id avoids running the same code twice
     // in case of touch screens.
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._pointerActive &amp;&amp; e.id === this._pointerId) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
       this._pointerCurrentX = e.x;
@@ -759,7 +781,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerEnd(e) {
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._pointerActive &amp;&amp; e.id === this._pointerId) {
       this._stopPointerTracking();
     }
   }
@@ -795,7 +817,7 @@ class XSlider extends HTMLElement {
     const time = Date.now();
     // Keep only data from the last 100ms
     while (this._trackingPoints.length > 0) {
-      if (time - this._trackingPoints[0].time <= 100) {
+      if (time - this._trackingPoints[0].time &lt;= 100) {
         break;
       }
       this._trackingPoints.shift();
@@ -857,12 +879,12 @@ class XSlider extends HTMLElement {
     // `newSelected` would be the new index of the selected slide,
     // based on where the user has dragged so far.
     // The initial value of newSelected is in preparation to the following loop.
-    let newSelected = distanceTravelled < 0 ? -1 : this._slides.length;
+    let newSelected = distanceTravelled &lt; 0 ? -1 : this._slides.length;
     this._slidesPosition.forEach((slidePos, slideIndex) => {
-      if (distanceTravelled < 0 && this._wrapperTranslateX < slidePos) {
+      if (distanceTravelled &lt; 0 &amp;&amp; this._wrapperTranslateX &lt; slidePos) {
         // Moving to the right.
         newSelected = Math.max(slideIndex, newSelected);
-      } else if (distanceTravelled > 0 && this._wrapperTranslateX > slidePos) {
+      } else if (distanceTravelled > 0 &amp;&amp; this._wrapperTranslateX > slidePos) {
         // Moving to the left.
         newSelected = Math.min(slideIndex, newSelected);
       }
@@ -959,5 +981,26 @@ class XSlider extends HTMLElement {
 }
 
 window.customElements.define('x-slider', XSlider);
+</code></pre>
+        </article>
+    </section>
 
-}());
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="XSlider.html">XSlider</a></li></ul><h3>Global</h3><ul><li><a href="global.html#template">template</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 21 2017 09:04:48 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
