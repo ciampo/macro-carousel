@@ -109,6 +109,10 @@
   margin-right: var(--x-slider-gap);
 }
 
+:host([drag]) ::slotted(*) {
+  user-select: none;
+}
+
 #previous,
 #next {
   position: absolute;
