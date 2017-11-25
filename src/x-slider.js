@@ -214,7 +214,7 @@ class XSlider extends HTMLElement {
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
-    this._updateDrag();
+    this._updateDragEventListeners();
   }
 
   /**
@@ -327,7 +327,7 @@ class XSlider extends HTMLElement {
         break;
 
       case 'drag':
-        this._updateDrag();
+        this._updateDragEventListeners();
         break;
 
       case 'slides-per-view':
@@ -689,7 +689,7 @@ class XSlider extends HTMLElement {
    * Add/remove event listeners for pointer interactions.
    * @private
    */
-  _updateDrag() {
+  _updateDragEventListeners() {
     if (this.drag) {
       this._externalWrapper.addEventListener('touchstart', this);
       this._externalWrapper.addEventListener('mousedown', this);
