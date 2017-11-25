@@ -97,7 +97,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
 
-    this.update();
+    // this.update();
 
     // Enable transitions only after the initial setup.
     // Double rAF is necessary to wait for 'selected' to take effect.
@@ -215,6 +215,7 @@ class XSlider extends HTMLElement {
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
+    this._updateWrapAround();
   }
 
   /**
@@ -316,6 +317,7 @@ class XSlider extends HTMLElement {
 
       case 'loop':
         this._updateNavigation();
+        this._updateWrapAround();
         break;
 
       case 'navigation':
@@ -653,6 +655,20 @@ class XSlider extends HTMLElement {
       this._nextButton.disabled =
           !this.loop && this.selected === this._lastViewIndex;
     }
+  }
+
+  /**
+   * Decides whether to wrapAround or not based on the number of views.
+   * @private
+   */
+  _updateWrapAround() {
+    console.log(this._lastViewIndex, this.loop);
+    this._wrapAround = this.loop && this._lastViewIndex > 0;
+    if (this._wrapAround) {
+      console.log('Wrap Around enabled');
+    } else {
+      console.log('Falling back to old-style loop');
+     }
   }
 
 
