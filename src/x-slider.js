@@ -47,7 +47,12 @@ class XSlider extends HTMLElement {
     this._prevButton = undefined;
     this._nextButton = undefined;
 
-    this._slides = undefined;
+    /**
+     * The array of slides, i.e. the children of this._slidesSlot.
+     * @type {Array<HTMLElement>}
+     * @private
+     */
+    this._slides = [];
 
     // State
     this._lastViewIndex = -1;
@@ -295,7 +300,7 @@ class XSlider extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
-        if (!this._slides || this._slides.length === 0) {
+        if (this._slides.length === 0) {
           return;
         }
 
@@ -333,7 +338,7 @@ class XSlider extends HTMLElement {
         break;
 
       case 'slides-per-view':
-        if (!this._slides || this._slides.length === 0) {
+        if (this._slides.length === 0) {
           return;
         }
 
@@ -558,8 +563,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updatePagination() {
-    if (!this._paginationWrapper || !this._slides ||
-        this._slides.length === 0) {
+    if (!this._paginationWrapper || this._slides.length === 0) {
       return;
     }
 
@@ -613,8 +617,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateNavigation() {
-    if (!this._navigationWrapper || !this._slides ||
-        this._slides.length === 0) {
+    if (!this._navigationWrapper || this._slides.length === 0) {
       return;
     }
 
@@ -683,7 +686,7 @@ class XSlider extends HTMLElement {
    */
   _getSlides() {
     return this._slidesSlot.assignedNodes()
-        .filter(n => n.nodeType === Node.ELEMENT_NODE);
+        .filter(n => n.nodeType === Node.ELEMENT_NODE) || [];
   }
 
   /**
