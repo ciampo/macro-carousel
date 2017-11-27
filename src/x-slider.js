@@ -66,7 +66,19 @@ class XSlider extends HTMLElement {
     this._resizeTimer = undefined;
 
     // Touch / drag
-    this._pointerActive = false;
+
+    /**
+     * Whether the user's pointer is currently being used to drag the slides.
+     * @type {boolean}
+     * @private
+     */
+    this._isPointerActive = false;
+
+    /**
+     * The ID of the active pointer that is dragging the slides.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerId = undefined;
     this._pointerFirstX = undefined;
     this._pointerFirstY = undefined;
@@ -763,9 +775,9 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerDown(e) {
-    if (!this._pointerActive) {
+    if (!this._isPointerActive) {
       this._decelerating = false;
-      this._pointerActive = true;
+      this._isPointerActive = true;
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
       this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.y;
@@ -791,7 +803,7 @@ class XSlider extends HTMLElement {
   _onPointerMove(e) {
     // Checking the pointer id avoids running the same code twice
     // in case of touch screens.
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive && e.id === this._pointerId) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
       this._pointerCurrentX = e.x;
@@ -817,7 +829,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerEnd(e) {
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive && e.id === this._pointerId) {
       this._stopPointerTracking();
     }
   }
@@ -828,7 +840,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _stopPointerTracking() {
-    this._pointerActive = false;
+    this._isPointerActive = false;
     this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
