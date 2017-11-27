@@ -765,7 +765,7 @@ class XSlider extends HTMLElement {
       this._pointerActive = true;
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
-      this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.x;
+      this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.y;
 
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
