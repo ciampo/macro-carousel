@@ -35,16 +35,61 @@ class XSlider extends HTMLElement {
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
-    // References to DOM nodes.
+    /**
+     * The wrapper element enclosing the slides.
+     * @type {HTMLElement}
+     * @private
+     */
     this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
+
+    /**
+     * The internal wrapper element (responsible for the slides layout
+     *  and for sliding).
+     * @type {HTMLElement}
+     * @private
+     */
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
+
+    /**
+     * The slot where the slides are injected into.
+     * @type {HTMLSlotElement}
+     * @private
+     */
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
 
+    /**
+     * The element wrapping the pagination indicators.
+     * @type {HTMLElement}
+     * @private
+     */
     this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+
+    /**
+     * Array of pagination indicators.
+     * @type {Array<HTMLElement>}
+     * @private
+     */
     this._paginationIndicators = [];
 
+    /**
+     * The element wrapping the navigation previous/next buttons.
+     * @type {HTMLElement}
+     * @private
+     */
     this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
+
+    /**
+     * The navigation `previous` button.
+     * @type {HTMLElement|undefined}
+     * @private
+     */
     this._prevButton = undefined;
+
+    /**
+     * The navigation `next` button.
+     * @type {HTMLElement|undefined}
+     * @private
+     */
     this._nextButton = undefined;
 
     /**
@@ -54,15 +99,54 @@ class XSlider extends HTMLElement {
      */
     this._slides = [];
 
-    // State
+    /**
+     * The index of the the last view.
+     * @type {number}
+     * @private
+     */
     this._lastViewIndex = -1;
 
-    // Layout related
+    /**
+     * The width of this._slidesWrapper (in px). Derived from CSS.
+     * @type {number}
+     * @private
+     */
     this._wrapperWidth = 0;
+
+    /**
+     * The width of the gap between each slide (in px). Derived from CSS.
+     * @type {number}
+     * @private
+     */
     this._slidesGap = 0;
+
+    /**
+     * The width of each individual slide (in px). Computed mathematically
+     * from other properties.
+     * @type {number}
+     * @private
+     */
     this._slidesWidth = 0;
-    this._slidesPosition = undefined;
-    this._wrapperTranslateX = undefined;
+
+    /**
+     * The position at which each slides is within the wrapper.
+     * @type {Array<number>}
+     * @private
+     */
+    this._slidesPosition = [];
+
+    /**
+     * The translation on the X axis applied to this._slidesWrapper (in px).
+     * @type {number}
+     * @private
+     */
+    this._wrapperTranslateX = 0;
+
+    /**
+     * The reference to the timer used to debounce the resize handler.
+     * @type {number|undefined}
+     * @private
+     */
     this._resizeTimer = undefined;
 
     // Touch / drag
@@ -80,19 +164,109 @@ class XSlider extends HTMLElement {
      * @private
      */
     this._pointerId = undefined;
+
+    /**
+     * The coordinate on the X axis at which the active pointer first "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerFirstX = undefined;
+
+    /**
+     * The coordinate on the Y axis at which the active pointer first "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerFirstY = undefined;
+
+    /**
+     * The coordinate on the X axis used to the set the wrapper's translation
+     * during the last frame.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerLastX = undefined;
+
+    /**
+     * The coordinate on the Y axis used to the set the wrapper's translation
+     * during the last frame.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerLastY = undefined;
+
+    /**
+     * The coordinate on the X axis at which the active pointer last "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerCurrentX = undefined;
+
+    /**
+     * The coordinate on the Y axis at which the active pointer last "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerCurrentY = undefined;
+
+    /**
+     * Array containining the translation value assumed by the slidesWrapper in
+     * the last 100ms. Used to compute the starting velocity when decelerating.
+     * @type {Array<number>}
+     * @private
+     */
     this._trackingPoints = [];
+
+    /**
+     * Flag used to limit the number of udpates to the slidesWrapper to once
+     * per frame (the pointer events may fire more frequently than that).
+     * @type {boolean}
+     * @private
+     */
     this._dragTicking = false;
+
+    /**
+     * The upper bound for the initial value of the velocity when decelerating.
+     * @type {number}
+     * @private
+     */
     this._maxDecelVelocity = 30;
+
+    /**
+     * The lower bound for the initial value of the velocity when decelerating.
+     * @type {number}
+     * @private
+     */
     this._minDecelVelocity = 15;
+
+    /**
+     * The value for the friction strenght used when decelerating.
+     * @type {number}
+     * @private
+     */
     this._friction = 0.74;
+
+    /**
+     * The value for the attraction strenght used when decelerating.
+     * @type {number}
+     * @private
+     */
     this._attraction = 0.022;
-    this._decelVelocity = undefined;
+
+    /**
+     * The value of the deceleration velocity (in px).
+     * @type {number}
+     * @private
+     */
+    this._decelVelocity = 0;
+
+    /**
+     * Whether the slider is currently decelerating towards its final point
+     * after being dragged by the user.
+     * @type {boolean}
+     * @private
+     *
+     */
     this._decelerating = false;
   }
 
@@ -677,12 +851,11 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateWrapAround() {
-    console.log(this._lastViewIndex, this.loop);
     this._wrapAround = this.loop && this._lastViewIndex > 0;
     if (this._wrapAround) {
-      console.log('Wrap Around enabled');
+      // console.log('Wrap Around enabled');
     } else {
-      console.log('Falling back to old-style loop');
+      // console.log('Falling back to old-style loop');
      }
   }
 
