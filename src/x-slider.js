@@ -240,14 +240,15 @@ class XSlider extends HTMLElement {
     this._minDecelVelocity = 15;
 
     /**
-     * The value for the friction strenght used when decelerating.
+     * The value for the friction strength used when decelerating.
+     * 0 < friction < 1.
      * @type {number}
      * @private
      */
     this._friction = 0.74;
 
     /**
-     * The value for the attraction strenght used when decelerating.
+     * The value for the attraction strength used when decelerating.
      * @type {number}
      * @private
      */
