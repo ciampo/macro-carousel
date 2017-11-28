@@ -16,6 +16,22 @@ const arrowLeftTemplate = document.createElement('template');
 arrowLeftTemplate.innerHTML = `${arrowLeft}`;
 
 /**
+ * An object representing either a touch event or a mouse event.
+ * @typedef {object} NormalisedPointerEvent
+ * @property {number} x The x coordinate.
+ * @property {number} y The y coordinate.
+ * @property {?number} id The pointer identifier.
+ * @property {MouseEvent|TouchEvent} event The original event object.
+ */
+
+/**
+ * An object containing information about a slide.
+ * @typedef {object} SlideInfo
+ * @property {HTMLElement} element The DOM element.
+ * @property {number} layoutIndex The position occupied i.
+ */
+
+/**
  * A slider/carousel Web Component.
  */
 class XSlider extends HTMLElement {
@@ -94,7 +110,7 @@ class XSlider extends HTMLElement {
 
     /**
      * The array of slides, i.e. the children of this._slidesSlot.
-     * @type {Array<HTMLElement>}
+     * @type {Array<SlideInfo>}
      * @private
      */
     this._slides = [];
@@ -683,7 +699,7 @@ class XSlider extends HTMLElement {
    */
   _getSlidesGap() {
     const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
+        getComputedStyle(this._slides[0].element)['margin-right'], 10);
     return !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 
@@ -709,7 +725,7 @@ class XSlider extends HTMLElement {
    */
   _computeSlidesPositions() {
     this._slidesPosition = this._slides
-        .map((s, i) => - i * (this._slidesWidth + this._slidesGap));
+        .map(s => - s.layoutIndex * (this._slidesWidth + this._slidesGap));
   }
 
   /**
@@ -854,7 +870,7 @@ class XSlider extends HTMLElement {
   _updateWrapAround() {
     this._wrapAround = this.loop && this._lastViewIndex > 0;
     if (this._wrapAround) {
-      // console.log('Wrap Around enabled');
+      // console.xlog('Wrap Around enabled');
     } else {
       // console.log('Falling back to old-style loop');
      }
@@ -867,12 +883,13 @@ class XSlider extends HTMLElement {
 
   /**
    * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
-   * @returns {Array<HTMLElement>} The elements found in #slidesSlot.
+   * @returns {Array<SlideInfo>} Info about the slides found in #slidesSlot.
    * @private
    */
   _getSlides() {
     return this._slidesSlot.assignedNodes()
-        .filter(n => n.nodeType === Node.ELEMENT_NODE) || [];
+        .filter(n => n.nodeType === Node.ELEMENT_NODE)
+        .map((n, i) => ({element: n, layoutIndex: i})) || [];
   }
 
   /**
@@ -903,15 +920,6 @@ class XSlider extends HTMLElement {
       this._externalWrapper.removeEventListener('mousedown', this);
     }
   }
-
-  /**
-   * A normalised object representing either a touch event or a mouse event.
-   * @typedef {object} NormalisedPointerEvent
-   * @property {number} x The x coordinate.
-   * @property {number} y The y coordinate.
-   * @property {?number} id The pointer identifier.
-   * @property {MouseEvent|TouchEvent} event The original event object.
-   */
 
   /**
    * Normalises touch and mouse events into an object with the same properties.
