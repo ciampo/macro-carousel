@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 
-var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  min-width: 48px;\n  min-height: 48px;\n  padding: 0;\n  color: var(--x-slider-navigation-color);\n  background: none;\n  border: 0;\n  border-radius: 50%;\n  cursor: pointer;\n}\n\n#previous:focus,\n#next:focus {\n  background-color: var(--x-slider-navigation-background-color-focus);\n  outline: none;\n}\n\n#previous:active,\n#next:active {\n  background-color: var(--x-slider-navigation-background-color-active);\n}\n\n#previous[disabled],\n#next[disabled] {\n  opacity: .2;\n}\n\n#previous svg,\n#next svg {\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n  pointer-events: none;\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
+var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size: 12px;\n  --x-slider-pagination-gap: 8px;\n  --x-slider-pagination-height: 32px;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  contain: strict;\n}\n\n#pagination button {\n  width: var(--x-slider-pagination-size);\n  height: var(--x-slider-pagination-size);\n  padding: 0;\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  border: none;\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  font-size: 0;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button:hover,\n#pagination button:focus,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button[disabled] {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n}\n\n:host([drag]) ::slotted(*) {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  min-width: 48px;\n  min-height: 48px;\n  padding: 0;\n  color: var(--x-slider-navigation-color);\n  background: none;\n  border: 0;\n  border-radius: 50%;\n  cursor: pointer;\n}\n\n#previous:focus,\n#next:focus {\n  background-color: var(--x-slider-navigation-background-color-focus);\n  outline: none;\n}\n\n#previous:active,\n#next:active {\n  background-color: var(--x-slider-navigation-background-color-active);\n}\n\n#previous[disabled],\n#next[disabled] {\n  opacity: .2;\n}\n\n#previous svg,\n#next svg {\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n  pointer-events: none;\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
 
 var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<div id=\"pagination\"></div>";
 
@@ -42,47 +42,238 @@ class XSlider extends HTMLElement {
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
-    // References to DOM nodes.
+    /**
+     * The wrapper element enclosing the slides.
+     * @type {HTMLElement}
+     * @private
+     */
     this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
+
+    /**
+     * The internal wrapper element (responsible for the slides layout
+     *  and for sliding).
+     * @type {HTMLElement}
+     * @private
+     */
     this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
+
+    /**
+     * The slot where the slides are injected into.
+     * @type {HTMLSlotElement}
+     * @private
+     */
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
 
+    /**
+     * The element wrapping the pagination indicators.
+     * @type {HTMLElement}
+     * @private
+     */
     this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+
+    /**
+     * Array of pagination indicators.
+     * @type {Array<HTMLElement>}
+     * @private
+     */
     this._paginationIndicators = [];
 
+    /**
+     * The element wrapping the navigation previous/next buttons.
+     * @type {HTMLElement}
+     * @private
+     */
     this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
+
+    /**
+     * The navigation `previous` button.
+     * @type {HTMLElement|undefined}
+     * @private
+     */
     this._prevButton = undefined;
+
+    /**
+     * The navigation `next` button.
+     * @type {HTMLElement|undefined}
+     * @private
+     */
     this._nextButton = undefined;
 
-    this._slides = undefined;
+    /**
+     * The array of slides, i.e. the children of this._slidesSlot.
+     * @type {Array<HTMLElement>}
+     * @private
+     */
+    this._slides = [];
 
-    // State
+    /**
+     * The index of the the last view.
+     * @type {number}
+     * @private
+     */
     this._lastViewIndex = -1;
 
-    // Layout related
+    /**
+     * The width of this._slidesWrapper (in px). Derived from CSS.
+     * @type {number}
+     * @private
+     */
     this._wrapperWidth = 0;
+
+    /**
+     * The width of the gap between each slide (in px). Derived from CSS.
+     * @type {number}
+     * @private
+     */
     this._slidesGap = 0;
+
+    /**
+     * The width of each individual slide (in px). Computed mathematically
+     * from other properties.
+     * @type {number}
+     * @private
+     */
     this._slidesWidth = 0;
-    this._slidesPosition = undefined;
-    this._wrapperTranslateX = undefined;
+
+    /**
+     * The position at which each slides is within the wrapper.
+     * @type {Array<number>}
+     * @private
+     */
+    this._slidesPosition = [];
+
+    /**
+     * The translation on the X axis applied to this._slidesWrapper (in px).
+     * @type {number}
+     * @private
+     */
+    this._wrapperTranslateX = 0;
+
+    /**
+     * The reference to the timer used to debounce the resize handler.
+     * @type {number|undefined}
+     * @private
+     */
     this._resizeTimer = undefined;
 
     // Touch / drag
-    this._pointerActive = false;
+
+    /**
+     * Whether the user's pointer is currently being used to drag the slides.
+     * @type {boolean}
+     * @private
+     */
+    this._isPointerActive = false;
+
+    /**
+     * The ID of the active pointer that is dragging the slides.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerId = undefined;
+
+    /**
+     * The coordinate on the X axis at which the active pointer first "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerFirstX = undefined;
+
+    /**
+     * The coordinate on the Y axis at which the active pointer first "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerFirstY = undefined;
+
+    /**
+     * The coordinate on the X axis used to the set the wrapper's translation
+     * during the last frame.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerLastX = undefined;
+
+    /**
+     * The coordinate on the Y axis used to the set the wrapper's translation
+     * during the last frame.
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerLastY = undefined;
+
+    /**
+     * The coordinate on the X axis at which the active pointer last "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerCurrentX = undefined;
+
+    /**
+     * The coordinate on the Y axis at which the active pointer last "touched".
+     * @type {number|undefined}
+     * @private
+     */
     this._pointerCurrentY = undefined;
+
+    /**
+     * Array containining the translation value assumed by the slidesWrapper in
+     * the last 100ms. Used to compute the starting velocity when decelerating.
+     * @type {Array<number>}
+     * @private
+     */
     this._trackingPoints = [];
+
+    /**
+     * Flag used to limit the number of udpates to the slidesWrapper to once
+     * per frame (the pointer events may fire more frequently than that).
+     * @type {boolean}
+     * @private
+     */
     this._dragTicking = false;
+
+    /**
+     * The upper bound for the initial value of the velocity when decelerating.
+     * @type {number}
+     * @private
+     */
     this._maxDecelVelocity = 30;
+
+    /**
+     * The lower bound for the initial value of the velocity when decelerating.
+     * @type {number}
+     * @private
+     */
     this._minDecelVelocity = 15;
+
+    /**
+     * The value for the friction strenght used when decelerating.
+     * @type {number}
+     * @private
+     */
     this._friction = 0.74;
+
+    /**
+     * The value for the attraction strenght used when decelerating.
+     * @type {number}
+     * @private
+     */
     this._attraction = 0.022;
-    this._decelVelocity = undefined;
+
+    /**
+     * The value of the deceleration velocity (in px).
+     * @type {number}
+     * @private
+     */
+    this._decelVelocity = 0;
+
+    /**
+     * Whether the slider is currently decelerating towards its final point
+     * after being dragged by the user.
+     * @type {boolean}
+     * @private
+     *
+     */
     this._decelerating = false;
   }
 
@@ -104,7 +295,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
 
-    this.update();
+    // this.update();
 
     // Enable transitions only after the initial setup.
     // Double rAF is necessary to wait for 'selected' to take effect.
@@ -221,7 +412,8 @@ class XSlider extends HTMLElement {
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
-    this._updateDrag();
+    this._updateDragEventListeners();
+    this._updateWrapAround();
   }
 
   /**
@@ -301,7 +493,7 @@ class XSlider extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
       case 'selected':
-        if (!this._slides || this._slides.length === 0) {
+        if (this._slides.length === 0) {
           return;
         }
 
@@ -323,6 +515,7 @@ class XSlider extends HTMLElement {
 
       case 'loop':
         this._updateNavigation();
+        this._updateWrapAround();
         break;
 
       case 'navigation':
@@ -334,11 +527,11 @@ class XSlider extends HTMLElement {
         break;
 
       case 'drag':
-        this._updateDrag();
+        this._updateDragEventListeners();
         break;
 
       case 'slides-per-view':
-        if (!this._slides || this._slides.length === 0) {
+        if (this._slides.length === 0) {
           return;
         }
 
@@ -563,8 +756,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updatePagination() {
-    if (!this._paginationWrapper || !this._slides ||
-        this._slides.length === 0) {
+    if (!this._paginationWrapper || this._slides.length === 0) {
       return;
     }
 
@@ -618,8 +810,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateNavigation() {
-    if (!this._navigationWrapper || !this._slides ||
-        this._slides.length === 0) {
+    if (!this._navigationWrapper || this._slides.length === 0) {
       return;
     }
 
@@ -662,6 +853,19 @@ class XSlider extends HTMLElement {
     }
   }
 
+  /**
+   * Decides whether to wrapAround or not based on the number of views.
+   * @private
+   */
+  _updateWrapAround() {
+    this._wrapAround = this.loop && this._lastViewIndex > 0;
+    if (this._wrapAround) {
+      // console.log('Wrap Around enabled');
+    } else {
+      // console.log('Falling back to old-style loop');
+     }
+  }
+
 
   // ===========================================================================
   // Slides slot
@@ -674,7 +878,7 @@ class XSlider extends HTMLElement {
    */
   _getSlides() {
     return this._slidesSlot.assignedNodes()
-        .filter(n => n.nodeType === Node.ELEMENT_NODE);
+        .filter(n => n.nodeType === Node.ELEMENT_NODE) || [];
   }
 
   /**
@@ -696,7 +900,7 @@ class XSlider extends HTMLElement {
    * Add/remove event listeners for pointer interactions.
    * @private
    */
-  _updateDrag() {
+  _updateDragEventListeners() {
     if (this.drag) {
       this._externalWrapper.addEventListener('touchstart', this);
       this._externalWrapper.addEventListener('mousedown', this);
@@ -751,12 +955,12 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerDown(e) {
-    if (!this._pointerActive) {
+    if (!this._isPointerActive) {
       this._decelerating = false;
-      this._pointerActive = true;
+      this._isPointerActive = true;
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
-      this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.x;
+      this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.y;
 
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
@@ -779,7 +983,7 @@ class XSlider extends HTMLElement {
   _onPointerMove(e) {
     // Checking the pointer id avoids running the same code twice
     // in case of touch screens.
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive && e.id === this._pointerId) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
       this._pointerCurrentX = e.x;
@@ -805,7 +1009,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _onPointerEnd(e) {
-    if (this._pointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive && e.id === this._pointerId) {
       this._stopPointerTracking();
     }
   }
@@ -816,7 +1020,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _stopPointerTracking() {
-    this._pointerActive = false;
+    this._isPointerActive = false;
     this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
