@@ -4,13 +4,15 @@
   "description": "Slider as a vanilla Web Component",
   "main": "src/x-slider.js",
   "scripts": {
-    "start": "node_modules/.bin/rollup -c rollup-dev.config.js --watch",
-    "test-lint": "eslint src test *.js",
+    "bundle-dev": "node_modules/.bin/rollup -c rollup-dev.config.js --watch",
+    "bundle-prod": "node_modules/.bin/rollup -c rollup-prod.config.js",
+    "test-lint": "eslint test *.js",
     "test-unit": "karma start",
     "test-e2e": "node run-e2e-tests.js",
     "test": "npm run test-lint && npm run test-unit && npm run test-e2e",
     "docs": "rm -rf docs/ && jsdoc -d docs src/x-slider.js",
-    "build": "npm run docs && node_modules/.bin/rollup -c rollup-prod.config.js"
+    "start": "npm run bundle-dev",
+    "build": "npm run docs && npm run bundle-prod"
   },
   "repository": {
     "type": "git",
