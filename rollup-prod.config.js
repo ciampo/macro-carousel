@@ -2,8 +2,9 @@ import html from 'rollup-plugin-html';
 import sass from 'rollup-plugin-sass';
 import autoprefixer from 'autoprefixer';
 import postcss from 'postcss';
-import uglify from 'rollup-plugin-uglify';
-import {minify} from 'uglify-es';
+import minify from 'rollup-plugin-babel-minify';
+
+const config = require('./package.json');
 
 export default {
   input: 'src/x-slider.js',
@@ -30,6 +31,11 @@ export default {
         removeComments: true,
       },
     }),
-    uglify({}, minify),
+    minify({
+      removeConsole: true,
+      comments: false,
+      banner: `/* ${config.name} ${config.version} */`,
+      sourceMap: false,
+    }),
   ],
 };
