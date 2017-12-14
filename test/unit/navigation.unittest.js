@@ -1,3 +1,5 @@
+/* eslint max-len: ["off"] */
+
 // Try to set a different value (not booleans) for the pagination prop
 
 // check that navigation buttons are vertically aligned and at the sides?

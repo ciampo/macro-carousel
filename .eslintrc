@@ -5,15 +5,15 @@
     "mocha": true
   },
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2017,
+    "sourceType": "module"
   },
-  // "extends": ["eslint:recommended", "google"],
   "extends": ["google"],
   "rules": {
     "max-len": ["error", {"ignoreComments": true}],
     "arrow-parens": 0,
     "valid-jsdoc": "off",
-    "require-jsdoc": "off",
+    "require-jsdoc": 0,
     "keyword-spacing": ["error"],
     "no-console": ["error", {"allow": ["warn", "error"]}],
     "no-extra-semi": ["error"],

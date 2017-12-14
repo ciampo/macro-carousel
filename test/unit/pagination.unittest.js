@@ -1,3 +1,5 @@
+/* eslint max-len: ["off"] */
+
 // Try to set a different value (not booleans) for the pagination prop
 
 // clicking a pagination indicator selectes that view (is it e2e?)
@@ -52,7 +54,7 @@
       it('should always mirror the selected slide', function(done) {
         this.paginationWrapper
             .querySelectorAll('button')
-            .forEach((r, i)  => {
+            .forEach((r, i) => {
               if (i !== 0) {
                 expect(r.disabled).to.be.false;
               } else {
