@@ -44,6 +44,23 @@ const arrowLeftTemplate = document.createElement('template');
 arrowLeftTemplate.innerHTML = `${arrowLeft}`;
 
 /**
+ * An object representing either a touch event or a mouse event.
+ * @typedef {object} NormalisedPointerEvent
+ * @property {number} x The x coordinate.
+ * @property {number} y The y coordinate.
+ * @property {?number} id The pointer identifier.
+ * @property {MouseEvent|TouchEvent} event The original event object.
+ */
+
+/**
+ * An object containing information about a slide.
+ * @typedef {object} SlideInfo
+ * @property {HTMLElement} element The DOM element.
+ * @property {number} layoutIndex The real index in the layout.
+ * @property {number} position The current position within the slder (in px).
+ */
+
+/**
  * A slider/carousel Web Component.
  */
 class XSlider extends HTMLElement {
@@ -122,7 +139,7 @@ class XSlider extends HTMLElement {
 
     /**
      * The array of slides, i.e. the children of this._slidesSlot.
-     * @type {Array&lt;HTMLElement>}
+     * @type {Array&lt;SlideInfo>}
      * @private
      */
     this._slides = [];
@@ -133,6 +150,24 @@ class XSlider extends HTMLElement {
      * @private
      */
     this._lastViewIndex = -1;
+
+    /**
+     * An internal index representing the "wrapAround" iteration about the
+     * selected index. If _wrapAround is false, its value doesn't change.
+     * @type {number}
+     * @private
+     */
+    this._selectedIteration = 0;
+
+
+    /**
+     * An internal index keeping track of the previous value for the layout
+     * index. Useful for understanding which slides need to be moved.Gets
+     * updated every time `selected` changes.
+     * @type {number}
+     * @private
+     */
+    this._previousEffectiveLayoutIndex = 0;
 
     /**
      * The width of this._slidesWrapper (in px). Derived from CSS.
@@ -155,13 +190,6 @@ class XSlider extends HTMLElement {
      * @private
      */
     this._slidesWidth = 0;
-
-    /**
-     * The position at which each slides is within the wrapper.
-     * @type {Array&lt;number>}
-     * @private
-     */
-    this._slidesPosition = [];
 
     /**
      * The translation on the X axis applied to this._slidesWrapper (in px).
@@ -238,6 +266,13 @@ class XSlider extends HTMLElement {
     this._pointerCurrentY = undefined;
 
     /**
+     * Updated during pointer events.
+     * @type {number|undefined}
+     * @private
+     */
+    this._lastDraggedLayoutIndex = undefined;
+
+    /**
      * Array containining the translation value assumed by the slidesWrapper in
      * the last 100ms. Used to compute the starting velocity when decelerating.
      * @type {Array&lt;number>}
@@ -306,9 +341,6 @@ class XSlider extends HTMLElement {
    * @private
    */
   connectedCallback() {
-    // Get Light Dom.
-    this._slides = this._getSlides();
-
     // Setup the component.
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
@@ -317,12 +349,14 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
 
+    this._previousEffectiveLayoutIndex = this.selected;
+
     // this.update();
 
     // Enable transitions only after the initial setup.
     // Double rAF is necessary to wait for 'selected' to take effect.
-    requestAnimationFrame(_ => {
-      requestAnimationFrame(_ => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         this.setAttribute('transitioning', '');
       });
     });
@@ -429,13 +463,13 @@ class XSlider extends HTMLElement {
    */
   update() {
     this._computeSizes();
+    this._updateWrapAround();
     this._computeSlidesPerViewLayout();
-    this._computeSlidesPositions();
+    this._shiftSlides(this._slides.map(slide => slide.layoutIndex), true);
     this._slideTo(this.selected);
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
-    this._updateWrapAround();
   }
 
   /**
@@ -444,20 +478,24 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   previous() {
-    this.selected = this._computePrevious(this.selected);
+    this._computePrevious(this.selected);
   }
 
   /**
    * Computes the previous index.
    * @param {number} i The index of reference used to compure the previous.
-   * @return {number} The previous index with respect to the input.
    * @private
    */
   _computePrevious(i) {
+    // Wrap around is true only if loop is true.
     if (i > 0) {
-      return i - 1;
+      this.selected = i - 1;
     } else if (this.loop) {
-      return this._lastViewIndex;
+      if (this._wrapAround) {
+        this._selectedIteration -= 1;
+      }
+
+      this.selected = this._lastViewIndex;
     }
   }
 
@@ -467,7 +505,7 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   next() {
-    this.selected = this._computeNext(this.selected);
+    this._computeNext(this.selected);
   }
 
   /**
@@ -477,10 +515,15 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computeNext(i) {
+    // Wrap around is true only if loop is true.
     if (i &lt; this._lastViewIndex) {
-      return i + 1;
+      this.selected = i + 1;
     } else if (this.loop) {
-      return 0;
+      if (this._wrapAround) {
+        this._selectedIteration += 1;
+      }
+
+      this.selected = 0;
     }
   }
 
@@ -519,25 +562,64 @@ class XSlider extends HTMLElement {
           return;
         }
 
-        const parsedSelected = parseInt(newValue, 10);
+        const parsedNewValue = parseInt(newValue, 10);
 
         // Accept only numbers between `0` and `this._lastViewIndex`.
-        if (!Number.isFinite(parsedSelected) ||
-            parsedSelected > this._lastViewIndex ||
-            parsedSelected &lt; 0) {
+        if (!Number.isFinite(parsedNewValue) ||
+            parsedNewValue > this._lastViewIndex ||
+            parsedNewValue &lt; 0) {
           this.selected = oldValue;
           return;
         }
 
-        // Show the new selected slide and update pagination.
+        if (this._wrapAround) {
+          const effectiveLayoutIndex = this.selected +
+              this._selectedIteration * (this._lastViewIndex + 1);
+
+          // Get the "jump" between the current layout position and the previous
+          // one. This gives the indication of which slides need to be moved to
+          // a different location.
+          // selectionDelta: if negative, we're selecting a slide to the right
+          // The absolute value is shows by how many slides the "jump" is.
+          // If selectionDelta === 0, no action is needed.
+          const selectionDelta = this._previousEffectiveLayoutIndex -
+              effectiveLayoutIndex;
+
+          // Compute which slides are going to be in view in the upcoming
+          // transition.
+          const slidesInViewIndexes = [];
+          const indexOffset = selectionDelta &lt; 0 ?
+              this.slidesPerView + selectionDelta : 0;
+          // Starting at -1 means that we're also shifting the slide to the left
+          // of the current one. Useful to not brake the slider while dragging
+          // left.
+          for (let i = -1; i &lt; Math.abs(selectionDelta); i++) {
+            // The index is compute by adding up:
+            // - i: the current iteration's index
+            // - effectiveLayoutIndex: where the slider is currently at
+            // - indexOffset: compensates when scrolling right by taking into
+            //   account the number of slidesPerView and selectionDelta
+            slidesInViewIndexes.push(i + effectiveLayoutIndex + indexOffset);
+          }
+
+          this._shiftSlides(slidesInViewIndexes);
+
+          this._previousEffectiveLayoutIndex = effectiveLayoutIndex;
+        }
+
         this._slideTo(this.selected);
         this._updatePagination();
         this._updateNavigation();
         break;
 
       case 'loop':
-        this._updateNavigation();
         this._updateWrapAround();
+        this._computeSlidesPerViewLayout();
+
+        // Reset the slides 'layoutIndex', transform and position.
+        this._shiftSlides(this._slides.map((slide, index) => index));
+        this._updateNavigation();
+        this._updatePagination();
         break;
 
       case 'navigation':
@@ -711,7 +793,7 @@ class XSlider extends HTMLElement {
    */
   _getSlidesGap() {
     const parsedGap = parseInt(
-        getComputedStyle(this._slides[0])['margin-right'], 10);
+        getComputedStyle(this._slides[0].element)['margin-right'], 10);
     return !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 
@@ -720,24 +802,92 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computeSlidesPerViewLayout() {
+    if (this._slides.length === 0) {
+      return;
+    }
+
     // Used to compute the slides's width.
     this.style.setProperty('--x-slider__internal__slides-per-view',
         this.slidesPerView);
 
     // Recompute the index of the last view (aka max value for `selected`).
-    this._lastViewIndex = Math.max(0, this._slides.length - this.slidesPerView);
-    if (this.selected > this._lastViewIndex) {
+    this._lastViewIndex = this._wrapAround ? this._slides.length - 1 :
+        this._computeLastViewIndex();
+    // TODO: check if the wrapAround check makes sense. The idea is to not force
+    // a new value for selected in case the slider is wrapping around. But
+    // probably we need to recompute slide positions and translate to them
+    if (!this._wrapAround &amp;&amp; this.selected > this._lastViewIndex) {
       this.selected = this._lastViewIndex;
     }
   }
 
   /**
-   * Calculates the position of each slide within the wrapper.
+   * Computes how many views there could be if the slider didn't wrap around.
+   * @return {number} The index of the last view.
    * @private
    */
-  _computeSlidesPositions() {
-    this._slidesPosition = this._slides
-        .map((s, i) => - i * (this._slidesWidth + this._slidesGap));
+  _computeLastViewIndex() {
+    return Math.max(0, this._slides.length - this.slidesPerView);
+  }
+
+
+  /**
+   * Extracts the slide's data index (i.e. between 0 and this._slides.lenght -1)
+   * from its layoutIndex.
+   * @param {number} layoutIndex The slide's layoutIndex
+   * @return {number} The slide's data index.
+   * @private
+   */
+  _getSlideDataIndexFromLayoutIndex(layoutIndex) {
+    if (this._slides.length === 0) {
+      return;
+    }
+
+    let positiveLayoutIndex = layoutIndex;
+    while (positiveLayoutIndex &lt; 0) {
+      positiveLayoutIndex += this._slides.length;
+    }
+    return positiveLayoutIndex % this._slides.length;
+  }
+
+  /**
+   * Shifts the slides to the new position needed.
+   * @param {Array&lt;number>} slidesInViewIndexes Layout indexes of the slides
+   * that will be seen during the next slider transition.
+   * @param {boolean} [force]
+   * @private
+   */
+  _shiftSlides(slidesInViewIndexes, force = false) {
+    if (this._slides.length === 0) {
+      return;
+    }
+
+    let dataIndex;
+    slidesInViewIndexes.forEach(inViewIndex => {
+      if (force ||
+          !this._slides.find(slide => slide.layoutIndex === inViewIndex)) {
+        // Correctly compute dataIndex also when it's negative.
+        dataIndex = this._getSlideDataIndexFromLayoutIndex(inViewIndex);
+
+        this._slides[dataIndex].layoutIndex = inViewIndex;
+        this._slides[dataIndex].position =
+            this._computeSlidePosition(inViewIndex);
+        // Using (dataIndex - inViewIndex) instead of (inViewIndex - dataIndex)
+        // to compensate for the "-" in the this._computeSlidePosition function.
+        this._slides[dataIndex].element.style.transform = `translateX(${
+            this._computeSlidePosition(dataIndex - inViewIndex)}px)`;
+      }
+    });
+  }
+
+  /**
+   * Computes the slide's position along the x axis given its index.
+   * @param {number} slideIndex
+   * @return {number} The view's position (in px).
+   * @private
+   */
+  _computeSlidePosition(slideIndex) {
+    return - slideIndex * (this._slidesWidth + this._slidesGap);
   }
 
   /**
@@ -751,15 +901,6 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Computes the view's position along the x axis.
-   * @param {number} viewIndex
-   * @private
-   */
-  _getViewPosition(viewIndex) {
-    return this._slidesPosition[viewIndex];
-  }
-
-  /**
    * Translates the slider to show the target view.
    * @param {number} targetView The view to slide to.
    * @private
@@ -769,7 +910,7 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    this._setWrapperTranslateX(this._getViewPosition(targetView));
+    this._setWrapperTranslateX(this._slides[targetView].position);
   }
 
   /**
@@ -786,9 +927,9 @@ class XSlider extends HTMLElement {
         this._paginationWrapper.childElementCount !==
         this._lastViewIndex + 1)) {
       // Remove all children of pag wrapper and their ev listeners
-      this._paginationIndicators.forEach(el => {
-        el.removeEventListener('click', this);
-        this._paginationWrapper.removeChild(el);
+      this._paginationIndicators.forEach(indicatorEl => {
+        indicatorEl.removeEventListener('click', this);
+        this._paginationWrapper.removeChild(indicatorEl);
       });
       this._paginationIndicators.length = 0;
     }
@@ -811,8 +952,8 @@ class XSlider extends HTMLElement {
       }
 
       // Update `disabled` to highlight the selected slide.
-      this._paginationIndicators.forEach((btn, i) => {
-        btn.disabled = i === this.selected;
+      this._paginationIndicators.forEach((btn, index) => {
+        btn.disabled = index === this.selected;
       });
     }
   }
@@ -880,12 +1021,12 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateWrapAround() {
-    this._wrapAround = this.loop &amp;&amp; this._lastViewIndex > 0;
-    if (this._wrapAround) {
-      // console.log('Wrap Around enabled');
-    } else {
-      // console.log('Falling back to old-style loop');
-     }
+    // this._computeLastViewIndex() > 1 means that there are at least 2 slides
+    // more than the number of slides in view. 2 extra slides are need in
+    // order to successfully shift the slides and simulate an infinite loop.
+    this._wrapAround = this.loop &amp;&amp; this._computeLastViewIndex() > 1;
+
+    // TODO: apply consequences (if there's any).
   }
 
 
@@ -895,12 +1036,19 @@ class XSlider extends HTMLElement {
 
   /**
    * Gets the elements in the light DOM (assignedNodes() of #slidesSlot).
-   * @returns {Array&lt;HTMLElement>} The elements found in #slidesSlot.
+   * @returns {Array&lt;SlideInfo>} Info about the slides found in #slidesSlot.
    * @private
    */
   _getSlides() {
+    // Get light DOM in #slidesSlot, keep only Element nodes,
+    // create a SlideInfo object out of it.
     return this._slidesSlot.assignedNodes()
-        .filter(n => n.nodeType === Node.ELEMENT_NODE) || [];
+        .filter(node => node.nodeType === Node.ELEMENT_NODE)
+        .map((node, index) => ({
+          element: node,
+          layoutIndex: index,
+          position: this._computeSlidePosition(index),
+        })) || [];
   }
 
   /**
@@ -931,15 +1079,6 @@ class XSlider extends HTMLElement {
       this._externalWrapper.removeEventListener('mousedown', this);
     }
   }
-
-  /**
-   * A normalised object representing either a touch event or a mouse event.
-   * @typedef {object} NormalisedPointerEvent
-   * @property {number} x The x coordinate.
-   * @property {number} y The y coordinate.
-   * @property {?number} id The pointer identifier.
-   * @property {MouseEvent|TouchEvent} event The original event object.
-   */
 
   /**
    * Normalises touch and mouse events into an object with the same properties.
@@ -983,6 +1122,7 @@ class XSlider extends HTMLElement {
       this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
       this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.y;
+      this._lastDraggedLayoutIndex = this._slides[this.selected].layoutIndex;
 
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
@@ -1093,8 +1233,47 @@ class XSlider extends HTMLElement {
    */
   _updateDragPosition() {
     // Current position + the amount of drag happened since the last rAF.
-    this._setWrapperTranslateX(this._wrapperTranslateX +
-        this._pointerCurrentX - this._pointerLastX);
+    let newPosition = this._wrapperTranslateX +
+        this._pointerCurrentX - this._pointerLastX;
+    if (!this._wrapAround) {
+      newPosition = Math.min(0,
+          Math.max(this._slides[this._lastViewIndex].position, newPosition));
+    }
+
+    // TODO - Bug: sometimes slideIndex is undefined. Probably because
+    // this._slidesPositions doesn't get upadted while decelerating?
+
+    // Get current slide we're dragging onto.
+    let slideIndex;
+    let slidePosition;
+    this._slides.forEach((slideObj, index) => {
+      if (slideObj.position >= newPosition &amp;&amp;
+          (typeof slidePosition === 'undefined' ||
+              slideObj.position &lt; slidePosition)) {
+        slidePosition = slideObj.position;
+        slideIndex = index;
+      }
+    });
+
+    if (this._wrapAround) {
+      // Updated (shift) slides.
+      const slidesToShift = [];
+      const firstLayoutIndex = this._slides[slideIndex].layoutIndex - 1;
+      const lastLayoutIndex = firstLayoutIndex + this.slidesPerView + 2;
+      for (let i = firstLayoutIndex; i &lt; lastLayoutIndex; i++) {
+        slidesToShift.push(i);
+      }
+      this._shiftSlides(slidesToShift);
+    } else {
+      // When _wrapAround is disabled, if we drag to the left of the first
+      // slide, the algorithm can't find a value for slideIndex (as indexes
+      // don't go negative in that case).
+      slideIndex = slideIndex || 0;
+    }
+
+    this._lastDraggedLayoutIndex = this._slides[slideIndex].layoutIndex;
+
+    this._setWrapperTranslateX(newPosition);
 
     this._pointerLastX = this._pointerCurrentX;
     this._pointerLastY = this._pointerCurrentY;
@@ -1124,36 +1303,24 @@ class XSlider extends HTMLElement {
           Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
     }
 
-    const distanceTravelled = this._pointerLastX - this._pointerFirstX;
+    this._selectedIteration =
+        Math.floor(this._lastDraggedLayoutIndex / this._slides.length);
 
-    // `newSelected` would be the new index of the selected slide,
-    // based on where the user has dragged so far.
-    // The initial value of newSelected is in preparation to the following loop.
-    let newSelected = distanceTravelled &lt; 0 ? -1 : this._slides.length;
-    this._slidesPosition.forEach((slidePos, slideIndex) => {
-      if (distanceTravelled &lt; 0 &amp;&amp; this._wrapperTranslateX &lt; slidePos) {
-        // Moving to the right.
-        newSelected = Math.max(slideIndex, newSelected);
-      } else if (distanceTravelled > 0 &amp;&amp; this._wrapperTranslateX > slidePos) {
-        // Moving to the left.
-        newSelected = Math.min(slideIndex, newSelected);
-      }
-    });
+    const newSelected =
+        this._getSlideDataIndexFromLayoutIndex(this._lastDraggedLayoutIndex);
 
     if (this._decelVelocity !== 0) {
       // Depending on the direction of the user's drag, go previous/next.
       this.selected = this._decelVelocity > 0 ?
-          this._computePrevious(Math.max(newSelected, 1)) :
-          this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
+          this._computePrevious(newSelected) : this._computeNext(newSelected);
     } else {
       // If the user's pointer was not moving, check the position: if at least
       // 1/3 through the slide, select the previous/next slide.
       const distToCurrent = this._wrapperTranslateX -
-          this._getViewPosition(this.selected);
+          this._slides[this.selected].position;
       if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
         this.selected = distToCurrent > 0 ?
-            this._computePrevious(Math.max(newSelected, 1)) :
-            this._computeNext(Math.min(newSelected, this._lastViewIndex - 1));
+            this._computePrevious(newSelected) : this._computeNext(newSelected);
       }
     }
 
@@ -1169,7 +1336,7 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const snapX = this._getViewPosition(this.selected);
+    const snapX = this._slides[this.selected].position;
 
     // Apply attraction: it moves the slider towards the target.
     // Attraction is bigger when the slide is further away.
@@ -1247,7 +1414,7 @@ window.customElements.define('x-slider', XSlider);
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 28 2017 11:03:24 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 14 2017 17:29:05 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>
