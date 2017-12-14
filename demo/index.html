@@ -89,6 +89,15 @@
       document.head.appendChild(script);
     });
 
+    const slider = document.querySelector('x-slider');
+    const selectedIndicator = document.querySelector('#selected');
+    slider.addEventListener('x-slider-selected-changed', e => {
+      selectedIndicator.textContent = e.detail;
+    });
+
+    customElements.whenDefined('x-slider').then(() => {
+      selectedIndicator.textContent = slider.selected;
+    });
   </script>
 </body>
 </html>

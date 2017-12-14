@@ -521,10 +521,18 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * The dd event.
+   * @event XSlider#x-slider-selected-changed
+   * @type {Object}
+   * @param {number} detail The index of the new selected slide.
+   */
+
+  /**
    * Called whenever an observedAttribute's value changes.
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
+   * @fires XSlider#x-slider-dd
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -582,6 +590,10 @@ class XSlider extends HTMLElement {
         this._slideTo(this.selected);
         this._updatePagination();
         this._updateNavigation();
+
+        this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
+          detail: this.selected,
+        }));
         break;
 
       case 'loop':
