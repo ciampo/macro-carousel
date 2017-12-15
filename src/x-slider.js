@@ -1224,10 +1224,7 @@ class XSlider extends HTMLElement {
           Math.max(this._slides[this._lastViewIndex].position, newPosition));
     }
 
-    // TODO - Bug: sometimes slideIndex is undefined. Probably because
-    // this._slidesPositions doesn't get upadted while decelerating?
-
-    // Get current slide we're dragging onto.
+    // Get the current slide (the one that we're dragging onto).
     let slideIndex;
     let slidePosition;
     this._slides.forEach((slideObj, index) => {
@@ -1296,7 +1293,8 @@ class XSlider extends HTMLElement {
     if (this._decelVelocity !== 0) {
       // Depending on the direction of the user's drag, go previous/next.
       this.selected = this._decelVelocity > 0 ?
-          this._computePrevious(newSelected) : this._computeNext(newSelected);
+          this._computePrevious(Math.max(1, newSelected + 1)) :
+          this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
     } else {
       // If the user's pointer was not moving, check the position: if at least
       // 1/3 through the slide, select the previous/next slide.
@@ -1304,7 +1302,8 @@ class XSlider extends HTMLElement {
           this._slides[this.selected].position;
       if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
         this.selected = distToCurrent > 0 ?
-            this._computePrevious(newSelected) : this._computeNext(newSelected);
+            this._computePrevious(Math.max(1, newSelected + 1)) :
+            this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
       }
     }
 
