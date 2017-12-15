@@ -117,6 +117,12 @@
   flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
       var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
   margin-right: var(--x-slider-gap);
+
+  /*
+   * Enforces the slides to keep their size even if the content requires
+   * a bigger slide size.
+   */
+  overflow: hidden;
 }
 
 :host([drag]) ::slotted(*) {

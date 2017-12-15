@@ -323,15 +323,8 @@ class XSlider extends HTMLElement {
 
     this._previousEffectiveLayoutIndex = this.selected;
 
-    // this.update();
-
     // Enable transitions only after the initial setup.
-    // Double rAF is necessary to wait for 'selected' to take effect.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.setAttribute('transitioning', '');
-      });
-    });
+    this._enableWrapperTransitions();
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
@@ -739,15 +732,39 @@ class XSlider extends HTMLElement {
   // ===========================================================================
 
   /**
+   * Disables CSS transitions on the slide wrapper. Useful when dragging and
+   * resizing.
+   * @private
+   */
+  _disableWrapperTransitions() {
+    this.removeAttribute('transitioning');
+  }
+
+  /**
+   * Enables CSS transitions on the slide wrapper.
+   * @private
+   */
+  _enableWrapperTransitions() {
+    // Double rAF is necessary to wait for 'selected' to take effect.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.setAttribute('transitioning', '');
+      });
+    });
+  }
+
+  /**
    * Updated the UI when the window resizes.
    * @private
    */
   _onResize() {
     // Debouncing resize.
     clearTimeout(this._resizeTimer);
+    this._disableWrapperTransitions();
     this._resizeTimer = setTimeout(() => {
       this.update();
-    }, 250);
+      this._enableWrapperTransitions();
+    }, 100);
   }
 
   /**
@@ -1143,7 +1160,7 @@ class XSlider extends HTMLElement {
 
       this._addTrackingPoint(this._pointerLastX);
 
-      this.removeAttribute('transitioning');
+      this._disableWrapperTransitions();
 
       this._requestDragTick();
     }
@@ -1338,7 +1355,7 @@ class XSlider extends HTMLElement {
     } else {
       this._setWrapperTranslateX(snapX);
       this._decelerating = false;
-      this.setAttribute('transitioning', '');
+      this._enableWrapperTransitions();
     }
   }
 
