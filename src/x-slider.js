@@ -791,8 +791,8 @@ class XSlider extends HTMLElement {
     }
 
     // Used to compute the slides's width.
-    this.style.setProperty('--x-slider__internal__slides-per-view',
-        this.slidesPerView);
+    this._slidesWrapper.style.setProperty(
+        '--x-slider__internal__slides-per-view', this.slidesPerView);
 
     // Recompute the index of the last view (aka max value for `selected`).
     this._lastViewIndex = this._wrapAround ? this._slides.length - 1 :

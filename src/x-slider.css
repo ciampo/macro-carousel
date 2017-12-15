@@ -27,8 +27,6 @@
   --x-slider-pagination-size: 12px;
   --x-slider-pagination-gap: 8px;
   --x-slider-pagination-height: 32px;
-
-  --x-slider__internal__slides-per-view: 1;
 }
 
 :host([hidden]) {
@@ -63,6 +61,8 @@
   max-height: var(--x-slider-slide-max-height);
 
   will-change: transform;
+
+  --x-slider__internal__slides-per-view: 1;
 }
 
 :host([transitioning]) #slidesWrapper {
