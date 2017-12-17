@@ -443,24 +443,25 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   previous() {
-    this._computePrevious(this.selected);
+    this.selected = this._computePrevious(this.selected);
   }
 
   /**
    * Computes the previous index.
    * @param {number} i The index of reference used to compure the previous.
+   * @return {number} The previous index with respect to the input.
    * @private
    */
   _computePrevious(i) {
     // Wrap around is true only if loop is true.
     if (i > 0) {
-      this.selected = i - 1;
+      return i - 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration -= 1;
       }
 
-      this.selected = this._lastViewIndex;
+      return this._lastViewIndex;
     }
   }
 
@@ -470,7 +471,7 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   next() {
-    this._computeNext(this.selected);
+    this.selected = this._computeNext(this.selected);
   }
 
   /**
@@ -482,13 +483,13 @@ class XSlider extends HTMLElement {
   _computeNext(i) {
     // Wrap around is true only if loop is true.
     if (i < this._lastViewIndex) {
-      this.selected = i + 1;
+      return i + 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration += 1;
       }
 
-      this.selected = 0;
+      return 0;
     }
   }
 
@@ -1289,38 +1290,59 @@ class XSlider extends HTMLElement {
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
 
-    if (diffX === 0) {
-      this._decelVelocity = 0;
-    } else {
-      // Compute the initial deceleration velocity.
-      const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
-      const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
-          maxVel);
-      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
-      this._decelVelocity = diffX / Math.abs(diffX) *
-          Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
-    }
-
     this._selectedIteration =
         Math.floor(this._lastDraggedLayoutIndex / this._slides.length);
 
-    const newSelected =
+    const current =
         this._getSlideDataIndexFromLayoutIndex(this._lastDraggedLayoutIndex);
 
-    if (this._decelVelocity !== 0) {
-      // Depending on the direction of the user's drag, go previous/next.
-      this.selected = this._decelVelocity > 0 ?
-          this._computePrevious(Math.max(1, newSelected + 1)) :
-          this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
-    } else {
+    if (diffX === 0) {
+      this._decelVelocity = 0;
+
       // If the user's pointer was not moving, pick the new selected slide
       // based on the pointer's position.
-      // Because newSelected is the slide the pointer is currently onto,
+      // Because current is the slide the pointer is currently onto,
       // distToCurrent is always going to be positive.
-      const distToCurrent = this._slides[newSelected].position -
+      const distToCurrent = this._slides[current].position -
           this._wrapperTranslateX;
       this.selected = distToCurrent > this._slidesWidth / 2 ?
-          this._computeNext(newSelected) : newSelected;
+          this._computeNext(current) : current;
+    } else {
+      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
+      this._decelVelocity = diffX / Math.abs(diffX) *
+          Math.max(this._minDecelVelocity,
+              Math.min(this._maxDecelVelocity, Math.abs(diffX)));
+
+      // Simulate how fare would the slider go with the decel velocity
+      // Attraction is not taken into account at this point. This is compensated
+      // always rounding to the upper limit for the value of slidesToMove below.
+      let simDistance = 0;
+      let simVelocity = diffX;
+      while (Math.abs(simVelocity) >= 1) {
+        simVelocity *= this._friction;
+        simDistance += simVelocity;
+      }
+
+      // Based on the simulated distance, compte by how many slides we should
+      // move during the deceleration [hase.]
+      let slidesToMove = Math.min(this.slidesPerView - 1,
+          Math.ceil(Math.abs(simDistance) /
+              (this._slidesWidth + this._slidesGap)));
+      if (this._slides[current].position - this._wrapperTranslateX >
+          this._slidesWidth) {
+        slidesToMove += 1;
+      }
+
+      // slidesToMove = Math.ceil(Math.abs(this._maxDecelVelocity / 20));
+
+      // Finally, apply next/prev for [slidesToMove] times and set the new value
+      // of selected.
+      let targetSlide = current;
+      for (let i = 0; i < slidesToMove; i++) {
+        targetSlide = simDistance < 0 ? this._computeNext(targetSlide) :
+            this._computePrevious(targetSlide);
+      }
+      this.selected = targetSlide;
     }
 
     requestAnimationFrame(this._decelerationStep.bind(this));
