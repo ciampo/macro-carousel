@@ -1313,15 +1313,14 @@ class XSlider extends HTMLElement {
           this._computePrevious(Math.max(1, newSelected + 1)) :
           this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
     } else {
-      // If the user's pointer was not moving, check the position: if at least
-      // 1/3 through the slide, select the previous/next slide.
-      const distToCurrent = this._wrapperTranslateX -
-          this._slides[this.selected].position;
-      if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
-        this.selected = distToCurrent > 0 ?
-            this._computePrevious(Math.max(1, newSelected + 1)) :
-            this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
-      }
+      // If the user's pointer was not moving, pick the new selected slide
+      // based on the pointer's position.
+      // Because newSelected is the slide the pointer is currently onto,
+      // distToCurrent is always going to be positive.
+      const distToCurrent = this._slides[newSelected].position -
+          this._wrapperTranslateX;
+      this.selected = distToCurrent > this._slidesWidth / 2 ?
+          this._computeNext(newSelected) : newSelected;
     }
 
     requestAnimationFrame(this._decelerationStep.bind(this));
