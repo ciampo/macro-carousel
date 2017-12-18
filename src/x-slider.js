@@ -2,6 +2,7 @@ import styles from './x-slider.css';
 import html from './x-slider.html';
 import arrowLeft from './arrow-left.svg';
 import arrowRight from './arrow-right.svg';
+import {getEvtListenerOptions} from './passiveEventListeners.js';
 
 /**
  * Markup and styles.
@@ -328,7 +329,7 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this, this._passiveOptions(true));
+    window.addEventListener('resize', this, getEvtListenerOptions(true));
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -1129,8 +1130,8 @@ class XSlider extends HTMLElement {
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      window.addEventListener('touchmove', this, this._passiveOptions(false));
-      window.addEventListener('mousemove', this, this._passiveOptions(false));
+      window.addEventListener('touchmove', this, getEvtListenerOptions(false));
+      window.addEventListener('mousemove', this, getEvtListenerOptions(false));
       window.addEventListener('mouseup', this);
       window.addEventListener('touchend', this);
       window.addEventListener('touchcancel', this);
@@ -1378,43 +1379,6 @@ class XSlider extends HTMLElement {
       this._decelerating = false;
       this._enableWrapperTransitions();
     }
-  }
-
-  // ===========================================================================
-  // Misc
-  // ===========================================================================
-
-  /**
-   * Detects browser support for passive event listeners. See
-   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
-   * @returns {boolean} True if the browser support passive event listeners.
-   * @private
-   */
-  _supportsPassiveEvt() {
-    if (typeof this._passiveEvt === 'undefined') {
-      this._passiveEvt = false;
-      try {
-        const opts = Object.defineProperty({}, 'passive', {
-          get: () => {
-            this._passiveEvt = true;
-          },
-        });
-        window.addEventListener('test', null, opts);
-      } catch (e) {}
-    }
-
-    return this._passiveEvt;
-  }
-
-  /**
-   * Returns the event options (including passive if the browser supports it)
-   * @param {boolean} isPassive Whether the event is passive or not.
-   * @returns {Object|boolean} Based on browser support, returns either an
-   * object representing the options (including passive), or a boolean.
-   * @private
-   */
-  _passiveOptions(isPassive) {
-    return this._supportsPassiveEvt ? {passive: isPassive} : false;
   }
 }
 
