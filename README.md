@@ -2,6 +2,8 @@
 
 Slider as a Vanilla Web Component.
 
+**Please note that this is still a WIP — wait for version 1.0.0 !**
+
 [Demo](https://ciampo.github.io/x-slider/demo/)
 
 [Docs](https://ciampo.github.io/x-slider/docs/XSlider.html)
