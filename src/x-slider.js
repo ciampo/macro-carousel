@@ -454,16 +454,20 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computePrevious(i) {
+    let previousSlideIndex;
+
     // Wrap around is true only if loop is true.
     if (i > 0) {
-      return i - 1;
+      previousSlideIndex = i - 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration -= 1;
       }
 
-      return this._lastViewIndex;
+      previousSlideIndex = this._lastViewIndex;
     }
+
+    return previousSlideIndex;
   }
 
   /**
@@ -482,16 +486,19 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computeNext(i) {
+    let nextSlideIndex;
     // Wrap around is true only if loop is true.
     if (i < this._lastViewIndex) {
-      return i + 1;
+      nextSlideIndex = i + 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration += 1;
       }
 
-      return 0;
+      nextSlideIndex = 0;
     }
+
+    return nextSlideIndex;
   }
 
 
