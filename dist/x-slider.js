@@ -10,6 +10,44 @@ var arrowLeft = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"
 
 var arrowRight = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z\"/>\n</svg>";
 
+let passiveEvtSupport;
+
+/**
+ * Detects browser support for passive event listeners. See
+ * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+ * @returns {boolean} True if the browser support passive event listeners.
+ * @private
+ */
+const passiveEvtListenersSupported = () => {
+  if (typeof passiveEvtSupport === 'undefined') {
+    passiveEvtSupport = false;
+    try {
+      const opts = Object.defineProperty({}, 'passive', {
+        get: () => {
+          passiveEvtSupport = true;
+        },
+      });
+      window.addEventListener('test', null, opts);
+    } catch (e) {}
+  }
+
+  return passiveEvtSupport;
+};
+
+/**
+ * Returns the event options (including passive if the browser supports it)
+ * @param {boolean} isPassive Whether the event is passive or not.
+ * @returns {Object|boolean} Based on browser support, returns either an
+ * object representing the options (including passive), or a boolean.
+ * @private
+ */
+const getEvtListenerOptions = (isPassive) => {
+  return passiveEvtListenersSupported() ? {passive: isPassive} : false;
+};
+
+/**
+ * Markup and styles.
+ */
 const sliderTemplate = document.createElement('template');
 sliderTemplate.innerHTML = `<style>${styles}</style> ${html}`;
 
@@ -276,7 +314,7 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._minDecelVelocity = 15;
+    this._minDecelVelocity = 20;
 
     /**
      * The value for the friction strength used when decelerating.
@@ -332,7 +370,7 @@ class XSlider extends HTMLElement {
 
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this, this._passiveOptions(true));
+    window.addEventListener('resize', this, getEvtListenerOptions(true));
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -447,25 +485,30 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   previous() {
-    this._computePrevious(this.selected);
+    this.selected = this._computePrevious(this.selected);
   }
 
   /**
    * Computes the previous index.
    * @param {number} i The index of reference used to compure the previous.
+   * @return {number} The previous index with respect to the input.
    * @private
    */
   _computePrevious(i) {
+    let previousSlideIndex;
+
     // Wrap around is true only if loop is true.
     if (i > 0) {
-      this.selected = i - 1;
+      previousSlideIndex = i - 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration -= 1;
       }
 
-      this.selected = this._lastViewIndex;
+      previousSlideIndex = this._lastViewIndex;
     }
+
+    return previousSlideIndex;
   }
 
   /**
@@ -474,7 +517,7 @@ class XSlider extends HTMLElement {
    * functionality is disabled, nothing happens.
    */
   next() {
-    this._computeNext(this.selected);
+    this.selected = this._computeNext(this.selected);
   }
 
   /**
@@ -484,16 +527,19 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computeNext(i) {
+    let nextSlideIndex;
     // Wrap around is true only if loop is true.
     if (i < this._lastViewIndex) {
-      this.selected = i + 1;
+      nextSlideIndex = i + 1;
     } else if (this.loop) {
       if (this._wrapAround) {
         this._selectedIteration += 1;
       }
 
-      this.selected = 0;
+      nextSlideIndex = 0;
     }
+
+    return nextSlideIndex;
   }
 
 
@@ -1132,8 +1178,8 @@ class XSlider extends HTMLElement {
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      window.addEventListener('touchmove', this, this._passiveOptions(false));
-      window.addEventListener('mousemove', this, this._passiveOptions(false));
+      window.addEventListener('touchmove', this, getEvtListenerOptions(false));
+      window.addEventListener('mousemove', this, getEvtListenerOptions(false));
       window.addEventListener('mouseup', this);
       window.addEventListener('touchend', this);
       window.addEventListener('touchcancel', this);
@@ -1293,39 +1339,55 @@ class XSlider extends HTMLElement {
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
 
-    if (diffX === 0) {
-      this._decelVelocity = 0;
-    } else {
-      // Compute the initial deceleration velocity.
-      const maxVel = Math.min(this._maxDecelVelocity, this._slidesWidth / 4);
-      const minVel = Math.min(this._minDecelVelocity, this._slidesWidth / 6,
-          maxVel);
-      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
-      this._decelVelocity = diffX / Math.abs(diffX) *
-          Math.max(minVel, Math.min(maxVel, Math.abs(diffX)));
-    }
-
     this._selectedIteration =
         Math.floor(this._lastDraggedLayoutIndex / this._slides.length);
 
-    const newSelected =
+    const currentSlideIndex =
         this._getSlideDataIndexFromLayoutIndex(this._lastDraggedLayoutIndex);
 
-    if (this._decelVelocity !== 0) {
-      // Depending on the direction of the user's drag, go previous/next.
-      this.selected = this._decelVelocity > 0 ?
-          this._computePrevious(Math.max(1, newSelected + 1)) :
-          this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
+    if (diffX === 0) {
+      this._decelVelocity = 0;
+
+      // If the user's pointer was not moving, pick the new selected slide
+      // based on the pointer's position.
+      // Because currentSlideIndex is the slide the pointer is currently onto,
+      // distToCurrent is always going to be positive.
+      const distToCurrent = this._slides[currentSlideIndex].position -
+          this._wrapperTranslateX;
+      this.selected = distToCurrent > this._slidesWidth / 2 ?
+          this._computeNext(currentSlideIndex) : currentSlideIndex;
     } else {
-      // If the user's pointer was not moving, check the position: if at least
-      // 1/3 through the slide, select the previous/next slide.
-      const distToCurrent = this._wrapperTranslateX -
-          this._slides[this.selected].position;
-      if (Math.abs(distToCurrent) > this._slidesWidth / 3) {
-        this.selected = distToCurrent > 0 ?
-            this._computePrevious(Math.max(1, newSelected + 1)) :
-            this._computeNext(Math.min(this._lastViewIndex - 1, newSelected));
+      // diffX / Math.abs(diffX) gives +1 or -1, indicating the direction (L/R).
+      this._decelVelocity = diffX / Math.abs(diffX) *
+          Math.max(this._minDecelVelocity,
+              Math.min(this._maxDecelVelocity, Math.abs(diffX)));
+
+      // TODO: extract these arbitrary values to variables
+      // TODO: Take into account the number of slidesPerView. The higher this
+      // number, the easier it should be to scroll multiple slides.
+      const slidesToMoveThresholds = [500, 800];
+      let slidesToMove = 1;
+      slidesToMoveThresholds.forEach(threshold => {
+        if (Math.abs(diffX) > threshold) {
+          slidesToMove += 1;
+        }
+      });
+
+      // If dragging left, we subtract 1 to slidesToMove, as the current slide
+      // would already be a previous slide with respect to where we started
+      // dragging from.
+      if (diffX > 0) {
+        slidesToMove -= 1;
       }
+
+      // Finally, apply next/prev for [slidesToMove] times and set the new value
+      // of selected.
+      let targetSlide = currentSlideIndex;
+      for (let i = 0; i < slidesToMove; i++) {
+        targetSlide = diffX < 0 ? this._computeNext(targetSlide) :
+            this._computePrevious(targetSlide);
+      }
+      this.selected = targetSlide;
     }
 
     requestAnimationFrame(this._decelerationStep.bind(this));
@@ -1361,43 +1423,6 @@ class XSlider extends HTMLElement {
       this._decelerating = false;
       this._enableWrapperTransitions();
     }
-  }
-
-  // ===========================================================================
-  // Misc
-  // ===========================================================================
-
-  /**
-   * Detects browser support for passive event listeners. See
-   * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
-   * @returns {boolean} True if the browser support passive event listeners.
-   * @private
-   */
-  _supportsPassiveEvt() {
-    if (typeof this._passiveEvt === 'undefined') {
-      this._passiveEvt = false;
-      try {
-        const opts = Object.defineProperty({}, 'passive', {
-          get: () => {
-            this._passiveEvt = true;
-          },
-        });
-        window.addEventListener('test', null, opts);
-      } catch (e) {}
-    }
-
-    return this._passiveEvt;
-  }
-
-  /**
-   * Returns the event options (including passive if the browser supports it)
-   * @param {boolean} isPassive Whether the event is passive or not.
-   * @returns {Object|boolean} Based on browser support, returns either an
-   * object representing the options (including passive), or a boolean.
-   * @private
-   */
-  _passiveOptions(isPassive) {
-    return this._supportsPassiveEvt ? {passive: isPassive} : false;
   }
 }
 
