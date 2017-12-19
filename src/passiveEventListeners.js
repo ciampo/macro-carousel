@@ -6,7 +6,7 @@ let passiveEvtSupport;
  * @returns {boolean} True if the browser support passive event listeners.
  * @private
  */
-const passiveEvtListenersSupported = () => {
+function _passiveEvtListenersSupported() {
   if (typeof passiveEvtSupport === 'undefined') {
     passiveEvtSupport = false;
     try {
@@ -20,15 +20,14 @@ const passiveEvtListenersSupported = () => {
   }
 
   return passiveEvtSupport;
-};
+}
 
 /**
  * Returns the event options (including passive if the browser supports it)
  * @param {boolean} isPassive Whether the event is passive or not.
  * @returns {Object|boolean} Based on browser support, returns either an
  * object representing the options (including passive), or a boolean.
- * @private
  */
-export const getEvtListenerOptions = (isPassive) => {
-  return passiveEvtListenersSupported() ? {passive: isPassive} : false;
-};
+export function getEvtListenerOptions(isPassive) {
+  return _passiveEvtListenersSupported() ? {passive: isPassive} : false;
+}

@@ -22,7 +22,7 @@ export function clamp(x, min = x, max = x) {
   }
 
   return clamped;
-};
+}
 
 /**
  * Clamps a number according to its absolute value, but still retainig its sign.
@@ -37,4 +37,4 @@ export function clampAbs(x, min, max) {
   }
 
   return x / Math.abs(x) * clamp(Math.abs(x), min, max);
-};
+}
