@@ -3,6 +3,7 @@ import html from './x-slider.html';
 import arrowLeft from './arrow-left.svg';
 import arrowRight from './arrow-right.svg';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
+import {clamp, clampAbs} from './utils.js';
 
 /**
  * Markup and styles.
@@ -864,7 +865,7 @@ class XSlider extends HTMLElement {
    * Shifts the slides to the new position needed.
    * @param {Array<number>} slidesInViewIndexes Layout indexes of the slides
    * that will be seen during the next slider transition.
-   * @param {boolean} [force]
+   * @param {boolean} [force=false] A value of true forces all slides to update.
    * @private
    */
   _shiftSlides(slidesInViewIndexes, force = false) {
@@ -1246,8 +1247,8 @@ class XSlider extends HTMLElement {
     let newPosition = this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX;
     if (!this._wrapAround) {
-      newPosition = Math.min(0,
-          Math.max(this._slides[this._lastViewIndex].position, newPosition));
+      newPosition = clamp(this._slides[this._lastViewIndex].position,
+          newPosition, 0);
     }
 
     // Get the current slide (the one that we're dragging onto).
@@ -1316,10 +1317,8 @@ class XSlider extends HTMLElement {
       this.selected = distToCurrent > this._slidesWidth / 2 ?
           this._computeNext(currentSlideIndex) : currentSlideIndex;
     } else {
-      // diffX / Math.abs(diffX) gives +1 or -1, indicating the direction (L/R).
-      this._decelVelocity = diffX / Math.abs(diffX) *
-          Math.max(this._minDecelVelocity,
-              Math.min(this._maxDecelVelocity, Math.abs(diffX)));
+      this._decelVelocity = clampAbs(diffX,
+          this._minDecelVelocity, this._maxDecelVelocity);
 
       // TODO: extract these arbitrary values to variables
       // TODO: Take into account the number of slidesPerView. The higher this
