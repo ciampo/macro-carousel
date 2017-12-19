@@ -277,12 +277,20 @@ class XSlider extends HTMLElement {
     this._minDecelVelocity = 20;
 
     /**
+     * If the velocity is higher than a threshold, the number of slides that
+     * / the carousel is moving by increases by 1.
+     * @type {number}
+     * @private
+     */
+    this._slidesToMoveVelocityThresholds = [500, 800];
+
+    /**
      * The value for the friction strength used when decelerating.
      * 0 < friction < 1.
      * @type {number}
      * @private
      */
-    this._friction = 0.74;
+    this._friction = 0.8;
 
     /**
      * The value for the attraction strength used when decelerating.
@@ -1244,12 +1252,8 @@ class XSlider extends HTMLElement {
    */
   _updateDragPosition() {
     // Current position + the amount of drag happened since the last rAF.
-    let newPosition = this._wrapperTranslateX +
+    const newPosition = this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX;
-    if (!this._wrapAround) {
-      newPosition = clamp(this._slides[this._lastViewIndex].position,
-          newPosition, 0);
-    }
 
     // Get the current slide (the one that we're dragging onto).
     let slideIndex;
@@ -1320,12 +1324,8 @@ class XSlider extends HTMLElement {
       this._decelVelocity = clampAbs(diffX,
           this._minDecelVelocity, this._maxDecelVelocity);
 
-      // TODO: extract these arbitrary values to variables
-      // TODO: Take into account the number of slidesPerView. The higher this
-      // number, the easier it should be to scroll multiple slides.
-      const slidesToMoveThresholds = [500, 800];
       let slidesToMove = 1;
-      slidesToMoveThresholds.forEach(threshold => {
+      this._slidesToMoveVelocityThresholds.forEach(threshold => {
         if (Math.abs(diffX) > threshold) {
           slidesToMove += 1;
         }
@@ -1368,13 +1368,13 @@ class XSlider extends HTMLElement {
     // Apply friction: friction slows down the slider.
     this._decelVelocity *= this._friction;
 
-    let newPosition = this._wrapperTranslateX + this._decelVelocity;
-    newPosition = this._decelVelocity > 0 ? Math.min(newPosition, snapX) :
-        newPosition = Math.max(newPosition, snapX);
+    const newPosition = this._wrapperTranslateX + this._decelVelocity;
 
-    this._setWrapperTranslateX(newPosition);
-
-    if (Math.abs(snapX - newPosition) >= 1) {
+    // Keep animating until the carousel is close to the snapping point
+    // with a very small veloity. This results in a springy effect.
+    if (Math.abs(snapX - newPosition) >= 1 ||
+        Math.abs(this._decelVelocity) >= 1) {
+      this._setWrapperTranslateX(newPosition);
       requestAnimationFrame(this._decelerationStep.bind(this));
     } else {
       this._setWrapperTranslateX(snapX);
