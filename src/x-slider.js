@@ -273,7 +273,7 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._minDecelVelocity = 15;
+    this._minDecelVelocity = 20;
 
     /**
      * The value for the friction strength used when decelerating.
@@ -1301,7 +1301,7 @@ class XSlider extends HTMLElement {
     this._selectedIteration =
         Math.floor(this._lastDraggedLayoutIndex / this._slides.length);
 
-    const current =
+    const currentSlideIndex =
         this._getSlideDataIndexFromLayoutIndex(this._lastDraggedLayoutIndex);
 
     if (diffX === 0) {
@@ -1309,45 +1309,41 @@ class XSlider extends HTMLElement {
 
       // If the user's pointer was not moving, pick the new selected slide
       // based on the pointer's position.
-      // Because current is the slide the pointer is currently onto,
+      // Because currentSlideIndex is the slide the pointer is currently onto,
       // distToCurrent is always going to be positive.
-      const distToCurrent = this._slides[current].position -
+      const distToCurrent = this._slides[currentSlideIndex].position -
           this._wrapperTranslateX;
       this.selected = distToCurrent > this._slidesWidth / 2 ?
-          this._computeNext(current) : current;
+          this._computeNext(currentSlideIndex) : currentSlideIndex;
     } else {
-      // Use normalised vector to give the direction [diffX / Math.abs(diffX)].
+      // diffX / Math.abs(diffX) gives +1 or -1, indicating the direction (L/R).
       this._decelVelocity = diffX / Math.abs(diffX) *
           Math.max(this._minDecelVelocity,
               Math.min(this._maxDecelVelocity, Math.abs(diffX)));
 
-      // Simulate how fare would the slider go with the decel velocity
-      // Attraction is not taken into account at this point. This is compensated
-      // always rounding to the upper limit for the value of slidesToMove below.
-      let simDistance = 0;
-      let simVelocity = diffX;
-      while (Math.abs(simVelocity) >= 1) {
-        simVelocity *= this._friction;
-        simDistance += simVelocity;
-      }
+      // TODO: extract these arbitrary values to variables
+      // TODO: Take into account the number of slidesPerView. The higher this
+      // number, the easier it should be to scroll multiple slides.
+      const slidesToMoveThresholds = [500, 800];
+      let slidesToMove = 1;
+      slidesToMoveThresholds.forEach(threshold => {
+        if (Math.abs(diffX) > threshold) {
+          slidesToMove += 1;
+        }
+      });
 
-      // Based on the simulated distance, compte by how many slides we should
-      // move during the deceleration [hase.]
-      let slidesToMove = Math.min(this.slidesPerView - 1,
-          Math.ceil(Math.abs(simDistance) /
-              (this._slidesWidth + this._slidesGap)));
-      if (this._slides[current].position - this._wrapperTranslateX >
-          this._slidesWidth) {
-        slidesToMove += 1;
+      // If dragging left, we subtract 1 to slidesToMove, as the current slide
+      // would already be a previous slide with respect to where we started
+      // dragging from.
+      if (diffX > 0) {
+        slidesToMove -= 1;
       }
-
-      // slidesToMove = Math.ceil(Math.abs(this._maxDecelVelocity / 20));
 
       // Finally, apply next/prev for [slidesToMove] times and set the new value
       // of selected.
-      let targetSlide = current;
+      let targetSlide = currentSlideIndex;
       for (let i = 0; i < slidesToMove; i++) {
-        targetSlide = simDistance < 0 ? this._computeNext(targetSlide) :
+        targetSlide = diffX < 0 ? this._computeNext(targetSlide) :
             this._computePrevious(targetSlide);
       }
       this.selected = targetSlide;
