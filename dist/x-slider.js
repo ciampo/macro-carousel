@@ -18,7 +18,7 @@ let passiveEvtSupport;
  * @returns {boolean} True if the browser support passive event listeners.
  * @private
  */
-const passiveEvtListenersSupported = () => {
+function _passiveEvtListenersSupported() {
   if (typeof passiveEvtSupport === 'undefined') {
     passiveEvtSupport = false;
     try {
@@ -32,18 +32,58 @@ const passiveEvtListenersSupported = () => {
   }
 
   return passiveEvtSupport;
-};
+}
 
 /**
  * Returns the event options (including passive if the browser supports it)
  * @param {boolean} isPassive Whether the event is passive or not.
  * @returns {Object|boolean} Based on browser support, returns either an
  * object representing the options (including passive), or a boolean.
- * @private
  */
-const getEvtListenerOptions = (isPassive) => {
-  return passiveEvtListenersSupported() ? {passive: isPassive} : false;
-};
+function getEvtListenerOptions(isPassive) {
+  return _passiveEvtListenersSupported() ? {passive: isPassive} : false;
+}
+
+/**
+ * Clamps a number between a min and a max.
+ * @param {number} x The number to be clamped.
+ * @param {number} [min] The min value.
+ * @param {number} [max] The max value.
+ * @return {number} The clamped number.
+ * @throws {RangeError} min must be strictly less than max.
+ */
+function clamp(x, min = x, max = x) {
+  let clamped = x;
+
+  if (min > max) {
+    throw new RangeError('`min` should be lower than `max`');
+  }
+
+  if (x < min) {
+    clamped = min;
+  }
+
+  if (x > max) {
+    clamped = max;
+  }
+
+  return clamped;
+}
+
+/**
+ * Clamps a number according to its absolute value, but still retainig its sign.
+ * @param {number} x The number to be clamped.
+ * @param {number} [min] The min value.
+ * @param {number} [max] The max value.
+ * @return {number} The clamped number.
+ */
+function clampAbs(x, min, max) {
+  if (x === 0) {
+    throw new RangeError('x must be different from `0`');
+  }
+
+  return x / Math.abs(x) * clamp(Math.abs(x), min, max);
+}
 
 /**
  * Markup and styles.
@@ -307,7 +347,7 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._maxDecelVelocity = 30;
+    this._maxDecelVelocity = 50;
 
     /**
      * The lower bound for the initial value of the velocity when decelerating.
@@ -317,12 +357,20 @@ class XSlider extends HTMLElement {
     this._minDecelVelocity = 20;
 
     /**
+     * If the velocity is higher than a threshold, the number of slides that
+     * / the carousel is moving by increases by 1.
+     * @type {number}
+     * @private
+     */
+    this._slidesToMoveVelocityThresholds = [500, 800];
+
+    /**
      * The value for the friction strength used when decelerating.
      * 0 < friction < 1.
      * @type {number}
      * @private
      */
-    this._friction = 0.74;
+    this._friction = 0.8;
 
     /**
      * The value for the attraction strength used when decelerating.
@@ -905,7 +953,7 @@ class XSlider extends HTMLElement {
    * Shifts the slides to the new position needed.
    * @param {Array<number>} slidesInViewIndexes Layout indexes of the slides
    * that will be seen during the next slider transition.
-   * @param {boolean} [force]
+   * @param {boolean} [force=false] A value of true forces all slides to update.
    * @private
    */
   _shiftSlides(slidesInViewIndexes, force = false) {
@@ -1284,12 +1332,8 @@ class XSlider extends HTMLElement {
    */
   _updateDragPosition() {
     // Current position + the amount of drag happened since the last rAF.
-    let newPosition = this._wrapperTranslateX +
+    const newPosition = this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX;
-    if (!this._wrapAround) {
-      newPosition = Math.min(0,
-          Math.max(this._slides[this._lastViewIndex].position, newPosition));
-    }
 
     // Get the current slide (the one that we're dragging onto).
     let slideIndex;
@@ -1357,17 +1401,11 @@ class XSlider extends HTMLElement {
       this.selected = distToCurrent > this._slidesWidth / 2 ?
           this._computeNext(currentSlideIndex) : currentSlideIndex;
     } else {
-      // diffX / Math.abs(diffX) gives +1 or -1, indicating the direction (L/R).
-      this._decelVelocity = diffX / Math.abs(diffX) *
-          Math.max(this._minDecelVelocity,
-              Math.min(this._maxDecelVelocity, Math.abs(diffX)));
+      this._decelVelocity = clampAbs(diffX,
+          this._minDecelVelocity, this._maxDecelVelocity);
 
-      // TODO: extract these arbitrary values to variables
-      // TODO: Take into account the number of slidesPerView. The higher this
-      // number, the easier it should be to scroll multiple slides.
-      const slidesToMoveThresholds = [500, 800];
       let slidesToMove = 1;
-      slidesToMoveThresholds.forEach(threshold => {
+      this._slidesToMoveVelocityThresholds.forEach(threshold => {
         if (Math.abs(diffX) > threshold) {
           slidesToMove += 1;
         }
@@ -1410,13 +1448,13 @@ class XSlider extends HTMLElement {
     // Apply friction: friction slows down the slider.
     this._decelVelocity *= this._friction;
 
-    let newPosition = this._wrapperTranslateX + this._decelVelocity;
-    newPosition = this._decelVelocity > 0 ? Math.min(newPosition, snapX) :
-        newPosition = Math.max(newPosition, snapX);
+    const newPosition = this._wrapperTranslateX + this._decelVelocity;
 
-    this._setWrapperTranslateX(newPosition);
-
-    if (Math.abs(snapX - newPosition) >= 1) {
+    // Keep animating until the carousel is close to the snapping point
+    // with a very small veloity. This results in a springy effect.
+    if (Math.abs(snapX - newPosition) >= 1 ||
+        Math.abs(this._decelVelocity) >= 1) {
+      this._setWrapperTranslateX(newPosition);
       requestAnimationFrame(this._decelerationStep.bind(this));
     } else {
       this._setWrapperTranslateX(snapX);
