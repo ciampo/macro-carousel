@@ -267,7 +267,7 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._maxDecelVelocity = 30;
+    this._maxDecelVelocity = 50;
 
     /**
      * The lower bound for the initial value of the velocity when decelerating.
