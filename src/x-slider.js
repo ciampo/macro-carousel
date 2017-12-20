@@ -3,7 +3,7 @@ import html from './x-slider.html';
 import arrowLeft from './arrow-left.svg';
 import arrowRight from './arrow-right.svg';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
-import {clamp, clampAbs} from './utils.js';
+import {clampAbs} from './utils.js';
 
 /**
  * Markup and styles.
@@ -290,14 +290,14 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._friction = 0.8;
+    this._friction = 0.7;
 
     /**
      * The value for the attraction strength used when decelerating.
      * @type {number}
      * @private
      */
-    this._attraction = 0.022;
+    this._attraction = 0.04;
 
     /**
      * The value of the deceleration velocity (in px).
