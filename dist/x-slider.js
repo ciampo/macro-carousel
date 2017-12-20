@@ -370,14 +370,14 @@ class XSlider extends HTMLElement {
      * @type {number}
      * @private
      */
-    this._friction = 0.8;
+    this._friction = 0.7;
 
     /**
      * The value for the attraction strength used when decelerating.
      * @type {number}
      * @private
      */
-    this._attraction = 0.022;
+    this._attraction = 0.04;
 
     /**
      * The value of the deceleration velocity (in px).
