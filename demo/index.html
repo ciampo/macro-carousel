@@ -70,13 +70,15 @@
   <script src="./webcomponents-loader.js"></script>
 </head>
 <body>
+  <h1 id="title">X-Slider demo</h1>
   <x-slider
       selected="1"
       navigation
       pagination
       drag
       loop
-      slides-per-view="4">
+      slides-per-view="4"
+      aria-labelledby="title">
     <article class="slide">1</article>
     <article class="slide">2</article>
     <article class="slide">3</article>
