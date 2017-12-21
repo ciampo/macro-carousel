@@ -1014,14 +1014,12 @@ class XSlider extends HTMLElement {
       if (this._navigationWrapper.childElementCount !== 2) {
         // add buttons and add ev listeners
         this._prevButton = document.createElement('button');
-        this._prevButton.setAttribute('aria-label', 'To previous view');
         this._prevButton.setAttribute('id', 'previous');
         this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
         this._nextButton = document.createElement('button');
-        this._nextButton.setAttribute('aria-label', 'To next view');
         this._nextButton.setAttribute('id', 'next');
         this._nextButton.appendChild(
             arrowRightTemplate.content.cloneNode(true));
@@ -1034,6 +1032,14 @@ class XSlider extends HTMLElement {
           !this.loop && this.selected === 0;
       this._nextButton.disabled =
           !this.loop && this.selected === this._lastViewIndex;
+
+      // update 'aria-label'
+      this._prevButton.setAttribute('aria-label',
+          this.loop && this.selected === 0 ?
+              'To last slide' : 'To previous slide');
+      this._nextButton.setAttribute('aria-label',
+          this.loop && this.selected === this._lastViewIndex ?
+              'To first slide' : 'To next slide');
     }
   }
 
