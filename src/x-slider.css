@@ -125,6 +125,10 @@
   overflow: hidden;
 }
 
+::slotted(:focus) {
+  outline: none;
+}
+
 :host([drag]) ::slotted(*) {
   user-select: none;
 }
