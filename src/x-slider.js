@@ -1078,6 +1078,9 @@ class XSlider extends HTMLElement {
    */
   _onSlotChange() {
     this._slides = this._getSlides();
+    this._slides.forEach(slide => {
+      slide.element.setAttribute('tabindex', '-1');
+    });
 
     this.update();
   }
