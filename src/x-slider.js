@@ -323,6 +323,8 @@ class XSlider extends HTMLElement {
    * @private
    */
   connectedCallback() {
+    this.setAttribute('role', 'region');
+
     // Setup the component.
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
