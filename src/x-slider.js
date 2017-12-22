@@ -341,6 +341,7 @@ class XSlider extends HTMLElement {
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
     window.addEventListener('resize', this, getEvtListenerOptions(true));
+    this.addEventListener('keydown', this);
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -402,6 +403,16 @@ class XSlider extends HTMLElement {
       this.previous();
     } else if (this.navigation && e.target === this._nextButton) {
       this.next();
+
+    // Keyboard.
+    } else if (e.type === 'keydown') {
+      // Left / Up.
+      if (e.keyCode === 37 || e.keyCode === 38) {
+        this.previous();
+      // Right / Down.
+      } else if (e.keyCode === 39 || e.keyCode === 40) {
+        this.next();
+      }
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
