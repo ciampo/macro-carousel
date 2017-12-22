@@ -55,6 +55,13 @@ class XSlider extends HTMLElement {
     this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
     /**
+     * The id of this element.
+     * @type {string}
+     * @private
+     */
+    this._sliderId = '';
+
+    /**
      * The wrapper element enclosing the slides.
      * @type {HTMLElement}
      * @private
@@ -323,7 +330,17 @@ class XSlider extends HTMLElement {
    * @private
    */
   connectedCallback() {
-    this.setAttribute('role', 'region');
+    // Setting role=list (we set role=listitem for the slides)
+    this.setAttribute('role', 'list');
+    // Giving the slider a unique id (if it doesn't have one yet).
+    // It will be used on buttons for their 'aria-controls' attribute.
+    if (!(this._sliderId = this.getAttribute('id'))) {
+      this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
+      while (document.getElementById(this._sliderId)) {
+        this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
+      }
+      this.setAttribute('id', this._sliderId);
+    }
 
     // Setup the component.
     this._upgradeProperty('selected');
@@ -541,6 +558,7 @@ class XSlider extends HTMLElement {
       'pagination',
       'drag',
       'slides-per-view',
+      'id',
     ];
   }
 
@@ -556,7 +574,7 @@ class XSlider extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#x-slider-dd
+   * @fires XSlider#x-slider-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -618,6 +636,9 @@ class XSlider extends HTMLElement {
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
         }));
+
+        // TODO: if transitioning is on, wait for transition to end/
+        // this._slides[this.selected].element.focus();
         break;
 
       case 'loop':
@@ -658,6 +679,33 @@ class XSlider extends HTMLElement {
 
         this.update();
         break;
+
+      case 'id':
+        if (this._slides.length === 0) {
+          return;
+        }
+
+        if (this._sliderId !== newValue) {
+          this._sliderId = newValue;
+          if (this.navigation) {
+            if (!this._sliderId) {
+              this._prevButton.removeAttribute('aria-controls');
+              this._nextButton.removeAttribute('aria-controls');
+            } else {
+              this._prevButton.setAttribute('aria-controls', this._sliderId);
+              this._nextButton.setAttribute('aria-controls', this._sliderId);
+            }
+          }
+          if (this.pagination) {
+            this._paginationIndicators.forEach(el => {
+              if (!this._sliderId) {
+                el.removeAttribute('aria-controls');
+              } else {
+                el.setAttribute('aria-controls', this._sliderId);
+              }
+            });
+          }
+        }
     }
   }
 
@@ -975,6 +1023,7 @@ class XSlider extends HTMLElement {
           const btn = document.createElement('button');
           btn.textContent = i;
           btn.setAttribute('aria-label', `Go to view ${i + 1}`);
+          btn.setAttribute('aria-controls', this._sliderId);
           btn.addEventListener('click', this);
 
           frag.appendChild(btn);
@@ -1026,12 +1075,14 @@ class XSlider extends HTMLElement {
         // add buttons and add ev listeners
         this._prevButton = document.createElement('button');
         this._prevButton.setAttribute('id', 'previous');
+        this._prevButton.setAttribute('aria-controls', this._sliderId);
         this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
         this._nextButton = document.createElement('button');
         this._nextButton.setAttribute('id', 'next');
+        this._nextButton.setAttribute('aria-controls', this._sliderId);
         this._nextButton.appendChild(
             arrowRightTemplate.content.cloneNode(true));
         this._nextButton.addEventListener('click', this);
@@ -1096,7 +1147,8 @@ class XSlider extends HTMLElement {
   _onSlotChange() {
     this._slides = this._getSlides();
     this._slides.forEach(slide => {
-      slide.element.setAttribute('tabindex', '-1');
+      slide.element.setAttribute('tabindex', -1);
+      slide.element.setAttribute('role', 'listitem');
     });
 
     this.update();
