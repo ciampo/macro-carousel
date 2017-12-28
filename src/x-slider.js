@@ -186,6 +186,13 @@ class XSlider extends HTMLElement {
      */
     this._resizeTimer = undefined;
 
+    /**
+     * True when CSS transitions are enabled.
+     * @type {boolean}
+     * @private
+     */
+    this._transitioning = false;
+
     // Touch / drag
 
     /**
@@ -431,6 +438,10 @@ class XSlider extends HTMLElement {
         this.next();
       }
 
+    // transitionend (CSS)
+    } else if (e.type === 'transitionend') {
+      this._focusSelectedSlide();
+
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
       this._onPointerDown(this._normalizeEvent(e));
@@ -637,8 +648,15 @@ class XSlider extends HTMLElement {
           detail: this.selected,
         }));
 
-        // TODO: if transitioning is on, wait for transition to end/
-        // this._slides[this.selected].element.focus();
+        // Only move the focus to the newly selected slide immediately if the
+        // slider is not transitioning (i.e. CSS transitions) or decelerating
+        //  (i.e. after dragging). In those cases, the _focusSelectedSlide()
+        // function is triggered in a transitionend event listener, or at the
+        // end of the deceleration rendering loop.
+        if (!this._transitioning && !this._decelerating) {
+          this._focusSelectedSlide();
+        }
+
         break;
 
       case 'loop':
@@ -817,6 +835,8 @@ class XSlider extends HTMLElement {
    */
   _disableWrapperTransitions() {
     this.removeAttribute('transitioning');
+    this._transitioning = false;
+    this._slidesWrapper.removeEventListener('transitionend', this, false);
   }
 
   /**
@@ -828,6 +848,8 @@ class XSlider extends HTMLElement {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this.setAttribute('transitioning', '');
+        this._transitioning = true;
+        this._slidesWrapper.addEventListener('transitionend', this, false);
       });
     });
   }
@@ -991,6 +1013,18 @@ class XSlider extends HTMLElement {
     }
 
     this._setWrapperTranslateX(this._slides[targetView].position);
+  }
+
+  /**
+   * Moves the focus to the selected slide.
+   * @private
+   */
+  _focusSelectedSlide() {
+    if (this._slides.length === 0) {
+      return;
+    }
+
+    this._slides[this.selected].element.focus();
   }
 
   /**
@@ -1454,6 +1488,8 @@ class XSlider extends HTMLElement {
       this._setWrapperTranslateX(snapX);
       this._decelerating = false;
       this._enableWrapperTransitions();
+
+      requestAnimationFrame(this._focusSelectedSlide.bind(this));
     }
   }
 }
