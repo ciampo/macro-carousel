@@ -441,6 +441,7 @@ class XSlider extends HTMLElement {
     // transitionend (CSS)
     } else if (e.type === 'transitionend') {
       this._focusSelectedSlide();
+      this._changeAriaVisibility();
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
@@ -486,6 +487,7 @@ class XSlider extends HTMLElement {
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
+    this._changeAriaVisibility();
   }
 
   /**
@@ -648,13 +650,14 @@ class XSlider extends HTMLElement {
           detail: this.selected,
         }));
 
-        // Only move the focus to the newly selected slide immediately if the
-        // slider is not transitioning (i.e. CSS transitions) or decelerating
-        //  (i.e. after dragging). In those cases, the _focusSelectedSlide()
-        // function is triggered in a transitionend event listener, or at the
-        // end of the deceleration rendering loop.
+        // Apply a11y changes immediately only if the slider is not
+        // transitioning (i.e. CSS transitions) or decelerating (i.e. after
+        // dragging). In those cases, the functions below are triggered in a
+        // transitionend event listener, or at the end of the deceleration
+        // rendering loop.
         if (!this._transitioning && !this._decelerating) {
           this._focusSelectedSlide();
+          this._changeAriaVisibility();
         }
 
         break;
@@ -1025,6 +1028,24 @@ class XSlider extends HTMLElement {
     }
 
     this._slides[this.selected].element.focus();
+  }
+
+  /**
+   * Sets the correct value for the 'aria-hidden' attribute on the slides.
+   * @private
+   */
+  _changeAriaVisibility() {
+    const slidesInView = [];
+    for (let i = 0; i < this.slidesPerView; i++) {
+      slidesInView.push((this.selected + i) % this._slides.length);
+    }
+
+    // Set aria-hidden to false only for the slides whose indexes are included
+    // in the slidesInView array.
+    this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
+      slideEl.setAttribute('aria-hidden', slidesInView
+          .find(i => i === slideIndex) !== 'undefined' ? 'false' : 'true');
+    });
   }
 
   /**
@@ -1489,7 +1510,10 @@ class XSlider extends HTMLElement {
       this._decelerating = false;
       this._enableWrapperTransitions();
 
-      requestAnimationFrame(this._focusSelectedSlide.bind(this));
+      requestAnimationFrame(() => {
+        this._focusSelectedSlide();
+        this._changeAriaVisibility();
+      });
     }
   }
 }
