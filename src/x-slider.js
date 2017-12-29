@@ -658,7 +658,9 @@ class XSlider extends HTMLElement {
         break;
 
       case 'navigation':
-        this._updateNavigation();
+        // Calling `_onResize()` instead of `_updateNavigation()` as adding/
+        // removing navigation buttons causes the slidesWrapper to resize.
+        this._onResize();
         break;
 
       case 'pagination':

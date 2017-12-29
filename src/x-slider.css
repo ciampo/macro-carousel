@@ -73,6 +73,10 @@
 }
 
 #pagination {
+  display: none;
+}
+
+:host([pagination]) #pagination {
   align-self: center;
 
   display: flex;
@@ -178,6 +182,14 @@
 
 :host([drag]) ::slotted(*) {
   user-select: none;
+}
+
+#navigation {
+  display: none;
+}
+
+:host([navigation]) #navigation {
+  display: block;
 }
 
 #previous,
