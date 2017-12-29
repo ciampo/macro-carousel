@@ -83,13 +83,6 @@ class XSlider extends HTMLElement {
     this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
     /**
-     * The id of this element.
-     * @type {string}
-     * @private
-     */
-    this._sliderId = '';
-
-    /**
      * The wrapper element enclosing the slides.
      * @type {HTMLElement}
      * @private
@@ -367,15 +360,6 @@ class XSlider extends HTMLElement {
   connectedCallback() {
     // Setting role=list (we set role=listitem for the slides)
     this.setAttribute('role', 'list');
-    // Giving the slider a unique id (if it doesn't have one yet).
-    // It will be used on buttons for their 'aria-controls' attribute.
-    if (!(this._sliderId = this.getAttribute('id'))) {
-      this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
-      while (document.getElementById(this._sliderId)) {
-        this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
-      }
-      this.setAttribute('id', this._sliderId);
-    }
 
     // Setup the component.
     this._upgradeProperty('selected');
@@ -384,6 +368,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('pagination');
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
+    this._upgradeProperty('reducedMotion');
 
     this._previousEffectiveLayoutIndex = this.selected;
 
@@ -469,7 +454,7 @@ class XSlider extends HTMLElement {
     // transitionend (CSS)
     } else if (e.type === 'transitionend') {
       this._focusSelectedSlide();
-      this._changeAriaVisibility();
+      this._updateSlidesA11y();
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
@@ -515,7 +500,7 @@ class XSlider extends HTMLElement {
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
-    this._changeAriaVisibility();
+    this._updateSlidesA11y();
   }
 
   /**
@@ -599,7 +584,7 @@ class XSlider extends HTMLElement {
       'pagination',
       'drag',
       'slides-per-view',
-      'id',
+      'reduced-motion',
     ];
   }
 
@@ -685,7 +670,7 @@ class XSlider extends HTMLElement {
         // rendering loop.
         if (!this._transitioning &amp;&amp; !this._decelerating) {
           this._focusSelectedSlide();
-          this._changeAriaVisibility();
+          this._updateSlidesA11y();
         }
 
         break;
@@ -701,7 +686,9 @@ class XSlider extends HTMLElement {
         break;
 
       case 'navigation':
-        this._updateNavigation();
+        // Calling `_onResize()` instead of `_updateNavigation()` as adding/
+        // removing navigation buttons causes the slidesWrapper to resize.
+        this._onResize();
         break;
 
       case 'pagination':
@@ -729,31 +716,11 @@ class XSlider extends HTMLElement {
         this.update();
         break;
 
-      case 'id':
-        if (this._slides.length === 0) {
-          return;
-        }
-
-        if (this._sliderId !== newValue) {
-          this._sliderId = newValue;
-          if (this.navigation) {
-            if (!this._sliderId) {
-              this._prevButton.removeAttribute('aria-controls');
-              this._nextButton.removeAttribute('aria-controls');
-            } else {
-              this._prevButton.setAttribute('aria-controls', this._sliderId);
-              this._nextButton.setAttribute('aria-controls', this._sliderId);
-            }
-          }
-          if (this.pagination) {
-            this._paginationIndicators.forEach(el => {
-              if (!this._sliderId) {
-                el.removeAttribute('aria-controls');
-              } else {
-                el.setAttribute('aria-controls', this._sliderId);
-              }
-            });
-          }
+      case 'reduced-motion':
+        if (newValue !== null) {
+          this._disableWrapperTransitions();
+        } else {
+          this._enableWrapperTransitions();
         }
     }
   }
@@ -854,6 +821,23 @@ class XSlider extends HTMLElement {
     return value === null ? 1 : parseInt(value, 10);
   }
 
+  /**
+   * If true, disables CSS transitions and drag deceleration.
+   * @type {boolean}
+   * @default false
+   */
+  set reducedMotion(flag) {
+    if (flag) {
+      this.setAttribute('reduced-motion', '');
+    } else {
+      this.removeAttribute('reduced-motion');
+    }
+  }
+
+  get reducedMotion() {
+    return this.hasAttribute('reduced-motion');
+  }
+
 
   // ===========================================================================
   // Layout-related
@@ -875,6 +859,10 @@ class XSlider extends HTMLElement {
    * @private
    */
   _enableWrapperTransitions() {
+    if (this.reducedMotion) {
+      return;
+    }
+
     // Double rAF is necessary to wait for 'selected' to take effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1059,10 +1047,10 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Sets the correct value for the 'aria-hidden' attribute on the slides.
+   * Updates the `aria-hidden` and `inert` attributes on the slides.
    * @private
    */
-  _changeAriaVisibility() {
+  _updateSlidesA11y() {
     const slidesInView = [];
     for (let i = 0; i &lt; this.slidesPerView; i++) {
       slidesInView.push((this.selected + i) % this._slides.length);
@@ -1070,9 +1058,18 @@ class XSlider extends HTMLElement {
 
     // Set aria-hidden to false only for the slides whose indexes are included
     // in the slidesInView array.
+    let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
-      slideEl.setAttribute('aria-hidden', slidesInView
-          .find(i => i === slideIndex) !== 'undefined' ? 'false' : 'true');
+      isSlideInView = typeof slidesInView
+          .find(i => i === slideIndex) !== 'undefined';
+      // Slides in view have `aria-hidden` set to `false`.
+      slideEl.setAttribute('aria-hidden', isSlideInView ? 'false' : 'true');
+      // Slides in view don't have the `inert` attribute and can be focused.
+      if (isSlideInView) {
+        slideEl.removeAttribute('inert');
+      } else {
+        slideEl.setAttribute('inert', '');
+      }
     });
   }
 
@@ -1092,7 +1089,8 @@ class XSlider extends HTMLElement {
       // Remove all children of pag wrapper and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
         indicatorEl.removeEventListener('click', this);
-        this._paginationWrapper.removeChild(indicatorEl);
+        // Using parentElement as we need to remore the parent &lt;li> element.
+        this._paginationWrapper.removeChild(indicatorEl.parentElement);
       });
       this._paginationIndicators.length = 0;
     }
@@ -1107,7 +1105,6 @@ class XSlider extends HTMLElement {
           const btn = document.createElement('button');
           btn.textContent = i;
           btn.setAttribute('aria-label', `Go to item ${i + 1}`);
-          btn.setAttribute('aria-controls', this._sliderId);
           btn.addEventListener('click', this);
 
           li.appendChild(btn);
@@ -1131,6 +1128,21 @@ class XSlider extends HTMLElement {
    */
   _onPaginationClicked(e) {
     this.selected = parseInt(e.target.textContent, 10);
+  }
+
+  /**
+   * Creates a navigation button element.
+   * @param {string} id The id of the button element.
+   * @param {HTMLTemplateElement} template The template to stamp in the button.
+   * @returns {HTMLButtonElement} The button element.
+   * @private
+   */
+  _createNavigationButton(id, template) {
+    const btn = document.createElement('button');
+    btn.setAttribute('id', id);
+    btn.appendChild(template.content.cloneNode(true));
+    btn.addEventListener('click', this);
+    return btn;
   }
 
   /**
@@ -1158,19 +1170,12 @@ class XSlider extends HTMLElement {
     if (this.navigation) {
       if (this._navigationWrapper.childElementCount !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = document.createElement('button');
-        this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.setAttribute('aria-controls', this._sliderId);
-        this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
-        this._prevButton.addEventListener('click', this);
+        this._prevButton = this._createNavigationButton('previous',
+            arrowLeftTemplate);
         this._navigationWrapper.appendChild(this._prevButton);
 
-        this._nextButton = document.createElement('button');
-        this._nextButton.setAttribute('id', 'next');
-        this._nextButton.setAttribute('aria-controls', this._sliderId);
-        this._nextButton.appendChild(
-            arrowRightTemplate.content.cloneNode(true));
-        this._nextButton.addEventListener('click', this);
+        this._nextButton = this._createNavigationButton('next',
+            arrowRightTemplate);
         this._navigationWrapper.appendChild(this._nextButton);
       }
 
@@ -1530,8 +1535,10 @@ class XSlider extends HTMLElement {
 
     // Keep animating until the carousel is close to the snapping point
     // with a very small veloity. This results in a springy effect.
-    if (Math.abs(snapX - newPosition) >= 1 ||
-        Math.abs(this._decelVelocity) >= 1) {
+    // Do not animate if the reduced-motion mode is enabled.
+    const tooFarOrTooFast = Math.abs(snapX - newPosition) >= 1 ||
+        Math.abs(this._decelVelocity) >= 1;
+    if (tooFarOrTooFast &amp;&amp; !this.reducedMotion) {
       this._setWrapperTranslateX(newPosition);
       requestAnimationFrame(this._decelerationStep.bind(this));
     } else {
@@ -1541,7 +1548,7 @@ class XSlider extends HTMLElement {
 
       requestAnimationFrame(() => {
         this._focusSelectedSlide();
-        this._changeAriaVisibility();
+        this._updateSlidesA11y();
       });
     }
   }
@@ -1564,7 +1571,7 @@ window.customElements.define('x-slider', XSlider);
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Dec 29 2017 12:05:21 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Dec 29 2017 22:04:12 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>
