@@ -24,10 +24,10 @@
 
   --x-slider-pagination-color: #999;
   --x-slider-pagination-color-selected: #000;
-  --x-slider-pagination-size-clickable: 28px;
-  --x-slider-pagination-size-dot: 12px;
-  --x-slider-pagination-gap: 6px;
-  --x-slider-pagination-height: 32px;
+  --x-slider-pagination-size-clickable: 24px;
+  --x-slider-pagination-size-dot: 8px;
+  --x-slider-pagination-gap: 2px;
+  --x-slider-pagination-height: 44px;
 }
 
 :host([hidden]) {
