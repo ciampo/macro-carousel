@@ -426,7 +426,7 @@ class XSlider extends HTMLElement {
     // transitionend (CSS)
     } else if (e.type === 'transitionend') {
       this._focusSelectedSlide();
-      this._changeAriaVisibility();
+      this._updateSlidesA11y();
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
@@ -472,7 +472,7 @@ class XSlider extends HTMLElement {
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
-    this._changeAriaVisibility();
+    this._updateSlidesA11y();
   }
 
   /**
@@ -642,7 +642,7 @@ class XSlider extends HTMLElement {
         // rendering loop.
         if (!this._transitioning && !this._decelerating) {
           this._focusSelectedSlide();
-          this._changeAriaVisibility();
+          this._updateSlidesA11y();
         }
 
         break;
@@ -1019,10 +1019,10 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Sets the correct value for the 'aria-hidden' attribute on the slides.
+   * Updates the `aria-hidden` and `inert` attributes on the slides.
    * @private
    */
-  _changeAriaVisibility() {
+  _updateSlidesA11y() {
     const slidesInView = [];
     for (let i = 0; i < this.slidesPerView; i++) {
       slidesInView.push((this.selected + i) % this._slides.length);
@@ -1030,9 +1030,18 @@ class XSlider extends HTMLElement {
 
     // Set aria-hidden to false only for the slides whose indexes are included
     // in the slidesInView array.
+    let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
-      slideEl.setAttribute('aria-hidden', typeof (slidesInView
-          .find(i => i === slideIndex)) !== 'undefined' ? 'false' : 'true');
+      isSlideInView = typeof slidesInView
+          .find(i => i === slideIndex) !== 'undefined';
+      // Slides in view have `aria-hidden` set to `false`.
+      slideEl.setAttribute('aria-hidden', isSlideInView ? 'false' : 'true');
+      // Slides in view don't have the `inert` attribute and can be focused.
+      if (isSlideInView) {
+        slideEl.removeAttribute('inert');
+      } else {
+        slideEl.setAttribute('inert', '');
+      }
     });
   }
 
@@ -1511,7 +1520,7 @@ class XSlider extends HTMLElement {
 
       requestAnimationFrame(() => {
         this._focusSelectedSlide();
-        this._changeAriaVisibility();
+        this._updateSlidesA11y();
       });
     }
   }

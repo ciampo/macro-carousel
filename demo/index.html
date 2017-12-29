@@ -25,6 +25,7 @@
 
     .slide {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
 
@@ -79,16 +80,46 @@
       loop
       slides-per-view="4"
       aria-labelledby="title">
-    <article class="slide">1</article>
-    <article class="slide">2</article>
-    <article class="slide">3</article>
-    <article class="slide">4</article>
-    <article class="slide">5</article>
-    <article class="slide">6</article>
-    <article class="slide">7</article>
-    <article class="slide">8</article>
-    <article class="slide">9</article>
-    <article class="slide">10</article>
+    <article class="slide">
+      <span>1</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>2</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>3</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>4</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>5</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>6</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>7</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>8</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>9</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>10</span>
+      <button>Click me</button>
+    </article>
   </x-slider>
 
   <p>Currently selected slide: <span id="selected"></span></p>
