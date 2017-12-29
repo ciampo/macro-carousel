@@ -356,6 +356,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('pagination');
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
+    this._upgradeProperty('reducedMotion');
 
     this._previousEffectiveLayoutIndex = this.selected;
 
@@ -572,6 +573,7 @@ class XSlider extends HTMLElement {
       'drag',
       'slides-per-view',
       'id',
+      'reduced-motion',
     ];
   }
 
@@ -727,6 +729,14 @@ class XSlider extends HTMLElement {
             });
           }
         }
+        break;
+
+      case 'reduced-motion':
+        if (newValue !== null) {
+          this._disableWrapperTransitions();
+        } else {
+          this._enableWrapperTransitions();
+        }
     }
   }
 
@@ -826,6 +836,23 @@ class XSlider extends HTMLElement {
     return value === null ? 1 : parseInt(value, 10);
   }
 
+  /**
+   * If true, disables CSS transitions and drag deceleration.
+   * @type {boolean}
+   * @default false
+   */
+  set reducedMotion(flag) {
+    if (flag) {
+      this.setAttribute('reduced-motion', '');
+    } else {
+      this.removeAttribute('reduced-motion');
+    }
+  }
+
+  get reducedMotion() {
+    return this.hasAttribute('reduced-motion');
+  }
+
 
   // ===========================================================================
   // Layout-related
@@ -847,6 +874,10 @@ class XSlider extends HTMLElement {
    * @private
    */
   _enableWrapperTransitions() {
+    if (this.reducedMotion) {
+      return;
+    }
+
     // Double rAF is necessary to wait for 'selected' to take effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1502,8 +1533,10 @@ class XSlider extends HTMLElement {
 
     // Keep animating until the carousel is close to the snapping point
     // with a very small veloity. This results in a springy effect.
-    if (Math.abs(snapX - newPosition) >= 1 ||
-        Math.abs(this._decelVelocity) >= 1) {
+    // Do not animate if the reduced-motion mode is enabled.
+    const tooFarOrTooFast = Math.abs(snapX - newPosition) >= 1 ||
+        Math.abs(this._decelVelocity) >= 1;
+    if (tooFarOrTooFast && !this.reducedMotion) {
       this._setWrapperTranslateX(newPosition);
       requestAnimationFrame(this._decelerationStep.bind(this));
     } else {
