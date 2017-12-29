@@ -1075,13 +1075,15 @@ class XSlider extends HTMLElement {
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
         for (let i = 0; i <= this._lastViewIndex; i++) {
+          const li = document.createElement('li');
           const btn = document.createElement('button');
           btn.textContent = i;
           btn.setAttribute('aria-label', `Go to view ${i + 1}`);
           btn.setAttribute('aria-controls', this._sliderId);
           btn.addEventListener('click', this);
 
-          frag.appendChild(btn);
+          li.appendChild(btn);
+          frag.appendChild(li);
           this._paginationIndicators.push(btn);
         }
         this._paginationWrapper.appendChild(frag);
