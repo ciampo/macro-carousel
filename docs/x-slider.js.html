@@ -83,6 +83,13 @@ class XSlider extends HTMLElement {
     this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
 
     /**
+     * The id of this element.
+     * @type {string}
+     * @private
+     */
+    this._sliderId = '';
+
+    /**
      * The wrapper element enclosing the slides.
      * @type {HTMLElement}
      * @private
@@ -206,6 +213,13 @@ class XSlider extends HTMLElement {
      * @private
      */
     this._resizeTimer = undefined;
+
+    /**
+     * True when CSS transitions are enabled.
+     * @type {boolean}
+     * @private
+     */
+    this._transitioning = false;
 
     // Touch / drag
 
@@ -351,6 +365,18 @@ class XSlider extends HTMLElement {
    * @private
    */
   connectedCallback() {
+    // Setting role=list (we set role=listitem for the slides)
+    this.setAttribute('role', 'list');
+    // Giving the slider a unique id (if it doesn't have one yet).
+    // It will be used on buttons for their 'aria-controls' attribute.
+    if (!(this._sliderId = this.getAttribute('id'))) {
+      this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
+      while (document.getElementById(this._sliderId)) {
+        this._sliderId = 'x-slider-' + Math.round(Math.random() * 1000);
+      }
+      this.setAttribute('id', this._sliderId);
+    }
+
     // Setup the component.
     this._upgradeProperty('selected');
     this._upgradeProperty('loop');
@@ -367,6 +393,7 @@ class XSlider extends HTMLElement {
     // Add event listeners.
     this._slidesSlot.addEventListener('slotchange', this);
     window.addEventListener('resize', this, getEvtListenerOptions(true));
+    this.addEventListener('keydown', this);
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
@@ -429,6 +456,21 @@ class XSlider extends HTMLElement {
     } else if (this.navigation &amp;&amp; e.target === this._nextButton) {
       this.next();
 
+    // Keyboard.
+    } else if (e.type === 'keydown') {
+      // Left / Up.
+      if (e.keyCode === 37 || e.keyCode === 38) {
+        this.previous();
+      // Right / Down.
+      } else if (e.keyCode === 39 || e.keyCode === 40) {
+        this.next();
+      }
+
+    // transitionend (CSS)
+    } else if (e.type === 'transitionend') {
+      this._focusSelectedSlide();
+      this._changeAriaVisibility();
+
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
       this._onPointerDown(this._normalizeEvent(e));
@@ -473,6 +515,7 @@ class XSlider extends HTMLElement {
     this._updatePagination();
     this._updateNavigation();
     this._updateDragEventListeners();
+    this._changeAriaVisibility();
   }
 
   /**
@@ -556,6 +599,7 @@ class XSlider extends HTMLElement {
       'pagination',
       'drag',
       'slides-per-view',
+      'id',
     ];
   }
 
@@ -571,7 +615,7 @@ class XSlider extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#x-slider-dd
+   * @fires XSlider#x-slider-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -633,6 +677,17 @@ class XSlider extends HTMLElement {
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
         }));
+
+        // Apply a11y changes immediately only if the slider is not
+        // transitioning (i.e. CSS transitions) or decelerating (i.e. after
+        // dragging). In those cases, the functions below are triggered in a
+        // transitionend event listener, or at the end of the deceleration
+        // rendering loop.
+        if (!this._transitioning &amp;&amp; !this._decelerating) {
+          this._focusSelectedSlide();
+          this._changeAriaVisibility();
+        }
+
         break;
 
       case 'loop':
@@ -673,6 +728,33 @@ class XSlider extends HTMLElement {
 
         this.update();
         break;
+
+      case 'id':
+        if (this._slides.length === 0) {
+          return;
+        }
+
+        if (this._sliderId !== newValue) {
+          this._sliderId = newValue;
+          if (this.navigation) {
+            if (!this._sliderId) {
+              this._prevButton.removeAttribute('aria-controls');
+              this._nextButton.removeAttribute('aria-controls');
+            } else {
+              this._prevButton.setAttribute('aria-controls', this._sliderId);
+              this._nextButton.setAttribute('aria-controls', this._sliderId);
+            }
+          }
+          if (this.pagination) {
+            this._paginationIndicators.forEach(el => {
+              if (!this._sliderId) {
+                el.removeAttribute('aria-controls');
+              } else {
+                el.setAttribute('aria-controls', this._sliderId);
+              }
+            });
+          }
+        }
     }
   }
 
@@ -784,6 +866,8 @@ class XSlider extends HTMLElement {
    */
   _disableWrapperTransitions() {
     this.removeAttribute('transitioning');
+    this._transitioning = false;
+    this._slidesWrapper.removeEventListener('transitionend', this, false);
   }
 
   /**
@@ -795,6 +879,8 @@ class XSlider extends HTMLElement {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this.setAttribute('transitioning', '');
+        this._transitioning = true;
+        this._slidesWrapper.addEventListener('transitionend', this, false);
       });
     });
   }
@@ -961,6 +1047,36 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * Moves the focus to the selected slide.
+   * @private
+   */
+  _focusSelectedSlide() {
+    if (this._slides.length === 0) {
+      return;
+    }
+
+    this._slides[this.selected].element.focus();
+  }
+
+  /**
+   * Sets the correct value for the 'aria-hidden' attribute on the slides.
+   * @private
+   */
+  _changeAriaVisibility() {
+    const slidesInView = [];
+    for (let i = 0; i &lt; this.slidesPerView; i++) {
+      slidesInView.push((this.selected + i) % this._slides.length);
+    }
+
+    // Set aria-hidden to false only for the slides whose indexes are included
+    // in the slidesInView array.
+    this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
+      slideEl.setAttribute('aria-hidden', slidesInView
+          .find(i => i === slideIndex) !== 'undefined' ? 'false' : 'true');
+    });
+  }
+
+  /**
    * Updates the pagination indicators (depending on the current value of
    * `pagination`) to reflect the current number of views and the selected view.
    * @private
@@ -987,12 +1103,15 @@ class XSlider extends HTMLElement {
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
         for (let i = 0; i &lt;= this._lastViewIndex; i++) {
+          const li = document.createElement('li');
           const btn = document.createElement('button');
           btn.textContent = i;
-          btn.setAttribute('aria-label', `Go to view ${i + 1}`);
+          btn.setAttribute('aria-label', `Go to item ${i + 1}`);
+          btn.setAttribute('aria-controls', this._sliderId);
           btn.addEventListener('click', this);
 
-          frag.appendChild(btn);
+          li.appendChild(btn);
+          frag.appendChild(li);
           this._paginationIndicators.push(btn);
         }
         this._paginationWrapper.appendChild(frag);
@@ -1040,15 +1159,15 @@ class XSlider extends HTMLElement {
       if (this._navigationWrapper.childElementCount !== 2) {
         // add buttons and add ev listeners
         this._prevButton = document.createElement('button');
-        this._prevButton.setAttribute('aria-label', 'To previous view');
         this._prevButton.setAttribute('id', 'previous');
+        this._prevButton.setAttribute('aria-controls', this._sliderId);
         this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
         this._prevButton.addEventListener('click', this);
         this._navigationWrapper.appendChild(this._prevButton);
 
         this._nextButton = document.createElement('button');
-        this._nextButton.setAttribute('aria-label', 'To next view');
         this._nextButton.setAttribute('id', 'next');
+        this._nextButton.setAttribute('aria-controls', this._sliderId);
         this._nextButton.appendChild(
             arrowRightTemplate.content.cloneNode(true));
         this._nextButton.addEventListener('click', this);
@@ -1060,6 +1179,13 @@ class XSlider extends HTMLElement {
           !this.loop &amp;&amp; this.selected === 0;
       this._nextButton.disabled =
           !this.loop &amp;&amp; this.selected === this._lastViewIndex;
+
+      // update 'aria-label'
+      this._prevButton.setAttribute('aria-label', `Go to ${
+         this.loop &amp;&amp; this.selected === 0 ? 'last' : 'previous'} item`);
+      this._nextButton.setAttribute('aria-label', `Go to ${
+          this.loop &amp;&amp; this.selected === this._lastViewIndex ? 'first' : 'next'
+          } item`);
     }
   }
 
@@ -1104,6 +1230,10 @@ class XSlider extends HTMLElement {
    */
   _onSlotChange() {
     this._slides = this._getSlides();
+    this._slides.forEach(slide => {
+      slide.element.setAttribute('tabindex', -1);
+      slide.element.setAttribute('role', 'listitem');
+    });
 
     this.update();
   }
@@ -1408,6 +1538,11 @@ class XSlider extends HTMLElement {
       this._setWrapperTranslateX(snapX);
       this._decelerating = false;
       this._enableWrapperTransitions();
+
+      requestAnimationFrame(() => {
+        this._focusSelectedSlide();
+        this._changeAriaVisibility();
+      });
     }
   }
 }
@@ -1429,7 +1564,7 @@ window.customElements.define('x-slider', XSlider);
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Dec 20 2017 00:03:24 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Dec 29 2017 12:05:21 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>
