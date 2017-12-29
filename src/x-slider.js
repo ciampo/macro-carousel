@@ -1091,6 +1091,21 @@ class XSlider extends HTMLElement {
   }
 
   /**
+   * Creates a navigation button element.
+   * @param {string} id The id of the button element.
+   * @param {HTMLTemplateElement} template The template to stamp in the button.
+   * @returns {HTMLButtonElement} The button element.
+   * @private
+   */
+  _createNavigationButton(id, template) {
+    const btn = document.createElement('button');
+    btn.setAttribute('id', id);
+    btn.appendChild(template.content.cloneNode(true));
+    btn.addEventListener('click', this);
+    return btn;
+  }
+
+  /**
    * Updates the navigation buttons (prev/next) depending on the value of
    * `navigation`, `loop` and the currently selected view.
    * @private
@@ -1115,17 +1130,12 @@ class XSlider extends HTMLElement {
     if (this.navigation) {
       if (this._navigationWrapper.childElementCount !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = document.createElement('button');
-        this._prevButton.setAttribute('id', 'previous');
-        this._prevButton.appendChild(arrowLeftTemplate.content.cloneNode(true));
-        this._prevButton.addEventListener('click', this);
+        this._prevButton = this._createNavigationButton('previous',
+            arrowLeftTemplate);
         this._navigationWrapper.appendChild(this._prevButton);
 
-        this._nextButton = document.createElement('button');
-        this._nextButton.setAttribute('id', 'next');
-        this._nextButton.appendChild(
-            arrowRightTemplate.content.cloneNode(true));
-        this._nextButton.addEventListener('click', this);
+        this._nextButton = this._createNavigationButton('next',
+            arrowRightTemplate);
         this._navigationWrapper.appendChild(this._nextButton);
       }
 
