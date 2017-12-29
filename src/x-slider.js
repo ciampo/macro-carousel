@@ -1078,7 +1078,7 @@ class XSlider extends HTMLElement {
           const li = document.createElement('li');
           const btn = document.createElement('button');
           btn.textContent = i;
-          btn.setAttribute('aria-label', `Go to view ${i + 1}`);
+          btn.setAttribute('aria-label', `Go to item ${i + 1}`);
           btn.setAttribute('aria-controls', this._sliderId);
           btn.addEventListener('click', this);
 
@@ -1153,12 +1153,11 @@ class XSlider extends HTMLElement {
           !this.loop && this.selected === this._lastViewIndex;
 
       // update 'aria-label'
-      this._prevButton.setAttribute('aria-label',
-          this.loop && this.selected === 0 ?
-              'To last slide' : 'To previous slide');
-      this._nextButton.setAttribute('aria-label',
-          this.loop && this.selected === this._lastViewIndex ?
-              'To first slide' : 'To next slide');
+      this._prevButton.setAttribute('aria-label', `Go to ${
+         this.loop && this.selected === 0 ? 'last' : 'previous'} item`);
+      this._nextButton.setAttribute('aria-label', `Go to ${
+          this.loop && this.selected === this._lastViewIndex ? 'first' : 'next'
+          } item`);
     }
   }
 
