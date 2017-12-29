@@ -1050,7 +1050,8 @@ class XSlider extends HTMLElement {
       // Remove all children of pag wrapper and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
         indicatorEl.removeEventListener('click', this);
-        this._paginationWrapper.removeChild(indicatorEl);
+        // Using parentElement as we need to remore the parent <li> element.
+        this._paginationWrapper.removeChild(indicatorEl.parentElement);
       });
       this._paginationIndicators.length = 0;
     }
