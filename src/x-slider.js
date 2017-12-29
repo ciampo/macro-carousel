@@ -1043,8 +1043,8 @@ class XSlider extends HTMLElement {
     // Set aria-hidden to false only for the slides whose indexes are included
     // in the slidesInView array.
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
-      slideEl.setAttribute('aria-hidden', slidesInView
-          .find(i => i === slideIndex) !== 'undefined' ? 'false' : 'true');
+      slideEl.setAttribute('aria-hidden', typeof (slidesInView
+          .find(i => i === slideIndex)) !== 'undefined' ? 'false' : 'true');
     });
   }
 
