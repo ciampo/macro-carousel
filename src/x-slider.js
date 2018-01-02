@@ -95,7 +95,7 @@ class XSlider extends HTMLElement {
      * @type {HTMLElement}
      * @private
      */
-    this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
+    this._navigationSlot = this.shadowRoot.querySelector('#navigationSlot');
 
     /**
      * The navigation `previous` button.
@@ -1112,6 +1112,7 @@ class XSlider extends HTMLElement {
   _createNavigationButton(id, template) {
     const btn = document.createElement('button');
     btn.setAttribute('id', id);
+    btn.setAttribute('slot', 'navigationSlot');
     btn.appendChild(template.content.cloneNode(true));
     btn.addEventListener('click', this);
     return btn;
@@ -1123,32 +1124,35 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateNavigation() {
-    if (!this._navigationWrapper || this._slides.length === 0) {
+    if (!this._navigationSlot || this._slides.length === 0) {
       return;
     }
 
-    if (!this.navigation ||
-        (this.navigation && this._navigationWrapper.childElementCount !== 2)) {
-      // remove all children of nav wrapper and their ev listeners
-      while (this._navigationWrapper.firstChild) {
-        this._navigationWrapper.firstChild.removeEventListener('click', this);
-        this._navigationWrapper.removeChild(this._navigationWrapper.firstChild);
+    const navButtons = Array.from(
+        this.querySelectorAll('[slot=navigationSlot]'));
 
-        this._prevButton = undefined;
-        this._nextButton = undefined;
-      }
+    if (!this.navigation || (this.navigation && navButtons.length !== 2)) {
+      // remove all children of nav wrapper and their ev listeners
+      navButtons.forEach(button => {
+        button.removeEventListener('click', this);
+        this.removeChild(button);
+      });
+
+      this._prevButton = undefined;
+      this._nextButton = undefined;
+      navButtons.length = 0;
     }
 
     if (this.navigation) {
-      if (this._navigationWrapper.childElementCount !== 2) {
+      if (navButtons.length !== 2) {
         // add buttons and add ev listeners
         this._prevButton = this._createNavigationButton('previous',
             arrowLeftTemplate);
-        this._navigationWrapper.appendChild(this._prevButton);
+        this.appendChild(this._prevButton);
 
         this._nextButton = this._createNavigationButton('next',
             arrowRightTemplate);
-        this._navigationWrapper.appendChild(this._nextButton);
+        this.appendChild(this._nextButton);
       }
 
       // update `disabled`
