@@ -395,23 +395,25 @@ class XSlider extends HTMLElement {
    */
   handleEvent(e) {
     // Window resize
-    if (e.target === window && e.type === 'resize') {
+    if (e.type === 'resize' && e.target === window) {
       this._onResize();
 
     // Slot change
-    } else if (e.target === this._slidesSlot) {
+    } else if (e.type === 'slotchange' && e.target === this._slidesSlot) {
       this._onSlotChange();
 
     // Pagination indicators
-    } else if (this.pagination &&
+    } else if (e.type === 'click' && this.pagination &&
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (this.navigation && e.target === this._prevButton) {
-      this.previous();
-    } else if (this.navigation && e.target === this._nextButton) {
-      this.next();
+    } else if (e.type === 'click' && this.navigation) {
+      if (e.target === this._prevButton) {
+        this.previous();
+      } else if (e.target === this._nextButton) {
+        this.next();
+      }
 
     // Keyboard.
     } else if (e.type === 'keydown') {
@@ -424,7 +426,7 @@ class XSlider extends HTMLElement {
       }
 
     // transitionend (CSS)
-    } else if (e.type === 'transitionend') {
+    } else if (e.type === 'transitionend' && e.target === this._slidesWrapper) {
       this._focusSelectedSlide();
       this._updateSlidesA11y();
 
