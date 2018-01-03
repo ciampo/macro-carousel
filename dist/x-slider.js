@@ -2,13 +2,13 @@
 (function () {
 'use strict';
 
-var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-background-color: transparent;\n  --x-slider-slide-min-height: 0px;\n  --x-slider-slide-max-height: none;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size-clickable: 24px;\n  --x-slider-pagination-size-dot: 8px;\n  --x-slider-pagination-gap: 2px;\n  --x-slider-pagination-height: 44px;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  background-color: var(--x-slider-background-color);\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n  will-change: transform;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  display: none;\n}\n\n:host([pagination]) #pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  min-height: var(--x-slider-pagination-size-clickable);\n  padding: 0;\n  margin: 0;\n  contain: strict;\n  list-style: none;\n}\n\n#pagination li {\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  font-size: 0;\n}\n\n#pagination button {\n  position: relative;\n  width: var(--x-slider-pagination-size-clickable);\n  height: var(--x-slider-pagination-size-clickable);\n  padding: 0;\n  border: none;\n  font-size: inherit;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button::before,\n#pagination button::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  -webkit-transform: translate(-50%, -50%);\n          transform: translate(-50%, -50%);\n  display: block;\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  content: '';\n}\n\n#pagination button::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n  opacity: 0;\n  will-change: opacity;\n}\n\n#pagination button:hover,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button:focus {\n  outline: none;\n}\n\n#pagination button:focus::before {\n  opacity: .2;\n}\n\n#pagination button[disabled]::after {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n  /*\n   * Enforces the slides to keep their size even if the content requires\n   * a bigger slide size.\n   */\n  overflow: hidden;\n}\n\n::slotted(:focus) {\n  outline: none;\n}\n\n:host([drag]) ::slotted(*) {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n#navigation {\n  display: none;\n}\n\n:host([navigation]) #navigation {\n  display: block;\n}\n\n#previous,\n#next {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  min-width: 48px;\n  min-height: 48px;\n  padding: 0;\n  color: var(--x-slider-navigation-color);\n  background: none;\n  border: 0;\n  border-radius: 50%;\n  overflow: hidden;\n  cursor: pointer;\n}\n\n#previous::before,\n#next::before {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  content: '';\n  background-color: var(--x-slider-navigation-background-color-focus);\n  opacity: 0;\n  will-change: opacity;\n}\n\n#previous:focus,\n#next:focus {\n  outline: none;\n}\n\n#previous:hover::before,\n#next:hover::before,\n#previous:focus::before,\n#next:focus::before {\n  opacity: 1;\n}\n\n#previous[disabled],\n#next[disabled] {\n  opacity: .2;\n}\n\n#previous svg,\n#next svg {\n  position: relative;\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n  pointer-events: none;\n}\n\n#previous {\n  left: 0;\n}\n\n#next {\n  right: 0;\n}\n";
+var styles = ":host {\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  contain: content;\n  --x-slider-gap: 16px;\n  --x-slider-background-color: transparent;\n  --x-slider-slide-min-height: 0px;\n  --x-slider-slide-max-height: none;\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size-clickable: 24px;\n  --x-slider-pagination-size-dot: 8px;\n  --x-slider-pagination-gap: 2px;\n  --x-slider-pagination-height: 44px;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n  background-color: var(--x-slider-background-color);\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n  will-change: transform;\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  display: none;\n}\n\n:host([pagination]) #pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  height: var(--x-slider-pagination-height);\n  min-height: var(--x-slider-pagination-size-clickable);\n  padding: 0;\n  margin: 0;\n  contain: strict;\n  list-style: none;\n}\n\n#pagination li {\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  font-size: 0;\n}\n\n#pagination button {\n  position: relative;\n  width: var(--x-slider-pagination-size-clickable);\n  height: var(--x-slider-pagination-size-clickable);\n  padding: 0;\n  border: none;\n  font-size: inherit;\n  cursor: pointer;\n  opacity: .8;\n}\n\n#pagination button::before,\n#pagination button::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  -webkit-transform: translate(-50%, -50%);\n          transform: translate(-50%, -50%);\n  display: block;\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n  border-radius: 50%;\n  background-color: var(--x-slider-pagination-color);\n  content: '';\n}\n\n#pagination button::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n  opacity: 0;\n  will-change: opacity;\n}\n\n#pagination button:hover,\n#pagination button[disabled] {\n  opacity: 1;\n}\n\n#pagination button:focus {\n  outline: none;\n}\n\n#pagination button:focus::before {\n  opacity: .2;\n}\n\n#pagination button[disabled]::after {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n#slidesSlot::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) * var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n  /*\n   * Enforces the slides to keep their size even if the content requires\n   * a bigger slide size.\n   */\n  overflow: hidden;\n}\n\n#slidesSlot::slotted(:focus) {\n  outline: none;\n}\n\n:host([drag]) #slidesSlot::slotted(*) {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n#navigation {\n  display: none;\n}\n\n:host([navigation]) #navigation {\n  display: block;\n}\n\n#navigationSlot::slotted(#previous),\n#navigationSlot::slotted(#next) {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  min-width: 48px;\n  min-height: 48px;\n  padding: 0;\n  color: var(--x-slider-navigation-color);\n  background: none;\n  border: 0;\n  border-radius: 50%;\n  overflow: hidden;\n  cursor: pointer;\n}\n\n#navigationSlot::slotted(#previous) {\n  left: 0;\n}\n\n#navigationSlot::slotted(#next) {\n  right: 0;\n}\n\n#navigationSlot::slotted(#previous)::before,\n#navigationSlot::slotted(#next)::before {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  content: '';\n  background-color: var(--x-slider-navigation-background-color-focus);\n  opacity: 0;\n  will-change: opacity;\n}\n\n#navigationSlot::slotted(#previous:focus),\n#navigationSlot::slotted(#next:focus) {\n  outline: none;\n}\n\n#navigationSlot::slotted(#previous:hover)::before,\n#navigationSlot::slotted(#next:hover)::before,\n#navigationSlot::slotted(#previous:focus)::before,\n#navigationSlot::slotted(#next:focus)::before {\n  opacity: 1;\n}\n\n#navigationSlot::slotted(#previous[disabled]),\n#navigationSlot::slotted(#next[disabled]) {\n  opacity: .2;\n}\n";
 
-var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\"></div>\n\n<ul id=\"pagination\"></ul>";
+var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\">\n  <slot id=\"navigationSlot\" name=\"navigationSlot\"></slot>\n</div>\n\n<ul id=\"pagination\"></ul>";
 
-var arrowLeft = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z\"/>\n</svg>";
+var arrowLeft = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" style=\"position: relative;  width: var(--x-slider-navigation-icon-size); height: var(--x-slider-navigation-icon-size);  pointer-events: none\">\n  <path d=\"M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z\"/>\n</svg>";
 
-var arrowRight = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\">\n  <path d=\"M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z\"/>\n</svg>";
+var arrowRight = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" style=\"position: relative;  width: var(--x-slider-navigation-icon-size); height: var(--x-slider-navigation-icon-size);  pointer-events: none\">\n  <path d=\"M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z\"/>\n</svg>";
 
 let passiveEvtSupport;
 
@@ -175,7 +175,7 @@ class XSlider extends HTMLElement {
      * @type {HTMLElement}
      * @private
      */
-    this._navigationWrapper = this.shadowRoot.querySelector('#navigation');
+    this._navigationSlot = this.shadowRoot.querySelector('#navigationSlot');
 
     /**
      * The navigation `previous` button.
@@ -475,23 +475,25 @@ class XSlider extends HTMLElement {
    */
   handleEvent(e) {
     // Window resize
-    if (e.target === window && e.type === 'resize') {
+    if (e.type === 'resize' && e.target === window) {
       this._onResize();
 
     // Slot change
-    } else if (e.target === this._slidesSlot) {
+    } else if (e.type === 'slotchange' && e.target === this._slidesSlot) {
       this._onSlotChange();
 
     // Pagination indicators
-    } else if (this.pagination &&
+    } else if (e.type === 'click' && this.pagination &&
         this._paginationIndicators.find(el => el === e.target)) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (this.navigation && e.target === this._prevButton) {
-      this.previous();
-    } else if (this.navigation && e.target === this._nextButton) {
-      this.next();
+    } else if (e.type === 'click' && this.navigation) {
+      if (e.target === this._prevButton) {
+        this.previous();
+      } else if (e.target === this._nextButton) {
+        this.next();
+      }
 
     // Keyboard.
     } else if (e.type === 'keydown') {
@@ -504,7 +506,7 @@ class XSlider extends HTMLElement {
       }
 
     // transitionend (CSS)
-    } else if (e.type === 'transitionend') {
+    } else if (e.type === 'transitionend' && e.target === this._slidesWrapper) {
       this._focusSelectedSlide();
       this._updateSlidesA11y();
 
@@ -1192,6 +1194,7 @@ class XSlider extends HTMLElement {
   _createNavigationButton(id, template) {
     const btn = document.createElement('button');
     btn.setAttribute('id', id);
+    btn.setAttribute('slot', 'navigationSlot');
     btn.appendChild(template.content.cloneNode(true));
     btn.addEventListener('click', this);
     return btn;
@@ -1203,32 +1206,35 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updateNavigation() {
-    if (!this._navigationWrapper || this._slides.length === 0) {
+    if (!this._navigationSlot || this._slides.length === 0) {
       return;
     }
 
-    if (!this.navigation ||
-        (this.navigation && this._navigationWrapper.childElementCount !== 2)) {
-      // remove all children of nav wrapper and their ev listeners
-      while (this._navigationWrapper.firstChild) {
-        this._navigationWrapper.firstChild.removeEventListener('click', this);
-        this._navigationWrapper.removeChild(this._navigationWrapper.firstChild);
+    const navButtons = Array.from(
+        this.querySelectorAll('[slot=navigationSlot]'));
 
-        this._prevButton = undefined;
-        this._nextButton = undefined;
-      }
+    if (!this.navigation || (this.navigation && navButtons.length !== 2)) {
+      // remove all children of nav wrapper and their ev listeners
+      navButtons.forEach(button => {
+        button.removeEventListener('click', this);
+        this.removeChild(button);
+      });
+
+      this._prevButton = undefined;
+      this._nextButton = undefined;
+      navButtons.length = 0;
     }
 
     if (this.navigation) {
-      if (this._navigationWrapper.childElementCount !== 2) {
+      if (navButtons.length !== 2) {
         // add buttons and add ev listeners
         this._prevButton = this._createNavigationButton('previous',
             arrowLeftTemplate);
-        this._navigationWrapper.appendChild(this._prevButton);
+        this.appendChild(this._prevButton);
 
         this._nextButton = this._createNavigationButton('next',
             arrowRightTemplate);
-        this._navigationWrapper.appendChild(this._nextButton);
+        this.appendChild(this._nextButton);
       }
 
       // update `disabled`
