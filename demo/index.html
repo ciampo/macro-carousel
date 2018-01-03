@@ -143,9 +143,8 @@
 
     window.addEventListener('WebComponentsReady', function() {
       var script = document.createElement('script');
-
-      var isDev = getParameterByName('dev') === 'true';
-      script.src = isDev ? '../dist/x-slider.js' :
+      script.src = getParameterByName('dev') === 'true' ?
+          '../dist/x-slider.js' :
           '../dist/x-slider.min.js';
 
       document.head.appendChild(script);
