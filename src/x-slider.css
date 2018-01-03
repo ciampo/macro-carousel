@@ -34,6 +34,11 @@
   display: none
 }
 
+:focus:not(.focus-ring),
+::slotted(*:focus:not(.focus-ring)) {
+  outline: 0;
+}
+
 #externalWrapper {
   overflow: hidden;
   contain: paint;
@@ -145,14 +150,9 @@
   will-change: opacity;
 }
 
-
 #pagination button:hover,
 #pagination button[disabled] {
   opacity: 1;
-}
-
-#pagination button:focus {
-  outline: none;
 }
 
 #pagination button:focus::before {
@@ -174,10 +174,6 @@
    * a bigger slide size.
    */
   overflow: hidden;
-}
-
-#slidesSlot::slotted(:focus) {
-  outline: none;
 }
 
 :host([drag]) #slidesSlot::slotted(*) {
@@ -239,11 +235,6 @@
   opacity: 0;
 
   will-change: opacity;
-}
-
-#navigationSlot::slotted(#previous:focus),
-#navigationSlot::slotted(#next:focus) {
-  outline: none;
 }
 
 #navigationSlot::slotted(#previous:hover)::before,

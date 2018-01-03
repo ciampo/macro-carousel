@@ -7,6 +7,10 @@
   <title>x-slider demo</title>
 
   <style>
+    :focus:not(.focus-ring) {
+      outline: 0;
+    }
+
     x-slider {
       margin: 0 auto;
 
@@ -69,6 +73,8 @@
   </style>
 
   <script src="./webcomponents-loader.js"></script>
+  <script src="./inert.min.js"></script>
+  <script src="./focus-ring.js"></script>
 </head>
 <body>
   <h1 id="title">X-Slider demo</h1>
