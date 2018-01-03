@@ -91,26 +91,18 @@
   height: var(--x-slider-pagination-height);
   min-height: var(--x-slider-pagination-size-clickable);
 
-  padding: 0;
-  margin: 0;
-
   contain: strict;
-
-  list-style: none;
-}
-
-#pagination li {
-  margin: 0 calc(var(--x-slider-pagination-gap) / 2);
 
   font-size: 0;
 }
 
-#pagination button {
+#paginationSlot::slotted(button) {
   position: relative;
 
   width: var(--x-slider-pagination-size-clickable);
   height: var(--x-slider-pagination-size-clickable);
 
+  margin: 0 calc(var(--x-slider-pagination-gap) / 2);
   padding: 0;
 
   border: none;
@@ -122,8 +114,8 @@
   opacity: .8;
 }
 
-#pagination button::before,
-#pagination button::after {
+#paginationSlot::slotted(button)::before,
+#paginationSlot::slotted(button)::after {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -142,7 +134,7 @@
   content: '';
 }
 
-#pagination button::before {
+#paginationSlot::slotted(button)::before {
   transform: translate(-50%, -50%) scale(2);
 
   opacity: 0;
@@ -150,16 +142,17 @@
   will-change: opacity;
 }
 
-#pagination button:hover,
-#pagination button[disabled] {
+#paginationSlot::slotted(button:hover),
+#paginationSlot::slotted(button[disabled]) {
   opacity: 1;
 }
 
-#pagination button:focus::before {
+#paginationSlot::slotted(button:active)::before,
+#paginationSlot::slotted(button.focus-ring)::before {
   opacity: .2;
 }
 
-#pagination button[disabled]::after {
+#paginationSlot::slotted(button[disabled])::after {
   background-color: var(--x-slider-pagination-color-selected);
 }
 
@@ -188,8 +181,7 @@
   display: block;
 }
 
-#navigationSlot::slotted(#previous),
-#navigationSlot::slotted(#next) {
+#navigationSlot::slotted(button) {
   position: absolute;
   top: calc(50% - var(--x-slider-pagination-height) / 2);
   transform: translateY(-50%);
@@ -220,8 +212,7 @@
   right: 0;
 }
 
-#navigationSlot::slotted(#previous)::before,
-#navigationSlot::slotted(#next)::before {
+#navigationSlot::slotted(button)::before {
   position: absolute;
   top: 0;
   right: 0;
@@ -237,14 +228,12 @@
   will-change: opacity;
 }
 
-#navigationSlot::slotted(#previous:hover)::before,
-#navigationSlot::slotted(#next:hover)::before,
-#navigationSlot::slotted(#previous:focus)::before,
-#navigationSlot::slotted(#next:focus)::before {
+#navigationSlot::slotted(button:hover)::before,
+#navigationSlot::slotted(button:active)::before,
+#navigationSlot::slotted(button.focus-ring)::before, {
   opacity: 1;
 }
 
-#navigationSlot::slotted(#previous[disabled]),
-#navigationSlot::slotted(#next[disabled]) {
+#navigationSlot::slotted(button[disabled]) {
   opacity: .2;
 }

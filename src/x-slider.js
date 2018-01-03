@@ -78,10 +78,10 @@ class XSlider extends HTMLElement {
 
     /**
      * The element wrapping the pagination indicators.
-     * @type {HTMLElement}
+     * @type {HTMLSlotElement}
      * @private
      */
-    this._paginationWrapper = this.shadowRoot.querySelector('#pagination');
+    this._paginationSlot = this.shadowRoot.querySelector('#paginationSlot');
 
     /**
      * Array of pagination indicators.
@@ -92,7 +92,7 @@ class XSlider extends HTMLElement {
 
     /**
      * The element wrapping the navigation previous/next buttons.
-     * @type {HTMLElement}
+     * @type {HTMLSlotElement}
      * @private
      */
     this._navigationSlot = this.shadowRoot.querySelector('#navigationSlot');
@@ -400,7 +400,7 @@ class XSlider extends HTMLElement {
 
     // Slot change
     } else if (e.type === 'slotchange' && e.target === this._slidesSlot) {
-      this._onSlotChange();
+      this._onSlidesSlotChange();
 
     // Pagination indicators
     } else if (e.type === 'click' && this.pagination &&
@@ -1053,39 +1053,37 @@ class XSlider extends HTMLElement {
    * @private
    */
   _updatePagination() {
-    if (!this._paginationWrapper || this._slides.length === 0) {
+    if (!this._paginationSlot || this._slides.length === 0) {
       return;
     }
 
     if (!this.pagination || (this.pagination &&
-        this._paginationWrapper.childElementCount !==
+        this._paginationSlot.assignedNodes().length !==
         this._lastViewIndex + 1)) {
-      // Remove all children of pag wrapper and their ev listeners
+      // Remove all the assignedNodes of pagination slot and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
         indicatorEl.removeEventListener('click', this);
-        // Using parentElement as we need to remore the parent <li> element.
-        this._paginationWrapper.removeChild(indicatorEl.parentElement);
+        this.removeChild(indicatorEl);
       });
       this._paginationIndicators.length = 0;
     }
 
     if (this.pagination) {
       // Create dom for pagination indicators
-      if (this._paginationWrapper.childElementCount !==
+      if (this._paginationSlot.assignedNodes().length !==
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
         for (let i = 0; i <= this._lastViewIndex; i++) {
-          const li = document.createElement('li');
           const btn = document.createElement('button');
           btn.textContent = i;
+          btn.setAttribute('slot', 'paginationSlot');
           btn.setAttribute('aria-label', `Go to item ${i + 1}`);
           btn.addEventListener('click', this);
 
-          li.appendChild(btn);
-          frag.appendChild(li);
+          frag.appendChild(btn);
           this._paginationIndicators.push(btn);
         }
-        this._paginationWrapper.appendChild(frag);
+        this.appendChild(frag);
       }
 
       // Update `disabled` to highlight the selected slide.
@@ -1130,23 +1128,20 @@ class XSlider extends HTMLElement {
       return;
     }
 
-    const navButtons = Array.from(
-        this.querySelectorAll('[slot=navigationSlot]'));
-
-    if (!this.navigation || (this.navigation && navButtons.length !== 2)) {
-      // remove all children of nav wrapper and their ev listeners
-      navButtons.forEach(button => {
+    if (!this.navigation || (this.navigation &&
+        this._navigationSlot.assignedNodes().length !== 2)) {
+      // remove all navigation slot assigned nodes and their ev listeners
+      this._navigationSlot.assignedNodes().forEach(button => {
         button.removeEventListener('click', this);
         this.removeChild(button);
       });
 
       this._prevButton = undefined;
       this._nextButton = undefined;
-      navButtons.length = 0;
     }
 
     if (this.navigation) {
-      if (navButtons.length !== 2) {
+      if (this._navigationSlot.assignedNodes().length !== 2) {
         // add buttons and add ev listeners
         this._prevButton = this._createNavigationButton('previous',
             arrowLeftTemplate);
@@ -1211,7 +1206,7 @@ class XSlider extends HTMLElement {
    * Updates the slider to react to DOM changes in #slidesSlot.
    * @private
    */
-  _onSlotChange() {
+  _onSlidesSlotChange() {
     this._slides = this._getSlides();
     this._slides.forEach(slide => {
       slide.element.setAttribute('tabindex', -1);
