@@ -1,7 +1,5 @@
 import styles from './x-slider.css';
 import html from './x-slider.html';
-import arrowLeft from './arrow-left.svg';
-import arrowRight from './arrow-right.svg';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
 import {clampAbs} from './utils.js';
 
@@ -10,12 +8,6 @@ import {clampAbs} from './utils.js';
  */
 const sliderTemplate = document.createElement('template');
 sliderTemplate.innerHTML = `<style>${styles}</style> ${html}`;
-
-const arrowRightTemplate = document.createElement('template');
-arrowRightTemplate.innerHTML = `${arrowRight}`;
-
-const arrowLeftTemplate = document.createElement('template');
-arrowLeftTemplate.innerHTML = `${arrowLeft}`;
 
 /**
  * An object representing either a touch event or a mouse event.
@@ -1105,15 +1097,13 @@ class XSlider extends HTMLElement {
   /**
    * Creates a navigation button element.
    * @param {string} id The id of the button element.
-   * @param {HTMLTemplateElement} template The template to stamp in the button.
    * @returns {HTMLButtonElement} The button element.
    * @private
    */
-  _createNavigationButton(id, template) {
+  _createNavigationButton(id) {
     const btn = document.createElement('button');
     btn.setAttribute('id', id);
     btn.setAttribute('slot', 'navigationSlot');
-    btn.appendChild(template.content.cloneNode(true));
     btn.addEventListener('click', this);
     return btn;
   }
@@ -1143,12 +1133,10 @@ class XSlider extends HTMLElement {
     if (this.navigation) {
       if (this._navigationSlot.assignedNodes().length !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = this._createNavigationButton('previous',
-            arrowLeftTemplate);
+        this._prevButton = this._createNavigationButton('previous');
         this.appendChild(this._prevButton);
 
-        this._nextButton = this._createNavigationButton('next',
-            arrowRightTemplate);
+        this._nextButton = this._createNavigationButton('next');
         this.appendChild(this._nextButton);
       }
 
