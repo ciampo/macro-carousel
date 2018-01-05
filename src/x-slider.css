@@ -3,10 +3,6 @@ Consistency between navigation and pagination hover/active/focus styles
 
 Focus-ring overrides should apply only if host-context has .focus-ring-js
 
-Consider switching from SVG to other shape in order to keep color freedom?
-(or looks at tricks like https://codepen.io/noahblon/post/coloring-svgs-in-css-background-images)
-(using filter? need to choose the right starting color)
-
 https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 */
 
@@ -29,6 +25,7 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
   --x-slider-transition-duration: 0.6s;
   --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);
 
+  --x-slider-navigation-color: #000;
   --x-slider-navigation-background-color-active: #ddd;
   --x-slider-navigation-background-color-focus: #f0f0f0;
   --x-slider-navigation-button-size: 48px;
@@ -226,19 +223,19 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 #navigationSlot::slotted(button)::before,
 #navigationSlot::slotted(button)::after {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
 
   content: '';
 }
 
 #navigationSlot::slotted(button)::after {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>');
-  background-size: var(--x-slider-navigation-icon-size);
-  background-position: center;
-  background-repeat: no-repeat;
+  top: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
+  right: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
+  width: var(--x-slider-navigation-icon-size);
+  height: var(--x-slider-navigation-icon-size);
+
+  background-color: var(--x-slider-navigation-color);
+
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>');
 }
 
 #navigationSlot::slotted(#next)::after {
@@ -247,6 +244,11 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 
 
 #navigationSlot::slotted(button)::before {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
   background-color: var(--x-slider-navigation-background-color-focus);
 
   opacity: 0;
