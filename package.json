@@ -51,7 +51,6 @@
     "rollup-plugin-babel-minify": "^3.1.2",
     "rollup-plugin-html": "^0.2.1",
     "rollup-plugin-livereload": "^0.6.0",
-    "rollup-plugin-postcss": "^0.5.5",
     "rollup-plugin-serve": "^0.4.2",
     "selenium-assistant": "^5.1.1",
     "selenium-webdriver": "^3.5.0"
