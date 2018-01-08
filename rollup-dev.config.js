@@ -1,7 +1,9 @@
 import html from 'rollup-plugin-html';
-import sass from 'rollup-plugin-sass';
+
+import postcss from 'rollup-plugin-postcss';
+import inlineSvg from 'postcss-inline-svg';
 import autoprefixer from 'autoprefixer';
-import postcss from 'postcss';
+
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
@@ -12,17 +14,15 @@ export default {
     format: 'iife',
   },
   plugins: [
-    sass({
-      include: 'src/*.css',
-      options: {
-        outputStyle: 'expanded',
-      },
-      processor: css => postcss([autoprefixer({browsers: 'last 2 versions'})])
-        .process(css)
-        .then(result => result.css),
+    postcss({
+      noStyleInject: true,
+      plugins: [
+        inlineSvg,
+        autoprefixer({browsers: 'last 2 versions'}),
+      ],
     }),
     html({
-      include: ['src/*.html', 'src/*.svg'],
+      include: ['src/*.html'],
     }),
     serve({
       contentBase: '',

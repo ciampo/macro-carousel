@@ -1,7 +1,10 @@
 import html from 'rollup-plugin-html';
-import sass from 'rollup-plugin-sass';
+
+import postcss from 'rollup-plugin-postcss';
+import inlineSvg from 'postcss-inline-svg';
 import autoprefixer from 'autoprefixer';
-import postcss from 'postcss';
+import cssnano from 'cssnano';
+
 import minify from 'rollup-plugin-babel-minify';
 
 const config = require('./package.json');
@@ -13,17 +16,16 @@ export default {
     format: 'iife',
   },
   plugins: [
-    sass({
-      include: 'src/*.css',
-      options: {
-        outputStyle: 'compressed',
-      },
-      processor: css => postcss([autoprefixer({browsers: 'last 2 versions'})])
-        .process(css)
-        .then(result => result.css),
+    postcss({
+      noStyleInject: true,
+      plugins: [
+        inlineSvg,
+        autoprefixer({browsers: 'last 2 versions'}),
+        cssnano(),
+      ],
     }),
     html({
-      include: ['src/*.html', 'src/*.svg'],
+      include: ['src/*.html'],
       htmlMinifierOptions: {
         collapseWhitespace: true,
         collapseBooleanAttributes: true,
