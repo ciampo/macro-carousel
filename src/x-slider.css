@@ -1,9 +1,5 @@
 /*
 Consistency between navigation and pagination hover/active/focus styles
-
-Focus-ring overrides should apply only if host-context has .focus-ring-js
-
-https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 */
 
 :host {
@@ -43,8 +39,8 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
   display: none
 }
 
-:focus:not(.focus-ring),
-::slotted(*:focus:not(.focus-ring)) {
+:host-context(.js-focus-ring) :focus:not(.focus-ring),
+:host-context(.js-focus-ring) ::slotted(*:focus:not(.focus-ring)) {
   outline: 0;
 }
 
@@ -177,6 +173,8 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
    * a bigger slide size.
    */
   overflow: hidden;
+
+  outline: 0;
 }
 
 :host([drag]) #slidesSlot::slotted(*) {
@@ -259,8 +257,13 @@ https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 
 #navigationSlot::slotted(button:hover)::before,
 #navigationSlot::slotted(button:active)::before,
-#navigationSlot::slotted(button.focus-ring)::before, {
+#navigationSlot::slotted(button:focus)::before,
+:host-context(.js-focus-ring) #navigationSlot::slotted(button.focus-ring)::before {
   opacity: 1;
+}
+
+:host-context(.js-focus-ring) #navigationSlot::slotted(button:focus)::before {
+  opacity: 0;
 }
 
 #navigationSlot::slotted(button[disabled]) {
