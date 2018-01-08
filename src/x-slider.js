@@ -419,8 +419,8 @@ class XSlider extends HTMLElement {
 
     // transitionend (CSS)
     } else if (e.type === 'transitionend' && e.target === this._slidesWrapper) {
-      this._focusSelectedSlide();
       this._updateSlidesA11y();
+      this._focusSelectedSlide();
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
@@ -635,8 +635,8 @@ class XSlider extends HTMLElement {
         // transitionend event listener, or at the end of the deceleration
         // rendering loop.
         if (!this._transitioning && !this._decelerating) {
-          this._focusSelectedSlide();
           this._updateSlidesA11y();
+          this._focusSelectedSlide();
         }
 
         break;
@@ -1033,6 +1033,7 @@ class XSlider extends HTMLElement {
       // Slides in view don't have the `inert` attribute and can be focused.
       if (isSlideInView) {
         slideEl.removeAttribute('inert');
+        slideEl.setAttribute('tabindex', -1);
       } else {
         slideEl.setAttribute('inert', '');
       }
@@ -1508,8 +1509,8 @@ class XSlider extends HTMLElement {
       this._enableWrapperTransitions();
 
       requestAnimationFrame(() => {
-        this._focusSelectedSlide();
         this._updateSlidesA11y();
+        this._focusSelectedSlide();
       });
     }
   }
