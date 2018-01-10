@@ -269,3 +269,38 @@ Consistency between navigation and pagination hover/active/focus styles
 #navigationSlot::slotted(button[disabled]) {
   opacity: .2;
 }
+
+/*
+ * Print styles:
+ * - Show all slides and stack them vertically
+ * - Eliminate the slide gap, show an outline
+ * - make sure the page doesn't break a slide in half
+ * - hide pagination and navigation buttons
+ */
+
+@media print {
+  #slidesSlot::slotted(*) {
+    margin-right: 0;
+    margin-bottom: .2em;
+
+    outline: 1px solid black;
+
+    color: #000;
+
+    page-break-inside: avoid;
+  }
+
+  /* Remove the navigational buttons, they provide no context in print */
+   :host([navigation]) #navigation,
+   :host([pagination]) #pagination {
+    display: none;
+  }
+
+  /* Stack the slides */
+  #slidesWrapper {
+    display: block;
+
+    transform: none !important;
+    transition: 0s;
+  }
+}
