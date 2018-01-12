@@ -1,6 +1,6 @@
 import html from 'rollup-plugin-html';
 
-import postcss from './tools/rollup-plugin-custom-postcss.js';
+import postcss from 'rollup-plugin-postcss';
 import inlineSvg from 'postcss-inline-svg';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
@@ -17,6 +17,7 @@ export default {
   },
   plugins: [
     postcss({
+      inject: false,
       plugins: [
         inlineSvg,
         autoprefixer({browsers: 'last 2 versions'}),
