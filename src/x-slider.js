@@ -1,7 +1,7 @@
 import styles from './x-slider.css';
 import html from './x-slider.html';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
-import {clampAbs} from './utils.js';
+import {clampAbs, booleanSetter, booleanGetter} from './utils.js';
 
 /**
  * Markup and styles.
@@ -714,15 +714,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set loop(flag) {
-    if (flag) {
-      this.setAttribute('loop', '');
-    } else {
-      this.removeAttribute('loop');
-    }
+    booleanSetter(this, 'loop', flag);
   }
 
   get loop() {
-    return this.hasAttribute('loop');
+    return booleanGetter(this, 'loop');
   }
 
   /**
@@ -731,15 +727,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set navigation(flag) {
-    if (flag) {
-      this.setAttribute('navigation', '');
-    } else {
-      this.removeAttribute('navigation');
-    }
+    booleanSetter(this, 'navigation', flag);
   }
 
   get navigation() {
-    return this.hasAttribute('navigation');
+    return booleanGetter(this, 'navigation');
   }
 
   /**
@@ -748,15 +740,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set pagination(flag) {
-    if (flag) {
-      this.setAttribute('pagination', '');
-    } else {
-      this.removeAttribute('pagination');
-    }
+    booleanSetter(this, 'pagination', flag);
   }
 
   get pagination() {
-    return this.hasAttribute('pagination');
+    return booleanGetter(this, 'pagination');
   }
 
   /**
@@ -765,15 +753,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set drag(flag) {
-    if (flag) {
-      this.setAttribute('drag', '');
-    } else {
-      this.removeAttribute('drag');
-    }
+    booleanSetter(this, 'drag', flag);
   }
 
   get drag() {
-    return this.hasAttribute('drag');
+    return booleanGetter(this, 'drag');
   }
 
   /**
@@ -796,15 +780,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set reducedMotion(flag) {
-    if (flag) {
-      this.setAttribute('reduced-motion', '');
-    } else {
-      this.removeAttribute('reduced-motion');
-    }
+    booleanSetter(this, 'reduced-motion', flag);
   }
 
   get reducedMotion() {
-    return this.hasAttribute('reduced-motion');
+    return booleanGetter(this, 'reduced-motion');
   }
 
   /**
@@ -813,15 +793,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set disableAutoFocus(flag) {
-    if (flag) {
-      this.setAttribute('disable-auto-focus', '');
-    } else {
-      this.removeAttribute('disable-auto-focus');
-    }
+    booleanSetter(this, 'disable-auto-focus', flag);
   }
 
   get disableAutoFocus() {
-    return this.hasAttribute('disable-auto-focus');
+    return booleanGetter(this, 'disable-auto-focus');
   }
 
 

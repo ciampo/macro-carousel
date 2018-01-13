@@ -38,3 +38,27 @@ export function clampAbs(x, min, max) {
 
   return x / Math.abs(x) * clamp(Math.abs(x), min, max);
 }
+
+/**
+ * Standard setter for a Custom Element property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @param {boolean} flag
+ */
+export function booleanSetter(element, attributeName, flag) {
+  if (flag) {
+    element.setAttribute(attributeName, '');
+  } else {
+    element.removeAttribute(attributeName);
+  }
+}
+
+/**
+ * Standard getter for a Custom Element property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @return {boolean} Whether the element has that specific attribute
+ */
+export function booleanGetter(element, attributeName) {
+  return element.hasAttribute(attributeName);
+}
