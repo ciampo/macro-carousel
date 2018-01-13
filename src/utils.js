@@ -40,7 +40,7 @@ export function clampAbs(x, min, max) {
 }
 
 /**
- * Standard setter for a Custom Element property reflected to attribute.
+ * Standard setter for a Custom Element boolean property reflected to attribute.
  * @param {HTMLElement} element
  * @param {string} attributeName
  * @param {boolean} flag
@@ -54,7 +54,7 @@ export function booleanSetter(element, attributeName, flag) {
 }
 
 /**
- * Standard getter for a Custom Element property reflected to attribute.
+ * Standard getter for a Custom Element boolean property reflected to attribute.
  * @param {HTMLElement} element
  * @param {string} attributeName
  * @return {boolean} Whether the element has that specific attribute
@@ -62,3 +62,25 @@ export function booleanSetter(element, attributeName, flag) {
 export function booleanGetter(element, attributeName) {
   return element.hasAttribute(attributeName);
 }
+
+/**
+ * Standard setter for a Custom Element int property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @param {number} value
+ */
+export function intSetter(element, attributeName, value) {
+  element.setAttribute(attributeName, value);
+}
+
+/**
+ * Standard getter for a Custom Element int property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @return {number} Whether the element has that specific attribute
+ */
+export function intGetter(element, attributeName) {
+  const value = element.getAttribute(attributeName);
+  return value === null ? 0 : parseInt(value, 10);
+}
+

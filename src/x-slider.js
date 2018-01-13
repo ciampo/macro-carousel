@@ -1,7 +1,9 @@
 import styles from './x-slider.css';
 import html from './x-slider.html';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
-import {clampAbs, booleanSetter, booleanGetter} from './utils.js';
+import {
+  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter
+} from './utils.js';
 
 /**
  * Markup and styles.
@@ -700,12 +702,11 @@ class XSlider extends HTMLElement {
    * @default 0
    */
   set selected(index) {
-    this.setAttribute('selected', index);
+    intSetter(this, 'selected', index);
   }
 
   get selected() {
-    const value = this.getAttribute('selected');
-    return value === null ? 0 : parseInt(value, 10);
+    return intGetter(this, 'selected');
   }
 
   /**
@@ -766,12 +767,11 @@ class XSlider extends HTMLElement {
    * @default 1
    */
   set slidesPerView(index) {
-    this.setAttribute('slides-per-view', index);
+    intSetter(this, 'slides-per-view', index);
   }
 
   get slidesPerView() {
-    const value = this.getAttribute('slides-per-view');
-    return value === null ? 1 : parseInt(value, 10);
+    return intGetter(this, 'slides-per-view');
   }
 
   /**
