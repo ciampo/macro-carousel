@@ -1081,7 +1081,11 @@ class XSlider extends HTMLElement {
 
       // Update `disabled` to highlight the selected slide.
       this._paginationIndicators.forEach((btn, index) => {
-        btn.disabled = index === this.selected;
+        if (index === this.selected) {
+          btn.classList.add('disabled');
+        } else {
+          btn.classList.remove('disabled');
+        }
       });
     }
   }

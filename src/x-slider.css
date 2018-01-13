@@ -149,7 +149,7 @@ Consistency between navigation and pagination hover/active/focus styles
 }
 
 #paginationSlot::slotted(button:hover),
-#paginationSlot::slotted(button[disabled]) {
+#paginationSlot::slotted(.disabled) {
   opacity: 1;
 }
 
@@ -158,7 +158,7 @@ Consistency between navigation and pagination hover/active/focus styles
   opacity: .2;
 }
 
-#paginationSlot::slotted(button[disabled])::after {
+#paginationSlot::slotted(.disabled)::after {
   background-color: var(--x-slider-pagination-color-selected);
 }
 
