@@ -333,6 +333,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
     this._upgradeProperty('reducedMotion');
+    this._upgradeProperty('disableAutoFocus');
 
     this._previousEffectiveLayoutIndex = this.selected;
 
@@ -551,6 +552,7 @@ class XSlider extends HTMLElement {
       'drag',
       'slides-per-view',
       'reduced-motion',
+      'disable-auto-focus',
     ];
   }
 
@@ -688,6 +690,7 @@ class XSlider extends HTMLElement {
         } else {
           this._enableWrapperTransitions();
         }
+        break;
     }
   }
 
@@ -802,6 +805,23 @@ class XSlider extends HTMLElement {
 
   get reducedMotion() {
     return this.hasAttribute('reduced-motion');
+  }
+
+  /**
+   * If true, disables auto-focusing the newly selected slide.
+   * @type {boolean}
+   * @default false
+   */
+  set disableAutoFocus(flag) {
+    if (flag) {
+      this.setAttribute('disable-auto-focus', '');
+    } else {
+      this.removeAttribute('disable-auto-focus');
+    }
+  }
+
+  get disableAutoFocus() {
+    return this.hasAttribute('disable-auto-focus');
   }
 
 
@@ -1005,7 +1025,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _focusSelectedSlide() {
-    if (this._slides.length === 0) {
+    if (this._slides.length === 0 || this.disableAutoFocus) {
       return;
     }
 
