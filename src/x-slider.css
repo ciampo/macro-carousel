@@ -39,8 +39,8 @@ Consistency between navigation and pagination hover/active/focus styles
   display: none
 }
 
-:host-context(.js-focus-ring) :focus:not(.focus-ring),
-:host-context(.js-focus-ring) ::slotted(*:focus:not(.focus-ring)) {
+:host-context(.js-focus-visible) :focus:not(.focus-visible),
+:host-context(.js-focus-visible) ::slotted(*:focus:not(.focus-visible)) {
   outline: 0;
 }
 
@@ -154,7 +154,7 @@ Consistency between navigation and pagination hover/active/focus styles
 }
 
 #paginationSlot::slotted(button:active)::before,
-#paginationSlot::slotted(button.focus-ring)::before {
+#paginationSlot::slotted(button.focus-visible)::before {
   opacity: .2;
 }
 
@@ -258,11 +258,11 @@ Consistency between navigation and pagination hover/active/focus styles
 #navigationSlot::slotted(button:hover)::before,
 #navigationSlot::slotted(button:active)::before,
 #navigationSlot::slotted(button:focus)::before,
-:host-context(.js-focus-ring) #navigationSlot::slotted(button.focus-ring)::before {
+:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::before {
   opacity: 1;
 }
 
-:host-context(.js-focus-ring) #navigationSlot::slotted(button:focus)::before {
+:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus)::before {
   opacity: 0;
 }
 

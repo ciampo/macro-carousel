@@ -58,6 +58,6 @@
   },
   "peerDependencies": {
     "wicg-inert": "1.x",
-    "wicg-focus-ring": "3.x"
+    "focus-visible": "4.x"
   }
 }
