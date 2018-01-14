@@ -71,7 +71,14 @@ class XSlider extends HTMLElement {
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
 
     /**
-     * The element wrapping the pagination indicators.
+     * The slot where the aria-live element is injected into.
+     * @type {HTMLSlotElement}
+     * @private
+     */
+    this._ariaSlot = this.shadowRoot.querySelector('#ariaSlot');
+
+    /**
+     * The slot where the pagination indicators are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
@@ -85,7 +92,7 @@ class XSlider extends HTMLElement {
     this._paginationIndicators = [];
 
     /**
-     * The element wrapping the navigation previous/next buttons.
+     * The slot where the navigation previous/next buttons are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
@@ -470,6 +477,7 @@ class XSlider extends HTMLElement {
     this._updateNavigation();
     this._updateDragEventListeners();
     this._updateSlidesA11y();
+    this._updateAriaLiveDom();
   }
 
   /**
@@ -628,6 +636,7 @@ class XSlider extends HTMLElement {
         this._slideTo(this.selected);
         this._updatePagination();
         this._updateNavigation();
+        this._updateAriaLiveDom();
 
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
@@ -653,6 +662,7 @@ class XSlider extends HTMLElement {
         this._shiftSlides(this._slides.map((slide, index) => index));
         this._updateNavigation();
         this._updatePagination();
+        this._updateAriaLiveDom();
         break;
 
       case 'navigation':
@@ -1203,6 +1213,42 @@ class XSlider extends HTMLElement {
     });
 
     this.update();
+  }
+
+
+  // ===========================================================================
+  // aria-live region
+  // ===========================================================================
+  /**
+   * Updates the aria-live region, used to notify screen readers.
+   * @private
+   */
+  _updateAriaLiveDom() {
+    if (!this._ariaSlot || this._slides.length === 0) {
+      return;
+    }
+
+    if (this._ariaSlot.assignedNodes().length !== 1) {
+      this._ariaLiveRegion = document.createElement('div');
+      this._ariaLiveRegion.setAttribute('slot', 'ariaSlot');
+      this._ariaLiveRegion.setAttribute('aria-live', 'polite');
+      this._ariaLiveRegion.setAttribute('aria-atomic', 'true');
+      this.appendChild(this._ariaLiveRegion);
+    }
+
+    const firstSlideIndex = this._slides[this.selected].layoutIndex;
+    let slidesIndexesString = '';
+    for (let i = 0; i < this.slidesPerView; i++) {
+      slidesIndexesString += (firstSlideIndex + i) % this._slides.length + 1;
+      if (i < this.slidesPerView - 2) {
+        slidesIndexesString += ', ';
+      } else if (i < this.slidesPerView - 1) {
+        slidesIndexesString += ' and ';
+      }
+    }
+    this._ariaLiveRegion.textContent = `
+Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString}
+of ${this._slides.length}`;
   }
 
 

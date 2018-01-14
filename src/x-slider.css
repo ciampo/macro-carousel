@@ -181,6 +181,22 @@ Consistency between navigation and pagination hover/active/focus styles
   user-select: none;
 }
 
+#ariaSlot::slotted(*) {
+  position: absolute;
+
+  height: 1px;
+  width: 1px;
+
+  margin: -1px;
+  padding: 0;
+
+  clip: rect(0 0 0 0);
+
+  overflow: hidden;
+
+  border: 0;
+}
+
 #navigation {
   display: none;
 }
