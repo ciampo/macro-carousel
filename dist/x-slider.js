@@ -2,9 +2,9 @@
 (function () {
 'use strict';
 
-var css = "/*\nConsistency between navigation and pagination hover/active/focus styles\n*/\n\n:host {\n  position: relative;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  contain: content;\n\n  --x-slider-gap: 16px;\n\n  --x-slider-background-color: transparent;\n\n  --x-slider-slide-min-height: 0px;\n  --x-slider-slide-max-height: none;\n\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);\n\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-button-size: 48px;\n  --x-slider-navigation-icon-size: 24px;\n\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size-clickable: 24px;\n  --x-slider-pagination-size-dot: 8px;\n  --x-slider-pagination-gap: 2px;\n  --x-slider-pagination-height: 44px;\n}\n\n:host([hidden]) {\n  display: none\n}\n\n:host-context(.js-focus-visible) :focus:not(.focus-visible),\n:host-context(.js-focus-visible) ::slotted(*:focus:not(.focus-visible)) {\n  outline: 0;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n\n  background-color: var(--x-slider-background-color);\n\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n\n  will-change: transform;\n\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  display: none;\n}\n\n:host([pagination]) #pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  height: var(--x-slider-pagination-height);\n  min-height: var(--x-slider-pagination-size-clickable);\n\n  contain: strict;\n\n  font-size: 0;\n}\n\n#paginationSlot::slotted(button) {\n  position: relative;\n\n  width: var(--x-slider-pagination-size-clickable);\n  height: var(--x-slider-pagination-size-clickable);\n\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  padding: 0;\n\n  border: none;\n  background: none;\n\n  font-size: inherit;\n\n  cursor: pointer;\n\n  opacity: .8;\n}\n\n#paginationSlot::slotted(button)::before,\n#paginationSlot::slotted(button)::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n\n  -webkit-transform: translate(-50%, -50%);\n\n          transform: translate(-50%, -50%);\n\n  display: block;\n\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n\n  border-radius: 50%;\n\n  background-color: var(--x-slider-pagination-color);\n\n  content: '';\n}\n\n#paginationSlot::slotted(button)::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n#paginationSlot::slotted(button:hover),\n#paginationSlot::slotted(.disabled) {\n  opacity: 1;\n}\n\n#paginationSlot::slotted(button:active)::before,\n#paginationSlot::slotted(button.focus-visible)::before {\n  opacity: .2;\n}\n\n#paginationSlot::slotted(.disabled)::after {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n#slidesSlot::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n\n  /*\n   * Enforces the slides to keep their size even if the content requires\n   * a bigger slide size.\n   */\n  overflow: hidden;\n\n  outline: 0;\n}\n\n:host([drag]) #slidesSlot::slotted(*) {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n#navigation {\n  display: none;\n}\n\n:host([navigation]) #navigation {\n  display: block;\n}\n\n#navigationSlot::slotted(button) {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  min-width: var(--x-slider-navigation-button-size);\n  min-height: var(--x-slider-navigation-button-size);\n  padding: 0;\n\n  background: none;\n  border: 0;\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n}\n\n#navigationSlot::slotted(#previous) {\n  left: 0;\n}\n\n#navigationSlot::slotted(#next) {\n  right: 0;\n}\n\n#navigationSlot::slotted(button)::before,\n#navigationSlot::slotted(button)::after {\n  position: absolute;\n\n  content: '';\n}\n\n#navigationSlot::slotted(button)::after {\n  top: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);\n  right: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n\n  background-color: var(--x-slider-navigation-color);\n\n  -webkit-mask-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E %3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E %3C/svg%3E\");\n\n          mask-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E %3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E %3C/svg%3E\");\n}\n\n#navigationSlot::slotted(#next)::after {\n  -webkit-transform: rotateZ(180deg);\n          transform: rotateZ(180deg);\n}\n\n\n#navigationSlot::slotted(button)::before {\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n\n  background-color: var(--x-slider-navigation-background-color-focus);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n#navigationSlot::slotted(button:hover)::before,\n#navigationSlot::slotted(button:active)::before,\n#navigationSlot::slotted(button:focus)::before,\n:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::before {\n  opacity: 1;\n}\n\n:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus)::before {\n  opacity: 0;\n}\n\n#navigationSlot::slotted(button[disabled]) {\n  opacity: .2;\n}\n\n/*\n * Print styles:\n * - Show all slides and stack them vertically\n * - Eliminate the slide gap, show an outline\n * - make sure the page doesn't break a slide in half\n * - hide pagination and navigation buttons\n */\n\n@media print {\n  #slidesSlot::slotted(*) {\n    margin-right: 0;\n    margin-bottom: .2em;\n\n    outline: 1px solid black;\n\n    color: #000;\n\n    page-break-inside: avoid;\n  }\n\n  /* Remove the navigational buttons, they provide no context in print */\n   :host([navigation]) #navigation,\n   :host([pagination]) #pagination {\n    display: none;\n  }\n\n  /* Stack the slides */\n  #slidesWrapper {\n    display: block;\n\n    -webkit-transform: none !important;\n\n            transform: none !important;\n    -webkit-transition: 0s;\n    transition: 0s;\n  }\n}\n";
+var css = "/*\nConsistency between navigation and pagination hover/active/focus styles\n*/\n\n:host {\n  position: relative;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  contain: content;\n\n  --x-slider-gap: 16px;\n\n  --x-slider-background-color: transparent;\n\n  --x-slider-slide-min-height: 0px;\n  --x-slider-slide-max-height: none;\n\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);\n\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-background-color-active: #ddd;\n  --x-slider-navigation-background-color-focus: #f0f0f0;\n  --x-slider-navigation-button-size: 48px;\n  --x-slider-navigation-icon-size: 24px;\n\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size-clickable: 24px;\n  --x-slider-pagination-size-dot: 8px;\n  --x-slider-pagination-gap: 2px;\n  --x-slider-pagination-height: 44px;\n}\n\n:host([hidden]) {\n  display: none\n}\n\n:host-context(.js-focus-visible) :focus:not(.focus-visible),\n:host-context(.js-focus-visible) ::slotted(*:focus:not(.focus-visible)) {\n  outline: 0;\n}\n\n#externalWrapper {\n  overflow: hidden;\n  contain: paint;\n\n  background-color: var(--x-slider-background-color);\n\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n}\n\n:host([drag]) #externalWrapper {\n  cursor: -webkit-grab;\n  cursor: grab;\n}\n\n:host([drag][pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n\n  will-change: transform;\n\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n#pagination {\n  display: none;\n}\n\n:host([pagination]) #pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  height: var(--x-slider-pagination-height);\n  min-height: var(--x-slider-pagination-size-clickable);\n\n  contain: strict;\n\n  font-size: 0;\n}\n\n#paginationSlot::slotted(button) {\n  position: relative;\n\n  width: var(--x-slider-pagination-size-clickable);\n  height: var(--x-slider-pagination-size-clickable);\n\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  padding: 0;\n\n  border: none;\n  background: none;\n\n  font-size: inherit;\n\n  cursor: pointer;\n\n  opacity: .8;\n}\n\n#paginationSlot::slotted(button)::before,\n#paginationSlot::slotted(button)::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n\n  -webkit-transform: translate(-50%, -50%);\n\n          transform: translate(-50%, -50%);\n\n  display: block;\n\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n\n  border-radius: 50%;\n\n  background-color: var(--x-slider-pagination-color);\n\n  content: '';\n}\n\n#paginationSlot::slotted(button)::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n#paginationSlot::slotted(button:hover),\n#paginationSlot::slotted(.disabled) {\n  opacity: 1;\n}\n\n#paginationSlot::slotted(button:active)::before,\n#paginationSlot::slotted(button.focus-visible)::before {\n  opacity: .2;\n}\n\n#paginationSlot::slotted(.disabled)::after {\n  background-color: var(--x-slider-pagination-color-selected);\n}\n\n#slidesSlot::slotted(*) {\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n          flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n  margin-right: var(--x-slider-gap);\n\n  /*\n   * Enforces the slides to keep their size even if the content requires\n   * a bigger slide size.\n   */\n  overflow: hidden;\n\n  outline: 0;\n}\n\n:host([drag]) #slidesSlot::slotted(*) {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n#ariaSlot::slotted(*) {\n  position: absolute;\n\n  height: 1px;\n  width: 1px;\n\n  margin: -1px;\n  padding: 0;\n\n  clip: rect(0 0 0 0);\n\n  overflow: hidden;\n\n  border: 0;\n}\n\n#navigation {\n  display: none;\n}\n\n:host([navigation]) #navigation {\n  display: block;\n}\n\n#navigationSlot::slotted(button) {\n  position: absolute;\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  min-width: var(--x-slider-navigation-button-size);\n  min-height: var(--x-slider-navigation-button-size);\n  padding: 0;\n\n  background: none;\n  border: 0;\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n}\n\n#navigationSlot::slotted(#previous) {\n  left: 0;\n}\n\n#navigationSlot::slotted(#next) {\n  right: 0;\n}\n\n#navigationSlot::slotted(button)::before,\n#navigationSlot::slotted(button)::after {\n  position: absolute;\n\n  content: '';\n}\n\n#navigationSlot::slotted(button)::after {\n  top: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);\n  right: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n\n  background-color: var(--x-slider-navigation-color);\n\n  -webkit-mask-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E %3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E %3C/svg%3E\");\n\n          mask-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E %3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E %3C/svg%3E\");\n}\n\n#navigationSlot::slotted(#next)::after {\n  -webkit-transform: rotateZ(180deg);\n          transform: rotateZ(180deg);\n}\n\n\n#navigationSlot::slotted(button)::before {\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n\n  background-color: var(--x-slider-navigation-background-color-focus);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n#navigationSlot::slotted(button:hover)::before,\n#navigationSlot::slotted(button:active)::before,\n#navigationSlot::slotted(button:focus)::before,\n:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::before {\n  opacity: 1;\n}\n\n:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus)::before {\n  opacity: 0;\n}\n\n#navigationSlot::slotted(button[disabled]) {\n  opacity: .2;\n}\n\n/*\n * Print styles:\n * - Show all slides and stack them vertically\n * - Eliminate the slide gap, show an outline\n * - make sure the page doesn't break a slide in half\n * - hide pagination and navigation buttons\n */\n\n@media print {\n  #slidesSlot::slotted(*) {\n    margin-right: 0;\n    margin-bottom: .2em;\n\n    outline: 1px solid black;\n\n    color: #000;\n\n    page-break-inside: avoid;\n  }\n\n  /* Remove the navigational buttons, they provide no context in print */\n   :host([navigation]) #navigation,\n   :host([pagination]) #pagination {\n    display: none;\n  }\n\n  /* Stack the slides */\n  #slidesWrapper {\n    display: block;\n\n    -webkit-transform: none !important;\n\n            transform: none !important;\n    -webkit-transition: 0s;\n    transition: 0s;\n  }\n}\n";
 
-var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\">\n  <slot id=\"navigationSlot\" name=\"navigationSlot\"></slot>\n</div>\n\n<div id=\"pagination\">\n  <slot id=\"paginationSlot\" name=\"paginationSlot\"></slot>\n</div>";
+var html = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\"><p>No content available</p></slot>\n  </div>\n</div>\n\n<div id=\"navigation\">\n  <slot id=\"navigationSlot\" name=\"navigationSlot\"></slot>\n</div>\n\n<div id=\"pagination\">\n  <slot id=\"paginationSlot\" name=\"paginationSlot\"></slot>\n</div>\n\n<slot id=\"ariaSlot\" name=\"ariaSlot\"></slot>";
 
 let passiveEvtSupport;
 
@@ -82,6 +82,51 @@ function clampAbs(x, min, max) {
 }
 
 /**
+ * Standard setter for a Custom Element boolean property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @param {boolean} flag
+ */
+function booleanSetter(element, attributeName, flag) {
+  if (flag) {
+    element.setAttribute(attributeName, '');
+  } else {
+    element.removeAttribute(attributeName);
+  }
+}
+
+/**
+ * Standard getter for a Custom Element boolean property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @return {boolean} Whether the element has that specific attribute
+ */
+function booleanGetter(element, attributeName) {
+  return element.hasAttribute(attributeName);
+}
+
+/**
+ * Standard setter for a Custom Element int property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @param {number} value
+ */
+function intSetter(element, attributeName, value) {
+  element.setAttribute(attributeName, value);
+}
+
+/**
+ * Standard getter for a Custom Element int property reflected to attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @return {number} Whether the element has that specific attribute
+ */
+function intGetter(element, attributeName) {
+  const value = element.getAttribute(attributeName);
+  return value === null ? 0 : parseInt(value, 10);
+}
+
+/**
  * Markup and styles.
  */
 const sliderTemplate = document.createElement('template');
@@ -147,7 +192,14 @@ class XSlider extends HTMLElement {
     this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
 
     /**
-     * The element wrapping the pagination indicators.
+     * The slot where the aria-live element is injected into.
+     * @type {HTMLSlotElement}
+     * @private
+     */
+    this._ariaSlot = this.shadowRoot.querySelector('#ariaSlot');
+
+    /**
+     * The slot where the pagination indicators are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
@@ -161,7 +213,7 @@ class XSlider extends HTMLElement {
     this._paginationIndicators = [];
 
     /**
-     * The element wrapping the navigation previous/next buttons.
+     * The slot where the navigation previous/next buttons are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
@@ -546,6 +598,7 @@ class XSlider extends HTMLElement {
     this._updateNavigation();
     this._updateDragEventListeners();
     this._updateSlidesA11y();
+    this._updateAriaLiveDom();
   }
 
   /**
@@ -704,6 +757,7 @@ class XSlider extends HTMLElement {
         this._slideTo(this.selected);
         this._updatePagination();
         this._updateNavigation();
+        this._updateAriaLiveDom();
 
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
@@ -729,6 +783,7 @@ class XSlider extends HTMLElement {
         this._shiftSlides(this._slides.map((slide, index) => index));
         this._updateNavigation();
         this._updatePagination();
+        this._updateAriaLiveDom();
         break;
 
       case 'navigation':
@@ -778,12 +833,11 @@ class XSlider extends HTMLElement {
    * @default 0
    */
   set selected(index) {
-    this.setAttribute('selected', index);
+    intSetter(this, 'selected', index);
   }
 
   get selected() {
-    const value = this.getAttribute('selected');
-    return value === null ? 0 : parseInt(value, 10);
+    return intGetter(this, 'selected');
   }
 
   /**
@@ -792,15 +846,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set loop(flag) {
-    if (flag) {
-      this.setAttribute('loop', '');
-    } else {
-      this.removeAttribute('loop');
-    }
+    booleanSetter(this, 'loop', flag);
   }
 
   get loop() {
-    return this.hasAttribute('loop');
+    return booleanGetter(this, 'loop');
   }
 
   /**
@@ -809,15 +859,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set navigation(flag) {
-    if (flag) {
-      this.setAttribute('navigation', '');
-    } else {
-      this.removeAttribute('navigation');
-    }
+    booleanSetter(this, 'navigation', flag);
   }
 
   get navigation() {
-    return this.hasAttribute('navigation');
+    return booleanGetter(this, 'navigation');
   }
 
   /**
@@ -826,15 +872,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set pagination(flag) {
-    if (flag) {
-      this.setAttribute('pagination', '');
-    } else {
-      this.removeAttribute('pagination');
-    }
+    booleanSetter(this, 'pagination', flag);
   }
 
   get pagination() {
-    return this.hasAttribute('pagination');
+    return booleanGetter(this, 'pagination');
   }
 
   /**
@@ -843,15 +885,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set drag(flag) {
-    if (flag) {
-      this.setAttribute('drag', '');
-    } else {
-      this.removeAttribute('drag');
-    }
+    booleanSetter(this, 'drag', flag);
   }
 
   get drag() {
-    return this.hasAttribute('drag');
+    return booleanGetter(this, 'drag');
   }
 
   /**
@@ -860,12 +898,11 @@ class XSlider extends HTMLElement {
    * @default 1
    */
   set slidesPerView(index) {
-    this.setAttribute('slides-per-view', index);
+    intSetter(this, 'slides-per-view', index);
   }
 
   get slidesPerView() {
-    const value = this.getAttribute('slides-per-view');
-    return value === null ? 1 : parseInt(value, 10);
+    return intGetter(this, 'slides-per-view');
   }
 
   /**
@@ -874,15 +911,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set reducedMotion(flag) {
-    if (flag) {
-      this.setAttribute('reduced-motion', '');
-    } else {
-      this.removeAttribute('reduced-motion');
-    }
+    booleanSetter(this, 'reduced-motion', flag);
   }
 
   get reducedMotion() {
-    return this.hasAttribute('reduced-motion');
+    return booleanGetter(this, 'reduced-motion');
   }
 
   /**
@@ -891,15 +924,11 @@ class XSlider extends HTMLElement {
    * @default false
    */
   set disableAutoFocus(flag) {
-    if (flag) {
-      this.setAttribute('disable-auto-focus', '');
-    } else {
-      this.removeAttribute('disable-auto-focus');
-    }
+    booleanSetter(this, 'disable-auto-focus', flag);
   }
 
   get disableAutoFocus() {
-    return this.hasAttribute('disable-auto-focus');
+    return booleanGetter(this, 'disable-auto-focus');
   }
 
 
@@ -1305,6 +1334,42 @@ class XSlider extends HTMLElement {
     });
 
     this.update();
+  }
+
+
+  // ===========================================================================
+  // aria-live region
+  // ===========================================================================
+  /**
+   * Updates the aria-live region, used to notify screen readers.
+   * @private
+   */
+  _updateAriaLiveDom() {
+    if (!this._ariaSlot || this._slides.length === 0) {
+      return;
+    }
+
+    if (this._ariaSlot.assignedNodes().length !== 1) {
+      this._ariaLiveRegion = document.createElement('div');
+      this._ariaLiveRegion.setAttribute('slot', 'ariaSlot');
+      this._ariaLiveRegion.setAttribute('aria-live', 'polite');
+      this._ariaLiveRegion.setAttribute('aria-atomic', 'true');
+      this.appendChild(this._ariaLiveRegion);
+    }
+
+    const firstSlideIndex = this._slides[this.selected].layoutIndex;
+    let slidesIndexesString = '';
+    for (let i = 0; i < this.slidesPerView; i++) {
+      slidesIndexesString += (firstSlideIndex + i) % this._slides.length + 1;
+      if (i < this.slidesPerView - 2) {
+        slidesIndexesString += ', ';
+      } else if (i < this.slidesPerView - 1) {
+        slidesIndexesString += ' and ';
+      }
+    }
+    this._ariaLiveRegion.textContent = `
+Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString}
+of ${this._slides.length}`;
   }
 
 
