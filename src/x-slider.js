@@ -568,7 +568,7 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * The dd event.
+   * Fired when the selected slide changes.
    * @event XSlider#x-slider-selected-changed
    * @type {Object}
    * @param {number} detail The index of the new selected slide.
