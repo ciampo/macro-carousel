@@ -431,6 +431,7 @@ class XSlider extends HTMLElement {
     } else if (e.type === 'transitionend' && e.target === this._slidesWrapper) {
       this._updateSlidesA11y();
       this._focusSelectedSlide();
+      this._updateAriaLiveDom();
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
@@ -636,7 +637,6 @@ class XSlider extends HTMLElement {
         this._slideTo(this.selected);
         this._updatePagination();
         this._updateNavigation();
-        this._updateAriaLiveDom();
 
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
@@ -650,6 +650,7 @@ class XSlider extends HTMLElement {
         if (!this._transitioning && !this._decelerating) {
           this._updateSlidesA11y();
           this._focusSelectedSlide();
+          this._updateAriaLiveDom();
         }
 
         break;
@@ -662,6 +663,8 @@ class XSlider extends HTMLElement {
         this._shiftSlides(this._slides.map((slide, index) => index));
         this._updateNavigation();
         this._updatePagination();
+        this._updateSlidesA11y();
+        this._focusSelectedSlide();
         this._updateAriaLiveDom();
         break;
 
@@ -1557,6 +1560,7 @@ of ${this._slides.length}`;
       requestAnimationFrame(() => {
         this._updateSlidesA11y();
         this._focusSelectedSlide();
+        this._updateAriaLiveDom();
       });
     }
   }
