@@ -4,7 +4,9 @@ Carousel as a Vanilla Web Component.
 
 **Please note that this is still a WIP — wait for version 1.0.0 !**
 
-[Demo](https://ciampo.github.io/x-slider/demo/)
+[Live demo](https://ciampo.github.io/x-slider/demo/)
+
+[Demo code](./demo/)
 
 [Docs](./docs/x-slider.md)
 

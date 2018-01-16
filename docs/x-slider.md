@@ -3,7 +3,9 @@
 
 ## Demo
 
-Look at the demos in the [demo folder](../demo/)
+[Live demo](https://ciampo.github.io/x-slider/demo/)
+
+[Demo code](../demo/)
 
 
 ## Description
@@ -87,7 +89,7 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 | `--x-slider-background-color` | The background-color of the slider | `transparent` |
 | `--x-slider-slide-min-height` | The minimum height of a slide | `0px` |
 | `--x-slider-slide-max-height` | The maximum height of a slide | `none` |
-| `--x-slider-transition-duration` | The duration of the transition between slides | `0.6s` |
+| `--x-slider-transition-duration` | The duration of the transition between slides | `.6s` |
 | `--x-slider-transition-timing-function` | The easing function for the transition between slides | `cubic-bezier(.25, .46, .45, .94)` |
 | `--x-slider-navigation-color` | The color of the icon in the previous/next buttons | `#000` |
 | `--x-slider-navigation-background-color-active` | The background color for the previous/next buttons when they are active | `#ddd` |
