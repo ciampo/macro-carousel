@@ -1,21 +1,6 @@
-# Element `<x-slider>`
-`class extends HTMLElement`
-
-## Demo
-
-[Live demo](https://ciampo.github.io/x-slider/demo/)
-
-[Demo code](../demo/)
-
-
-## Description
+# `class XSlider extends HTMLElement`
 
 `<x-slider>` is a carousel vanilla Web Component.
-
-<!-- Features:
-- ...
-- ...
-- a11y... -->
 
 
 ## Properties (all reflected to attributes in kebab-case)
@@ -108,12 +93,3 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 **`x-slider-selected-changed`**: `CustomEvent`
 
 `event.detail` contains the index of the new selected slide.
-
-
-<!-- ## How to..?
-
-- slides with different heights? Slides pushing the overall height?
-- custom navigation
-- custom pagination
-- vertical mode
-... -->

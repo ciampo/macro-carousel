@@ -1,15 +1,17 @@
 # x-slider
 
-Carousel as a Vanilla Web Component.
+`<x-slider>` is a carousel vanilla Web Component.
 
-**Please note that this is still a WIP — wait for version 1.0.0 !**
+**Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/x-slider/milestone/1) !**
 
-[Live demo](https://ciampo.github.io/x-slider/demo/)
-
-[Demo code](./demo/)
-
-[Docs](./docs/x-slider.md)
-
+- Compatible with every framework
+- Public APIs exposed as methods, events and properties/attributes
+- Mouse and touch events
+- Previous/Next buttons
+- Pagination indicators
+- Multiple slides per view
+- Customisable styles though CSS custom properties
+- Focused on a11y
 
 
 ## Setup
@@ -20,11 +22,29 @@ Carousel as a Vanilla Web Component.
 
 Run `npm install` to install all local dependencies.
 
+For enhancing the a11y of the carousel, it's best to also install the `inert` and `focus-visible` polyfills, listed as `peerDependencies`. Have a look at the demos to see them in use.
+
 
 ### Running the project locally
 
 Run `npm run start` to start a local dev server and open the `demo/` page in your browser.
 
+
+## Usage:
+
+Please read the [full documentation](./docs/x-slider.md)
+
+```html
+<x-slider>
+  <div>First slide</div>
+  <div>Second slide</div>
+  <div>Third slider</div>
+</x-slider>
+
+<script src="x-slider.min.js" defer></script>
+```
+
+For more examples, look at the demos ([Live demo](https://ciampo.github.io/x-slider/demo/), [Demo code](./demo/))
 
 
 ## Test
@@ -34,3 +54,10 @@ Run `npm run start` to start a local dev server and open the `demo/` page in you
 *The testing environment is set up the same way as the [howto-components](https://github.com/GoogleChrome/howto-components) project.*
 
 Run `npm run test` to run all tests.
+
+
+## Whishlist
+
+Please have a look at [the `1.1.0` milestone](https://github.com/ciampo/x-slider/milestone/2) to see the plan for the next release.
+
+If you have a feature request, feel free to open an issue!
