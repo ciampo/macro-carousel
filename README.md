@@ -58,6 +58,6 @@ Run `npm run test` to run all tests.
 
 ## Whishlist
 
-Please have a look at [the `1.1.0` milestone](https://github.com/ciampo/x-slider/milestone/2) to see the plan for the next release.
+Please have a look at [the backlog](https://github.com/ciampo/x-slider/milestone/2) to see the plan for the next release.
 
 If you have a feature request, feel free to open an issue!
