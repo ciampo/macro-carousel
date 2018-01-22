@@ -130,26 +130,8 @@
 
   <p>Currently selected slide: <span id="selected"></span></p>
 
-  <script>
-    function getParameterByName(name) {
-      var url = window.location.href;
-      name = name.replace(/[\[\]]/g, "\\$&");
-      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
-    window.addEventListener('WebComponentsReady', function() {
-      var script = document.createElement('script');
-      script.src = getParameterByName('dev') === 'true' ?
-          '../dist/x-slider.js' :
-          '../dist/x-slider.min.js';
-
-      document.head.appendChild(script);
-    });
-
+  <script src="js/x-slider-loader.js" defer></script>
+  <script defer>
     const slider = document.querySelector('x-slider');
     const selectedIndicator = document.querySelector('#selected');
     slider.addEventListener('x-slider-selected-changed', e => {
