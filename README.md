@@ -1,4 +1,4 @@
-# x-slider
+# x-slider 0.2.0
 
 `<x-slider>` is a carousel vanilla Web Component.
 
@@ -38,7 +38,7 @@ Please read the [full documentation](./docs/x-slider.md)
 <x-slider>
   <div>First slide</div>
   <div>Second slide</div>
-  <div>Third slider</div>
+  <div>Third slide</div>
 </x-slider>
 
 <script src="x-slider.min.js" defer></script>
