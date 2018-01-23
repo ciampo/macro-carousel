@@ -27,7 +27,7 @@ Whether the pagination indicators are shown.
 
 **`drag`**: `boolean` = `false`
 
-Whether the slides can be dragged with touch/mouse events.
+Whether the slides can be dragged with pointer events.
 
 
 **`slidesPerView`**: `number` = `1`
