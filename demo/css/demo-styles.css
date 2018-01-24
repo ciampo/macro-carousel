@@ -1,0 +1,18 @@
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: 0;
+}
+
+pre {
+  margin-top: 60px !important;
+  font-size: 14px;
+}
+
+#backToIndex {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  padding: 1em;
+
+  border: 1px solid black;
+}
