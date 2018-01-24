@@ -2,7 +2,7 @@ import styles from './x-slider.css';
 import html from './x-slider.html';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
 import {
-  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter
+  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
 } from './utils.js';
 
 /**
@@ -784,7 +784,7 @@ class XSlider extends HTMLElement {
   }
 
   get slidesPerView() {
-    return intGetter(this, 'slides-per-view');
+    return intGetter(this, 'slides-per-view', 1);
   }
 
   /**
