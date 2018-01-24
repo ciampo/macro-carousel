@@ -21,7 +21,16 @@
       }
 
       .slide {
-        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #0ecd91, #7fffd4);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
       }
     </style>
 
@@ -30,8 +39,6 @@
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
-      <article class="slide">Slide 5</article>
-      <article class="slide">Slide 6</article>
     </x-slider>
   </template>
 
