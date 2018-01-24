@@ -45,6 +45,8 @@ Consistency between navigation and pagination hover/active/focus styles
 }
 
 #externalWrapper {
+  height: 100%;
+
   overflow: hidden;
   contain: paint;
 
@@ -68,6 +70,7 @@ Consistency between navigation and pagination hover/active/focus styles
   display: flex;
   align-items: stretch;
 
+  height: 100%;
   min-height: var(--x-slider-slide-min-height);
   max-height: var(--x-slider-slide-max-height);
 
