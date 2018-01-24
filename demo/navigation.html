@@ -25,7 +25,7 @@
         align-items: center;
         justify-content: center;
 
-        background: linear-gradient(to bottom right, #0ecd91, #7fffd4);
+        background: linear-gradient(to bottom right, #0e61cd, #5193e9);
         box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
 
         color: white;
@@ -34,9 +34,8 @@
       }
     </style>
 
-    <!-- The basic version of x-slider doesn't show any UI
-         that allows the user to navigate through its slides -->
-    <x-slider>
+    <!-- `navigation` adds previous and next buttons -->
+    <x-slider navigation>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
