@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>x-slider demo</title>
+
+  <style>
+    .js-focus-visible :focus:not(.focus-visible) {
+      outline: 0;
+    }
+
+    x-slider {
+      margin: 0 auto;
+
+      --x-slider-gap: 1rem;
+      --x-slider-slide-min-height: 300px;
+      --x-slider-pagination-size: 10px;
+    }
+
+    x-slider[navigation] {
+      /*
+       * Leverage padding and margin to decide how much horizontal space
+       * around the navigation arrows.
+       */
+       padding: 0 60px;
+    }
+
+    .slide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      color: rgba(255, 255, 255, .9);
+
+      font-family: sans-serif;
+      font-size: 4rem;
+      font-weight: 300;
+
+      text-transform: uppercase;
+    }
+
+    .slide:nth-child(5n) {
+      background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+    }
+
+    .slide:nth-child(5n + 1) {
+      align-self: flex-end;
+      height: 220px;
+
+      background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+    }
+
+    .slide:nth-child(5n + 2) {
+      align-self: center;
+      height: 220px;
+
+      background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .slide:nth-child(5n + 3) {
+      align-self: flex-start;
+      height: 220px;
+
+      background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .slide:nth-child(5n + 4) {
+      background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+  </style>
+
+  <script src="js/third-party/webcomponents-loader.js"></script>
+  <script src="js/third-party/inert.min.js"></script>
+  <script src="js/third-party/focus-visible.js"></script>
+</head>
+<body>
+  <h1 id="title">Basic usage</h1>
+  <x-slider
+      selected="1"
+      navigation
+      pagination
+      drag
+      loop
+      slides-per-view="4"
+      aria-labelledby="title">
+    <article class="slide">
+      <span>1</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>2</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>3</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>4</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>5</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>6</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>7</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>8</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>9</span>
+      <button>Click me</button>
+    </article>
+    <article class="slide">
+      <span>10</span>
+      <button>Click me</button>
+    </article>
+  </x-slider>
+
+  <p>Currently selected slide: <span id="selected"></span></p>
+
+  <script src="js/x-slider-loader.js" defer></script>
+  <script defer>
+    const slider = document.querySelector('x-slider');
+    const selectedIndicator = document.querySelector('#selected');
+    slider.addEventListener('x-slider-selected-changed', e => {
+      selectedIndicator.textContent = e.detail;
+    });
+
+    customElements.whenDefined('x-slider').then(() => {
+      selectedIndicator.textContent = slider.selected;
+    });
+  </script>
+</body>
+</html>
