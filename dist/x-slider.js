@@ -1552,7 +1552,7 @@ of ${this._slides.length}`;
     const newPosition = this._wrapperTranslateX +
         this._pointerCurrentX - this._pointerLastX;
 
-    // Get the current slide (the one that we're dragging onto).
+    // Get the slide that we're dragging onto.
     let slideIndex;
     let slidePosition;
     this._slides.forEach((slideObj, index) => {
@@ -1565,9 +1565,29 @@ of ${this._slides.length}`;
     });
 
     if (this._wrapAround) {
+      let firstLayoutIndex;
+
+      // Sometimes there's no slide to the left of the current one - in that
+      // case, slideIndex would be undefined.
+      if (typeof slideIndex === 'undefined') {
+        // Get the leftmost slide - the one we just left to the pointer's right.
+        const leftMostSlide = this._slides.slice(0)
+            .sort((a, b) => a.layoutIndex > b.layoutIndex)[0];
+        // Compute the slideIndex as a valid index for this._slides.
+        slideIndex = leftMostSlide.layoutIndex - 1;
+        while (slideIndex < 0) {
+          slideIndex += this._slides.length;
+        }
+        slideIndex = slideIndex % this._slides.length;
+        // Compute firstLayoutIndex.
+        firstLayoutIndex = leftMostSlide.layoutIndex - 2;
+      } else {
+        // If slideIndex is defined, firstLayoutIndex is easy to compute.
+        firstLayoutIndex = this._slides[slideIndex].layoutIndex - 1;
+      }
+
       // Updated (shift) slides.
       const slidesToShift = [];
-      const firstLayoutIndex = this._slides[slideIndex].layoutIndex - 1;
       const lastLayoutIndex = firstLayoutIndex + this.slidesPerView + 2;
       for (let i = firstLayoutIndex; i < lastLayoutIndex; i++) {
         slidesToShift.push(i);
