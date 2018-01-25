@@ -34,9 +34,13 @@
       }
     </style>
 
-    <!-- The basic version of x-slider doesn't show any UI
-         that allows the user to navigate through its slides -->
-    <x-slider>
+    <!--
+      The basic version of x-slider doesn't show any UI that allows the
+      user to navigate through its slides. The slides can still be navigated
+      via by dragging them, or also programmatically by calling next(),
+      previous(), or setting the `selected` property.
+    -->
+    <x-slider drag>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
