@@ -210,7 +210,7 @@ Consistency between navigation and pagination hover/active/focus styles
 
 #navigationSlot::slotted(button) {
   position: absolute;
-  top: calc(50% - var(--x-slider-pagination-height) / 2);
+  top: 50%;
   transform: translateY(-50%);
 
   display: flex;
@@ -228,6 +228,10 @@ Consistency between navigation and pagination hover/active/focus styles
   overflow: hidden;
 
   cursor: pointer;
+}
+
+:host([pagination]) #navigationSlot::slotted(button) {
+  top: calc(50% - var(--x-slider-pagination-height) / 2);
 }
 
 #navigationSlot::slotted(#previous) {
