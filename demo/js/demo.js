@@ -56,9 +56,9 @@ document.body.appendChild(pre);
 // Download x-slider once the WebCompomnents polyfills have downloaded.
 window.addEventListener('WebComponentsReady', function() {
   const script = document.createElement('script');
-  script.src = getQueryParamValue('dev') === 'true' ?
-      '../dist/x-slider.js' :
-      '../dist/x-slider.min.js';
+  const useDev = /localhost/.test(window.location.href) ||
+      getQueryParamValue('dev') === 'true';
+  script.src = `../dist/x-slider${useDev ? '' : '.min'}.js`;
 
   document.head.appendChild(script);
 });
