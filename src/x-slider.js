@@ -801,7 +801,8 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * If true, disables auto-focusing the newly selected slide.
+   * If true, newly selected slides will focused automatically. This will likely
+   * move the page so that the slide is completely in view.
    * @type {boolean}
    * @default false
    */

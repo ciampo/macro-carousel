@@ -40,9 +40,9 @@ The number of slides seen at once in the slider
 If true, disables CSS transitions and drag deceleration.
 
 
-**`disableAutoFocus`**: `boolean` = `false`
+**`autoFocus`**: `boolean` = `false`
 
-If true, disables auto-focusing the newly selected slide.
+If true, newly selected slides will focused automatically. This will likely move the page so that the slide is completely in view.
 
 
 ## Methods
