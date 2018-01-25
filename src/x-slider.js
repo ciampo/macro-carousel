@@ -342,7 +342,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('drag');
     this._upgradeProperty('slidesPerView');
     this._upgradeProperty('reducedMotion');
-    this._upgradeProperty('disableAutoFocus');
+    this._upgradeProperty('autoFocus');
 
     this._previousEffectiveLayoutIndex = this.selected;
 
@@ -563,7 +563,7 @@ class XSlider extends HTMLElement {
       'drag',
       'slides-per-view',
       'reduced-motion',
-      'disable-auto-focus',
+      'auto-focus',
     ];
   }
 
@@ -805,12 +805,12 @@ class XSlider extends HTMLElement {
    * @type {boolean}
    * @default false
    */
-  set disableAutoFocus(flag) {
-    booleanSetter(this, 'disable-auto-focus', flag);
+  set autoFocus(flag) {
+    booleanSetter(this, 'auto-focus', flag);
   }
 
-  get disableAutoFocus() {
-    return booleanGetter(this, 'disable-auto-focus');
+  get autoFocus() {
+    return booleanGetter(this, 'auto-focus');
   }
 
 
@@ -1014,7 +1014,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _focusSelectedSlide() {
-    if (this._slides.length === 0 || this.disableAutoFocus) {
+    if (this._slides.length === 0 || !this.autoFocus) {
       return;
     }
 
