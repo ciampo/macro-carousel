@@ -25,9 +25,9 @@ Whether the navigation buttons (prev/next) are shown.
 Whether the pagination indicators are shown.
 
 
-**`drag`**: `boolean` = `false`
+**`disableDrag`**: `boolean` = `false`
 
-Whether the slides can be dragged with pointer events.
+If true, the slides can not be dragged with pointer events.
 
 
 **`slidesPerView`**: `number` = `1`

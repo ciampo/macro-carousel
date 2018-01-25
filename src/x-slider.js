@@ -339,7 +339,7 @@ class XSlider extends HTMLElement {
     this._upgradeProperty('loop');
     this._upgradeProperty('navigation');
     this._upgradeProperty('pagination');
-    this._upgradeProperty('drag');
+    this._upgradeProperty('disableDrag');
     this._upgradeProperty('slidesPerView');
     this._upgradeProperty('reducedMotion');
     this._upgradeProperty('autoFocus');
@@ -369,7 +369,7 @@ class XSlider extends HTMLElement {
     this._slidesSlot.removeEventListener('slotchange', this);
     window.removeEventListener('resize', this);
 
-    if (this.drag) {
+    if (!this.disableDrag) {
       this._externalWrapper.removeEventListener('touchstart', this);
       this._externalWrapper.removeEventListener('mousedown', this);
     }
@@ -560,7 +560,7 @@ class XSlider extends HTMLElement {
       'loop',
       'navigation',
       'pagination',
-      'drag',
+      'disable-drag',
       'slides-per-view',
       'reduced-motion',
       'auto-focus',
@@ -678,7 +678,7 @@ class XSlider extends HTMLElement {
         this._updatePagination();
         break;
 
-      case 'drag':
+      case 'disable-drag':
         this._updateDragEventListeners();
         break;
 
@@ -762,16 +762,16 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Whether the slides can be dragged with touch/mouse events.
+   * If true, the slides can not be dragged with pointer events.
    * @type {boolean}
    * @default false
    */
-  set drag(flag) {
-    booleanSetter(this, 'drag', flag);
+  set disableDrag(flag) {
+    booleanSetter(this, 'disable-drag', flag);
   }
 
-  get drag() {
-    return booleanGetter(this, 'drag');
+  get disableDrag() {
+    return booleanGetter(this, 'disable-drag');
   }
 
   /**
@@ -1265,12 +1265,12 @@ of ${this._slides.length}`;
    * @private
    */
   _updateDragEventListeners() {
-    if (this.drag) {
-      this._externalWrapper.addEventListener('touchstart', this);
-      this._externalWrapper.addEventListener('mousedown', this);
-    } else {
+    if (this.disableDrag) {
       this._externalWrapper.removeEventListener('touchstart', this);
       this._externalWrapper.removeEventListener('mousedown', this);
+    } else {
+      this._externalWrapper.addEventListener('touchstart', this);
+      this._externalWrapper.addEventListener('mousedown', this);
     }
   }
 

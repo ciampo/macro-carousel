@@ -56,15 +56,19 @@ Consistency between navigation and pagination hover/active/focus styles
     https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
   */
   touch-action: pan-y pinch-zoom;
-}
 
-:host([drag]) #externalWrapper {
   cursor: grab;
 }
 
-:host([drag][pointer-down]) #externalWrapper {
+:host([pointer-down]) #externalWrapper {
   cursor: grabbing;
 }
+
+:host([disable-drag]) #externalWrapper,
+:host([disable-drag][pointer-down]) #externalWrapper {
+  cursor: default;
+}
+
 
 #slidesWrapper {
   display: flex;
@@ -178,10 +182,12 @@ Consistency between navigation and pagination hover/active/focus styles
   overflow: hidden;
 
   outline: 0;
+
+  user-select: none;
 }
 
-:host([drag]) #slidesSlot::slotted(*) {
-  user-select: none;
+:host([disable-drag]) #slidesSlot::slotted(*) {
+  user-select: auto;
 }
 
 #ariaSlot::slotted(*) {
