@@ -1,6 +1,6 @@
 # x-slider 0.2.0
 
-`<x-slider>` is a carousel vanilla Web Component.
+`<x-slider>` is a carousel vanilla Web Component [(DEMO)[https://ciampo.github.io/x-slider/demo/]]
 
 **Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/x-slider/milestone/1) !**
 
