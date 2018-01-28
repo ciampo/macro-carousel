@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Reduced motion - x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">Reduced motion</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        height: 300px;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #19d0d6, #048d92);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
+      }
+    </style>
+
+    <!--
+      The `reduced-motion` is an a11y feature and attribute disables transisions
+      on the carousel (including when the user releases the pointer while dragging.)
+    -->
+    <x-slider reduced-motion>
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+    </x-slider>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
