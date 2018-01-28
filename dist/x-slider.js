@@ -128,6 +128,45 @@ function intGetter(element, attributeName, defaultValue = 0) {
 }
 
 /**
+ * An object representing either a touch event or a mouse event.
+ * @typedef {object} NormalisedPointerEvent
+ * @property {number} x The x coordinate.
+ * @property {number} y The y coordinate.
+ * @property {?number} id The pointer identifier.
+ * @property {MouseEvent|TouchEvent} event The original event object.
+ */
+
+/**
+ * Normalises touch and mouse events into an object with the same properties.
+ * @param {MouseEvent|TouchEvent} ev The mouse or touch event.
+ * @returns {NormalisedPointerEvent}
+ * @private
+ */
+function normalizeEvent(ev) {
+  // touch
+  if (ev.type === 'touchstart' ||
+      ev.type === 'touchmove' ||
+      ev.type === 'touchend') {
+    const touch = ev.targetTouches[0] || ev.changedTouches[0];
+    return {
+      x: touch.clientX,
+      y: touch.clientY,
+      id: touch.identifier,
+      event: ev,
+    };
+
+  // mouse
+  } else {
+      return {
+        x: ev.clientX,
+        y: ev.clientY,
+        id: null,
+        event: ev,
+      };
+  }
+}
+
+/**
  * Markup and styles.
  */
 const sliderTemplate = document.createElement('template');
@@ -557,11 +596,11 @@ class XSlider extends HTMLElement {
 
     // Touch / drag
     } else if (e.type === 'touchstart' || e.type === 'mousedown') {
-      this._onPointerDown(this._normalizeEvent(e));
+      this._onPointerDown(normalizeEvent(e));
     } else if (e.type === 'touchmove' || e.type === 'mousemove') {
-      this._onPointerMove(this._normalizeEvent(e));
+      this._onPointerMove(normalizeEvent(e));
     } else if (e.type === 'touchend' || e.type === 'mouseup') {
-      this._onPointerEnd(this._normalizeEvent(e));
+      this._onPointerEnd(normalizeEvent(e));
     } else if (e.type === 'touchcancel') {
       this._stopPointerTracking();
     }
@@ -1393,36 +1432,6 @@ of ${this._slides.length}`;
     } else {
       this._externalWrapper.addEventListener('touchstart', this);
       this._externalWrapper.addEventListener('mousedown', this);
-    }
-  }
-
-  /**
-   * Normalises touch and mouse events into an object with the same properties.
-   * @param {MouseEvent|TouchEvent} ev The mouse or touch event.
-   * @returns {NormalisedPointerEvent}
-   * @private
-   */
-  _normalizeEvent(ev) {
-    // touch
-    if (ev.type === 'touchstart' ||
-        ev.type === 'touchmove' ||
-        ev.type === 'touchend') {
-      const touch = ev.targetTouches[0] || ev.changedTouches[0];
-      return {
-        x: touch.clientX,
-        y: touch.clientY,
-        id: touch.identifier,
-        event: ev,
-      };
-
-    // mouse
-    } else {
-        return {
-          x: ev.clientX,
-          y: ev.clientY,
-          id: null,
-          event: ev,
-        };
     }
   }
 
