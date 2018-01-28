@@ -1,5 +1,6 @@
 body {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 960px;
 }
 
 .js-focus-visible :focus:not(.focus-visible) {
@@ -18,6 +19,11 @@ code {
   margin-left: 3em;
 }
 
+h1 {
+  padding-left: 1rem;
+  padding-right: 12rem;
+}
+
 #backToIndex {
   position: absolute;
   top: 0;
@@ -26,6 +32,7 @@ code {
   padding: 1em;
   border: 1px dashed currentColor;
   font-family: monospace;
+  font-size: 1.25rem;
 
   color: inherit;
 }
