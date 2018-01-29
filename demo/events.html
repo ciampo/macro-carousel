@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Events- x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">The <code>x-slider-selected-changed</code> event</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        height: 300px;
+        padding: 0 50px;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #ffe981, #d74177);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
+      }
+
+      #selected {
+        font-weight: bold;
+      }
+
+      p {
+        font-size: 1.5rem;
+      }
+    </style>
+
+    <x-slider selected="1">
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+    </x-slider>
+    <p>The selected slide is <span id="selected"></span> (0-based)</p>
+
+    <script>
+      const slider = document.querySelector('x-slider');
+      const selectedIndicator = document.querySelector('#selected');
+
+      // The `x-slider-selected-changed` is fired every time that a new slide
+      // is selected.
+      slider.addEventListener('x-slider-selected-changed', e => {
+        selectedIndicator.textContent = e.detail;
+      });
+
+      // Initial setup.
+      customElements.whenDefined('x-slider').then(() => {
+        selectedIndicator.textContent = slider.selected;
+      });
+    </script>
+  </template>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
