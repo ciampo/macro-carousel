@@ -100,6 +100,7 @@ Consistency between navigation and pagination hover/active/focus styles
   align-items: center;
   justify-content: center;
 
+  width: 100%;
   height: var(--x-slider-pagination-height);
   min-height: var(--x-slider-pagination-size-clickable);
 
