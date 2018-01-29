@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Events- x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">The <code>x-slider-selected-changed</code> event</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        height: 300px;
+        padding: 0 50px;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #dfa579, #c79081);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
+      }
+    </style>
+
+    <!--
+      Setting `pagination` and `navigation` to show how `x-slider` automatically
+      updates itself after a slide is added/removed.
+      Both the pagination dots and the navigation arrows update automatically in
+      order to reflect the new number of slides.
+    -->
+    <x-slider navigation pagination>
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+    </x-slider>
+    <button id="append" disabled>Append slide</button>
+    <button id="remove" disabled>Remove last slide</button>
+
+    <script>
+      const slider = document.querySelector('x-slider');
+      const appendBtn = document.querySelector('#append');
+      const removeBtn = document.querySelector('#remove');
+
+      // Get the initial slides.
+      const slides = Array.from(document.querySelectorAll('.slide'));
+
+      // Disables or enables the removeBtn based on how many slides are left.
+      function checkRemoveBtnDisabledState() {
+        if (slides.length > 1) {
+          removeBtn.removeAttribute('disabled');
+        } else {
+          // Disable the removeBtn when there's only one slide left.
+          removeBtn.setAttribute('disabled', '');
+        }
+      }
+
+      function appendSlide() {
+        // Create new slide
+        const slideEl = document.createElement('article');
+        slideEl.classList.add('slide');
+        slideEl.textContent = `Slide ${slides.length + 1}`;
+
+        // Append the slide to the slider's DOM and to the array of slides.
+        slider.appendChild(slideEl);
+        slides.push(slideEl);
+
+        // Potentially enable the remove button (in case it was disabled).
+        checkRemoveBtnDisabledState();
+      }
+
+      function removeSlide() {
+        const lastSlide = slides[slides.length - 1];
+
+        // Remove the last slide from the slider's DOM and the array of slides.
+        slider.removeChild(lastSlide);
+        slides.pop();
+
+        // Potentially disable the remove button if there's only one slide left.
+        checkRemoveBtnDisabledState();
+      }
+
+      // Initial setup.
+      customElements.whenDefined('x-slider').then(() => {
+        appendBtn.addEventListener('click', appendSlide);
+        removeBtn.addEventListener('click', removeSlide);
+
+        appendBtn.removeAttribute('disabled');
+        checkRemoveBtnDisabledState();
+      });
+    </script>
+  </template>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
