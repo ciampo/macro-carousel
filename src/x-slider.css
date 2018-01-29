@@ -244,11 +244,11 @@ Consistency between navigation and pagination hover/active/focus styles
   top: calc(50% - var(--x-slider-pagination-height) / 2);
 }
 
-#navigationSlot::slotted(#previous) {
+#navigationSlot::slotted(.x-slider-previous) {
   left: 0;
 }
 
-#navigationSlot::slotted(#next) {
+#navigationSlot::slotted(.x-slider-next) {
   right: 0;
 }
 
@@ -274,7 +274,7 @@ Consistency between navigation and pagination hover/active/focus styles
   mask-image: var(--x-slider-navigation-icon-mask);
 }
 
-#navigationSlot::slotted(#next)::after {
+#navigationSlot::slotted(.x-slider-next)::after {
   transform: rotateZ(180deg);
 }
 

@@ -1111,13 +1111,13 @@ class XSlider extends HTMLElement {
 
   /**
    * Creates a navigation button element.
-   * @param {string} id The id of the button element.
+   * @param {string} className The class of the button element.
    * @returns {HTMLButtonElement} The button element.
    * @private
    */
-  _createNavigationButton(id) {
+  _createNavigationButton(className) {
     const btn = document.createElement('button');
-    btn.setAttribute('id', id);
+    btn.classList.add(className);
     btn.setAttribute('slot', 'navigationSlot');
     btn.addEventListener('click', this);
     return btn;
@@ -1148,10 +1148,10 @@ class XSlider extends HTMLElement {
     if (this.navigation) {
       if (this._navigationSlot.assignedNodes().length !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = this._createNavigationButton('previous');
+        this._prevButton = this._createNavigationButton('x-slider-previous');
         this.appendChild(this._prevButton);
 
-        this._nextButton = this._createNavigationButton('next');
+        this._nextButton = this._createNavigationButton('x-slider-next');
         this.appendChild(this._nextButton);
       }
 
