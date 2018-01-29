@@ -3,7 +3,7 @@ body {
   max-width: 960px;
 }
 
-.js-focus-visible :focus:not(.focus-visible) {
+.js-focus-visible :focus:not(:active):not(:hover):not(.focus-visible) {
   outline: 0;
 }
 

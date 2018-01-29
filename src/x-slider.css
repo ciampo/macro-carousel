@@ -285,14 +285,30 @@ Consistency between navigation and pagination hover/active/focus styles
   will-change: opacity;
 }
 
-#navigationSlot::slotted(button:hover)::before,
-#navigationSlot::slotted(button:active)::before,
-#navigationSlot::slotted(button:focus)::before,
+/*
+ * Show the bg circle when the button is not disabled and is hovered, active,
+ * focused or keyboard-focused (thanks to the focus-visible polyfill).
+ */
+#navigationSlot::slotted(button:hover:not(:disabled))::before,
+#navigationSlot::slotted(button:active:not(:disabled))::before,
+#navigationSlot::slotted(button:focus:not(:disabled))::before,
 :host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::before {
   opacity: 1;
 }
 
-:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus)::before {
+#navigationSlot::slotted(button:hover:not(:disabled))::after,
+#navigationSlot::slotted(button:active:not(:disabled))::after,
+#navigationSlot::slotted(button:focus:not(:disabled))::after,
+:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::after {
+  background-color: var(--x-slider-navigation-color-focus);
+}
+
+/*
+ * Do not show the bg circle if the button is focused (but not active or not hovered)
+ * and doesn't have a focused-visible class. This means, do not leave the bg showing
+ * after the user clicks on the button.
+ */
+:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::before {
   opacity: 0;
 }
 
