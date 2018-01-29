@@ -4,20 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Navigation - x-slider demo</title>
+  <title>Default navigation - x-slider demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-  <h1 id="title">Navigation (previous / next buttons)</h1>
+  <h1 id="title">Default navigation (previous/next buttons)</h1>
   <a id="backToIndex" href="index.html">See all demos</a>
 
   <template id="demoTemplate">
     <style>
       x-slider {
         height: 300px;
-        padding: 0 50px;
+        padding: 0 calc(10px + var(--x-slider-navigation-button-size));
+        margin: 0 10px;
       }
 
       .slide {

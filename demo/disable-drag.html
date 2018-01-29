@@ -4,20 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Disable Pointer Events - x-slider demo</title>
+  <title>Disable Pointer Events (a.k.a. drag) - x-slider demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-  <h1 id="title">Disable pointer events</h1>
+  <h1 id="title">Disable pointer events (a.k.a. drag)</h1>
   <a id="backToIndex" href="index.html">See all demos</a>
 
   <template id="demoTemplate">
     <style>
       x-slider {
         height: 300px;
-        padding: 0 50px;
+        padding: 0 calc(10px + var(--x-slider-navigation-button-size));
+        margin: 0 10px;
       }
 
       .slide {
