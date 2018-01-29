@@ -77,10 +77,12 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 | `--x-slider-transition-duration` | The duration of the transition between slides | `.6s` |
 | `--x-slider-transition-timing-function` | The easing function for the transition between slides | `cubic-bezier(.25, .46, .45, .94)` |
 | `--x-slider-navigation-color` | The color of the icon in the previous/next buttons | `#000` |
-| `--x-slider-navigation-background-color-active` | The background color for the previous/next buttons when they are active | `#ddd` |
-| `--x-slider-navigation-background-color-focus` | The background color for the previous/next buttons when they are focused | `#f0f0f0` |
+| `--x-slider-navigation-color-focus` | The color of the icon in the previous/next buttons when the button is focused / active / hovered | `var(--x-slider-navigation-color);` |
+| `--x-slider-navigation-background-color` | The background color for the previous/next buttons | `transparent` |
+| `--x-slider-navigation-background-color-focus` | The background color for the previous/next buttons when they are focused / active / hovered | `#f0f0f0` |
 | `--x-slider-navigation-button-size` | The size of the previous/next buttons | `48px` |
 | `--x-slider-navigation-icon-size` | The size of the icon in the previous/next buttons | `24px` |
+| `--x-slider-navigation-icon-mask` | The shape of the icon in the previous/next buttons to be used as a valid value for the `mask-image` CSS property | `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='%23000'%3E %3Cpath fill-rule='evenodd' d='M47 2L32 32l15 30-29-30L47 2z'/%3E %3C/svg%3E")` |
 | `--x-slider-pagination-color` | The color of the pagination dots | `#999` |
 | `--x-slider-pagination-color-selected` | The color of the selected pagination dot | `#000` |
 | `--x-slider-pagination-size-clickable` | The clickable area around the pagination dot | `24px` |

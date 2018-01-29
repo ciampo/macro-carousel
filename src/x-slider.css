@@ -22,10 +22,12 @@ Consistency between navigation and pagination hover/active/focus styles
   --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);
 
   --x-slider-navigation-color: #000;
-  --x-slider-navigation-background-color-active: #ddd;
+  --x-slider-navigation-color-focus: var(--x-slider-navigation-color);
+  --x-slider-navigation-background-color: transparent;
   --x-slider-navigation-background-color-focus: #f0f0f0;
   --x-slider-navigation-button-size: 48px;
   --x-slider-navigation-icon-size: 24px;
+  --x-slider-navigation-icon-mask: svg-load('./arrow-left.svg', fill: #000);
 
   --x-slider-pagination-color: #999;
   --x-slider-pagination-color-selected: #000;
@@ -229,6 +231,7 @@ Consistency between navigation and pagination hover/active/focus styles
   padding: 0;
 
   background: none;
+  background-color: var(--x-slider-navigation-background-color);
   border: 0;
   border-radius: 50%;
 
@@ -264,7 +267,11 @@ Consistency between navigation and pagination hover/active/focus styles
 
   background-color: var(--x-slider-navigation-color);
 
-  mask-image: svg-load('./arrow-left.svg', fill: #000);
+  /* References:
+   * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
+   * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
+   */
+  mask-image: var(--x-slider-navigation-icon-mask);
 }
 
 #navigationSlot::slotted(#next)::after {
@@ -310,6 +317,10 @@ Consistency between navigation and pagination hover/active/focus styles
  */
 :host-context(.js-focus-visible) #navigationSlot::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::before {
   opacity: 0;
+}
+
+:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::after {
+  background-color: var(--x-slider-navigation-color);
 }
 
 #navigationSlot::slotted(button[disabled]) {
