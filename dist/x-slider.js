@@ -166,6 +166,9 @@ function normalizeEvent(ev) {
   }
 }
 
+/**
+ * Markup and styles.
+ */
 const sliderTemplate = document.createElement('template');
 sliderTemplate.innerHTML = `<style>${css}</style> ${html}`;
 
