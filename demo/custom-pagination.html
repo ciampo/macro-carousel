@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Custom pagination - x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">Custom pagination (dots)</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        height: 300px;
+
+        /* Change the dots color */
+        --x-slider-pagination-color: #ced20c;
+        --x-slider-pagination-color-selected: #a39800;
+        /* Change the dots size */
+        --x-slider-pagination-size-clickable: 32px;
+        --x-slider-pagination-size-dot: 16px;
+        /* Change the gap between dots */
+        --x-slider-pagination-gap: 6px;
+        /* Change the height of the pagination container */
+        --x-slider-pagination-height: 72px;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #feffcb, #ced20c);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
+      }
+
+      /*
+       * Bonus: since the pagination buttons are exposed in the light DOM,
+       * you can target them via the button[slot="paginationSlot"] selector.
+       * The selected pagination dot is the one with the `disabled` class.
+       * This approach is quite tricky and advanced, and is on purposed not
+       * documented in the main docs as it may change in the next releases,
+       * when I'll focus more on extensibility and customisation.
+       */
+       button[slot="paginationSlot"].disabled::after {
+         border: 2px solid var(--x-slider-pagination-color-selected);
+         background-color: transparent;
+       }
+    </style>
+
+    <!-- `pagination` adds the pagination indicators (dots) -->
+    <x-slider pagination>
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+    </x-slider>
+    <p>If the CSS properties to customize the <code>x-slider</code> pagination dots are not enough for your needs, you can always use any custom UI and set the `selected` property.</p>
+    <button id="go-to-first">Go to first slide</button>
+
+    <script>
+      const slider = document.querySelector('x-slider');
+      const goToFirstSlideBtn = document.querySelector('#go-to-first');
+
+      // Initial setup.
+      customElements.whenDefined('x-slider').then(() => {
+        goToFirstSlideBtn.addEventListener('click', () => {
+          slider.selected = 0;
+        });
+      });
+    </script>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
