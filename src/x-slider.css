@@ -176,6 +176,11 @@ Consistency between navigation and pagination hover/active/focus styles
   /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
   flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
       var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+  align-self: stretch;
+
+  min-height: var(--x-slider-slide-min-height);
+  max-height: var(--x-slider-slide-max-height);
+
   margin-right: var(--x-slider-gap);
 
   /*
