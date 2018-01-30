@@ -144,6 +144,7 @@ Consistency between navigation and pagination hover/active/focus styles
   height: var(--x-slider-pagination-size-dot);
 
   border-radius: 50%;
+  box-sizing: border-box;
 
   background-color: var(--x-slider-pagination-color);
 
