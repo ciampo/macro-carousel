@@ -70,7 +70,7 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 
 | Custom property | Description | Default |
 | --- | --- | --- |
-| `--x-slider-gap` | The gap between each slide | `16px` |
+| `--x-slider-gap` | The gap between each slide. This value *needs* to be specified in CSS units (e.g. `px`, `em`, `rem`, `%`...). | `16px` |
 | `--x-slider-background-color` | The background-color of the slider | `transparent` |
 | `--x-slider-slide-min-height` | The minimum height of a slide | `0px` |
 | `--x-slider-slide-max-height` | The maximum height of a slide | `none` |

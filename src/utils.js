@@ -124,3 +124,24 @@ export function normalizeEvent(ev) {
   }
 }
 
+/**
+ * Gets the value of a CSS Custom property on a HTML Element.
+ * @param {HTMLElement} element The element to get the property from.
+ * @param {string} propertyName The property name.
+ * @return {string} The property value.
+ */
+export function getCSSCustomProperty(element, propertyName) {
+  const cssStyles = getComputedStyle(element);
+  return String(cssStyles.getPropertyValue(propertyName)).trim();
+}
+
+/**
+ * Sets the value of a CSS Custom property on a HTML Element.
+ * @param {HTMLElement} element The element to get the property onto.
+ * @param {string} propertyName The property name.
+ * @param {string|number} propertyValue The property value.
+ */
+export function setCSSCustomProperty(element, propertyName, propertyValue) {
+  element.style.setProperty(propertyName, propertyValue);
+}
+
