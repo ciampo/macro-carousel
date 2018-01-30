@@ -5,7 +5,7 @@ import inlineSvg from 'postcss-inline-svg';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 
-import minify from 'rollup-plugin-babel-minify';
+import uglify from 'rollup-plugin-uglify';
 
 const config = require('./package.json');
 
@@ -33,11 +33,18 @@ export default {
         removeComments: true,
       },
     }),
-    minify({
-      removeConsole: true,
-      comments: false,
-      banner: `/* ${config.name} ${config.version} */`,
-      sourceMap: false,
+    uglify({
+      output: {
+        beautify: false,
+        preamble: `/*! ${config.name} ${config.version} */`,
+      },
+      mangle: {
+        keep_classnames: true,
+        keep_fnames: true,
+        properties: {
+          regex: /^_/,
+        },
+      },
     }),
   ],
 };
