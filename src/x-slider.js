@@ -2,7 +2,7 @@ import styles from './x-slider.css';
 import html from './x-slider.html';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
 import {
-  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter, normalizeEvent
+  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter, normalizeEvent,
 } from './utils.js';
 
 /**
@@ -469,6 +469,20 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
+    // Sometimes the 'slot-changed' event doesn't fire consistently across
+    // browsers, depending on how the Custom Element was parsed and initialised
+    // (see https://github.com/whatwg/dom/issues/447)
+    // Here, we're making sure that the `slot-changed callback runs at least
+    // once before the update() function.
+    if (this._slides.length === 0) {
+      this._onSlidesSlotChange();
+
+      // If there's really no slide ヾ(-_- )ゞ.
+      if (this._slides.length === 0) {
+        return;
+      }
+    }
+
     this._computeSizes();
     this._updateWrapAround();
     this._computeSlidesPerViewLayout();
