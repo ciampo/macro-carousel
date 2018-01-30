@@ -166,6 +166,30 @@ function normalizeEvent(ev) {
   }
 }
 
+/**
+ * Gets the value of a CSS Custom property on a HTML Element.
+ * @param {HTMLElement} element The element to get the property from.
+ * @param {string} propertyName The property name.
+ * @return {string} The property value.
+ */
+function getCSSCustomProperty(element, propertyName) {
+  const cssStyles = getComputedStyle(element);
+  return String(cssStyles.getPropertyValue(propertyName)).trim();
+}
+
+/**
+ * Sets the value of a CSS Custom property on a HTML Element.
+ * @param {HTMLElement} element The element to get the property onto.
+ * @param {string} propertyName The property name.
+ * @param {string|number} propertyValue The property value.
+ */
+function setCSSCustomProperty(element, propertyName, propertyValue) {
+  element.style.setProperty(propertyName, propertyValue);
+}
+
+/**
+ * Markup and styles.
+ */
 const sliderTemplate = document.createElement('template');
 sliderTemplate.innerHTML = `<style>${css}</style> ${html}`;
 
@@ -1047,7 +1071,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Computes the width of one slide given the layout constraint.
-   * @returns {number} The width of one slide.
+   * @returns {number} The width (in px) of one slide.
    * @private
    */
   _getSlideWidth() {
@@ -1057,10 +1081,17 @@ class XSlider extends HTMLElement {
 
   /**
    * Computes the slide gap value from CSS.
-   * @returns {number} The width of the gap between slides.
+   * @returns {number} The width (in px) of the gap between slides.
    * @private
    */
   _getSlidesGap() {
+    // Check if gap has unitless values (i.e. values ending with a digit).
+    if (/\d$/.test(getCSSCustomProperty(this, '--x-slider-gap'))) {
+      console.warn(`Warning: it looks like --x-slider-gap has a unitless value.
+Add CSS units to its value to avoid breaking the slides layout.`);
+    }
+    // Getting the computed style because we need a value in px, while
+    // the actual CSS property can be declared with any unit.
     const parsedGap = parseInt(
         getComputedStyle(this._slides[0].element)['margin-right'], 10);
     return !Number.isFinite(parsedGap) ? 0 : parsedGap;
@@ -1076,7 +1107,7 @@ class XSlider extends HTMLElement {
     }
 
     // Used to compute the slides's width.
-    this._slidesWrapper.style.setProperty(
+    setCSSCustomProperty(this._slidesWrapper,
         '--x-slider__internal__slides-per-view', this.slidesPerView);
 
     // Recompute the index of the last view (aka max value for `selected`).
