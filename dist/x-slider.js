@@ -166,6 +166,9 @@ function normalizeEvent(ev) {
   }
 }
 
+/**
+ * Markup and styles.
+ */
 const sliderTemplate = document.createElement('template');
 sliderTemplate.innerHTML = `<style>${css}</style> ${html}`;
 
@@ -627,6 +630,20 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
+    // Sometimes the 'slot-changed' event doesn't fire consistently across
+    // browsers, depending on how the Custom Element was parsed and initialised
+    // (see https://github.com/whatwg/dom/issues/447)
+    // Here, we're making sure that the `slot-changed callback runs at least
+    // once before the update() function.
+    if (this._slides.length === 0) {
+      this._onSlidesSlotChange();
+
+      // If there's really no slide ヾ(-_- )ゞ.
+      if (this._slides.length === 0) {
+        return;
+      }
+    }
+
     this._computeSizes();
     this._updateWrapAround();
     this._computeSlidesPerViewLayout();
