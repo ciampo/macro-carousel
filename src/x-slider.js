@@ -175,11 +175,11 @@ class XSlider extends HTMLElement {
     this._wrapperTranslateX = 0;
 
     /**
-     * The reference to the timer used to debounce the resize handler.
+     * The reference to the timer used to debounce the `update()` function.
      * @type {number|undefined}
      * @private
      */
-    this._resizeTimer = undefined;
+    this._updateTimer = undefined;
 
     /**
      * True when CSS transitions are enabled.
@@ -399,7 +399,8 @@ class XSlider extends HTMLElement {
   handleEvent(e) {
     // Window resize
     if (e.type === 'resize' && e.target === window) {
-      this._onResize();
+      this._disableWrapperTransitions();
+      this.update();
 
     // Slot change
     } else if (e.type === 'slotchange' && e.target === this._slidesSlot) {
@@ -470,6 +471,20 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
+    // Debouncing resize.
+    clearTimeout(this._updateTimer);
+    this._disableWrapperTransitions();
+    this._updateTimer = setTimeout(() => {
+      this._internalUpdate();
+    }, 50);
+  }
+
+  /**
+   * Internal implementation of update(). Split in a separate function in
+   * order to allow debouncing.
+   * @private
+   */
+  _internalUpdate() {
     // Sometimes the 'slot-changed' event doesn't fire consistently across
     // browsers, depending on how the Custom Element was parsed and initialised
     // (see https://github.com/whatwg/dom/issues/447)
@@ -494,6 +509,8 @@ class XSlider extends HTMLElement {
     this._updateDragEventListeners();
     this._updateSlidesA11y();
     this._updateAriaLiveDom();
+
+    this._enableWrapperTransitions();
   }
 
   /**
@@ -684,9 +701,9 @@ class XSlider extends HTMLElement {
         break;
 
       case 'navigation':
-        // Calling `_onResize()` instead of `_updateNavigation()` as adding/
+        // Calling `update()` instead of `_updateNavigation()` as adding/
         // removing navigation buttons causes the slidesWrapper to resize.
-        this._onResize();
+        this.update();
         break;
 
       case 'pagination':
@@ -862,20 +879,6 @@ class XSlider extends HTMLElement {
         this._slidesWrapper.addEventListener('transitionend', this, false);
       });
     });
-  }
-
-  /**
-   * Updated the UI when the window resizes.
-   * @private
-   */
-  _onResize() {
-    // Debouncing resize.
-    clearTimeout(this._resizeTimer);
-    this._disableWrapperTransitions();
-    this._resizeTimer = setTimeout(() => {
-      this.update();
-      this._enableWrapperTransitions();
-    }, 100);
   }
 
   /**
