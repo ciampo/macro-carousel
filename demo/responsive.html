@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Responsive - x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">Responsive</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        /* Removing the gap bewteen slides */
+        --x-slider-gap: 0px;
+        /* Setting a minimum and a maximum height for the slides */
+        --x-slider-slide-min-height: 200px;
+
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #777777, #1d1d1d);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 2em;
+        font-family: sans-serif;
+      }
+
+      /*
+       * Responsive styles.
+       * See the JavaScript code below on how to change the slider's properties
+       * in a similar responsive fashion.
+       */
+      @media screen and (min-width: 480px) {
+        x-slider {
+          /* Increasing the size of the slides. */
+          --x-slider-slide-min-height: 320px;
+        }
+      }
+
+      @media screen and (min-width: 768px) {
+        x-slider {
+          /* Adding a bigger gap as from this resolution slidesPerView is > 1 */
+          --x-slider-gap: 8px;
+        }
+
+        .slide {
+          font-size: 3em;
+        }
+      }
+
+      @media screen and (min-width: 1280px) {
+        x-slider {
+          /* Adding padding in order to make room for the navigation buttons */
+          padding: 0 60px;
+        }
+      }
+    </style>
+
+    <x-slider>
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+      <article class="slide">Slide 5</article>
+      <article class="slide">Slide 6</article>
+    </x-slider>
+
+    <script>
+      const slider = document.querySelector('x-slider');
+
+      // Example of how to define different configations for the value of some
+      // of the slider's properties. The matching configuration is applied
+      // through the `resizeHandler` function below.
+      // The minWidth value refers to the viewport width.
+      // See the CSS code above on how to change the slider's styles in a
+      // responsive fashion.
+      const responsiveConfig = [
+        {
+          minWidth: 1280,
+          props: {
+            navigation: true,
+            pagination: true,
+            slidesPerView: 3
+          }
+        },
+        {
+          minWidth: 768,
+          props: {
+            navigation: false,
+            pagination: true,
+            slidesPerView: 2,
+          }
+        },
+        {
+          minWidth: 0,
+          props: {
+            navigation: false,
+            pagination: true,
+            slidesPerView: 1
+          }
+        },
+      ];
+
+      // Using `window.matchMedia` to apply the min-width as a media query.
+      // The first matching config is applied — hence why it's important to
+      // put the highest values of `minWidth` first in the `responsiveConfig`
+      // array.
+      const resizeHandler = () => {
+        for (const config of responsiveConfig) {
+          if (window.matchMedia(`(min-width: ${config.minWidth}px)`).matches) {
+            Object.keys(config.props).forEach(propName => {
+              slider[propName] = config.props[propName];
+            });
+            break;
+          }
+        }
+      };
+
+      // Initial setup.
+      customElements.whenDefined('x-slider').then(() => {
+        // Add resize handler.
+        window.addEventListener('resize', resizeHandler);
+        // Initial setup.
+        resizeHandler();
+      });
+    </script>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
