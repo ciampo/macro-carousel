@@ -94,12 +94,14 @@
       }
 
       // Initial setup.
-      customElements.whenDefined('x-slider').then(() => {
-        appendBtn.addEventListener('click', appendSlide);
-        removeBtn.addEventListener('click', removeSlide);
+      window.addEventListener('WebComponentsReady', function() {
+        customElements.whenDefined('x-slider').then(() => {
+          appendBtn.addEventListener('click', appendSlide);
+          removeBtn.addEventListener('click', removeSlide);
 
-        appendBtn.removeAttribute('disabled');
-        checkRemoveBtnDisabledState();
+          appendBtn.removeAttribute('disabled');
+          checkRemoveBtnDisabledState();
+        });
       });
     </script>
   </template>

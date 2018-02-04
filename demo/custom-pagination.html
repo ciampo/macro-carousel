@@ -72,9 +72,11 @@
       const goToFirstSlideBtn = document.querySelector('#go-to-first');
 
       // Initial setup.
-      customElements.whenDefined('x-slider').then(() => {
-        goToFirstSlideBtn.addEventListener('click', () => {
-          slider.selected = 0;
+      window.addEventListener('WebComponentsReady', function() {
+        customElements.whenDefined('x-slider').then(() => {
+          goToFirstSlideBtn.addEventListener('click', () => {
+            slider.selected = 0;
+          });
         });
       });
     </script>

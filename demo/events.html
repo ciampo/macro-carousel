@@ -60,8 +60,10 @@
       });
 
       // Initial setup.
-      customElements.whenDefined('x-slider').then(() => {
-        selectedIndicator.textContent = slider.selected;
+      window.addEventListener('WebComponentsReady', function() {
+        customElements.whenDefined('x-slider').then(() => {
+          selectedIndicator.textContent = slider.selected;
+        });
       });
     </script>
   </template>

@@ -86,12 +86,14 @@
       const customNextBtn = document.querySelector('#custom-next');
 
       // Initial setup.
-      customElements.whenDefined('x-slider').then(() => {
-        customPreviousBtn.addEventListener('click', () => {
-          slider.previous();
-        });
-        customNextBtn.addEventListener('click', () => {
-          slider.next();
+      window.addEventListener('WebComponentsReady', function() {
+        customElements.whenDefined('x-slider').then(() => {
+          customPreviousBtn.addEventListener('click', () => {
+            slider.previous();
+          });
+          customNextBtn.addEventListener('click', () => {
+            slider.next();
+          });
         });
       });
     </script>

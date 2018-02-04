@@ -132,11 +132,13 @@
       };
 
       // Initial setup.
-      customElements.whenDefined('x-slider').then(() => {
-        // Add resize handler.
-        window.addEventListener('resize', resizeHandler);
-        // Initial setup.
-        resizeHandler();
+      window.addEventListener('WebComponentsReady', function() {
+        customElements.whenDefined('x-slider').then(() => {
+          // Add resize handler.
+          window.addEventListener('resize', resizeHandler);
+          // Initial setup.
+          resizeHandler();
+        });
       });
     </script>
   </template>
