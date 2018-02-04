@@ -111,7 +111,7 @@ Consistency between navigation and pagination hover/active/focus styles
   font-size: 0;
 }
 
-#paginationSlot::slotted(button) {
+#pagination ::slotted(button) {
   position: relative;
 
   width: var(--x-slider-pagination-size-clickable);
@@ -130,8 +130,8 @@ Consistency between navigation and pagination hover/active/focus styles
   opacity: .8;
 }
 
-#paginationSlot::slotted(button)::before,
-#paginationSlot::slotted(button)::after {
+#pagination ::slotted(button)::before,
+#pagination ::slotted(button)::after {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -151,7 +151,7 @@ Consistency between navigation and pagination hover/active/focus styles
   content: '';
 }
 
-#paginationSlot::slotted(button)::before {
+#pagination ::slotted(button)::before {
   transform: translate(-50%, -50%) scale(2);
 
   opacity: 0;
@@ -159,21 +159,21 @@ Consistency between navigation and pagination hover/active/focus styles
   will-change: opacity;
 }
 
-#paginationSlot::slotted(button:hover),
-#paginationSlot::slotted(.disabled) {
+#pagination ::slotted(button:hover),
+#pagination ::slotted(.disabled) {
   opacity: 1;
 }
 
-#paginationSlot::slotted(button:active)::before,
-#paginationSlot::slotted(button.focus-visible)::before {
+#pagination ::slotted(button:active)::before,
+#pagination ::slotted(button.focus-visible)::before {
   opacity: .2;
 }
 
-#paginationSlot::slotted(.disabled)::after {
+#pagination ::slotted(.disabled)::after {
   background-color: var(--x-slider-pagination-color-selected);
 }
 
-#slidesSlot::slotted(*) {
+#slidesWrapper ::slotted(*) {
   /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
   flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
       var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
@@ -195,7 +195,7 @@ Consistency between navigation and pagination hover/active/focus styles
   user-select: none;
 }
 
-:host([disable-drag]) #slidesSlot::slotted(*) {
+:host([disable-drag]) #slidesWrapper ::slotted(*) {
   user-select: auto;
 }
 
@@ -223,7 +223,7 @@ Consistency between navigation and pagination hover/active/focus styles
   display: block;
 }
 
-#navigationSlot::slotted(button) {
+#navigation ::slotted(button) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -246,26 +246,26 @@ Consistency between navigation and pagination hover/active/focus styles
   cursor: pointer;
 }
 
-:host([pagination]) #navigationSlot::slotted(button) {
+:host([pagination]) #navigation ::slotted(button) {
   top: calc(50% - var(--x-slider-pagination-height) / 2);
 }
 
-#navigationSlot::slotted(.x-slider-previous) {
+#navigation ::slotted(.x-slider-previous) {
   left: 0;
 }
 
-#navigationSlot::slotted(.x-slider-next) {
+#navigation ::slotted(.x-slider-next) {
   right: 0;
 }
 
-#navigationSlot::slotted(button)::before,
-#navigationSlot::slotted(button)::after {
+#navigation ::slotted(button)::before,
+#navigation ::slotted(button)::after {
   position: absolute;
 
   content: '';
 }
 
-#navigationSlot::slotted(button)::after {
+#navigation ::slotted(button)::after {
   top: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
   right: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
   width: var(--x-slider-navigation-icon-size);
@@ -280,12 +280,12 @@ Consistency between navigation and pagination hover/active/focus styles
   mask-image: var(--x-slider-navigation-icon-mask);
 }
 
-#navigationSlot::slotted(.x-slider-next)::after {
+#navigation ::slotted(.x-slider-next)::after {
   transform: rotateZ(180deg);
 }
 
 
-#navigationSlot::slotted(button)::before {
+#navigation ::slotted(button)::before {
   top: 0;
   right: 0;
   bottom: 0;
@@ -302,17 +302,17 @@ Consistency between navigation and pagination hover/active/focus styles
  * Show the bg circle when the button is not disabled and is hovered, active,
  * focused or keyboard-focused (thanks to the focus-visible polyfill).
  */
-#navigationSlot::slotted(button:hover:not(:disabled))::before,
-#navigationSlot::slotted(button:active:not(:disabled))::before,
-#navigationSlot::slotted(button:focus:not(:disabled))::before,
-:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::before {
+#navigation ::slotted(button:hover:not(:disabled))::before,
+#navigation ::slotted(button:active:not(:disabled))::before,
+#navigation ::slotted(button:focus:not(:disabled))::before,
+:host-context(.js-focus-visible) #navigation ::slotted(button.focus-visible)::before {
   opacity: 1;
 }
 
-#navigationSlot::slotted(button:hover:not(:disabled))::after,
-#navigationSlot::slotted(button:active:not(:disabled))::after,
-#navigationSlot::slotted(button:focus:not(:disabled))::after,
-:host-context(.js-focus-visible) #navigationSlot::slotted(button.focus-visible)::after {
+#navigation ::slotted(button:hover:not(:disabled))::after,
+#navigation ::slotted(button:active:not(:disabled))::after,
+#navigation ::slotted(button:focus:not(:disabled))::after,
+:host-context(.js-focus-visible) #navigation ::slotted(button.focus-visible)::after {
   background-color: var(--x-slider-navigation-color-focus);
 }
 
@@ -321,15 +321,15 @@ Consistency between navigation and pagination hover/active/focus styles
  * and doesn't have a focused-visible class. This means, do not leave the bg showing
  * after the user clicks on the button.
  */
-:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::before {
+:host-context(.js-focus-visible) #navigation ::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::before {
   opacity: 0;
 }
 
-:host-context(.js-focus-visible) #navigationSlot::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::after {
+:host-context(.js-focus-visible) #navigation ::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::after {
   background-color: var(--x-slider-navigation-color);
 }
 
-#navigationSlot::slotted(button[disabled]) {
+#navigation ::slotted(button[disabled]) {
   opacity: .2;
 }
 
@@ -342,7 +342,7 @@ Consistency between navigation and pagination hover/active/focus styles
  */
 
 @media print {
-  #slidesSlot::slotted(*) {
+  #slidesWrapper ::slotted(*) {
     margin-right: 0;
     margin-bottom: .2em;
 
