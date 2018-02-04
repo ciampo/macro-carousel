@@ -9,8 +9,12 @@ import {
 /**
  * Markup and styles.
  */
-const sliderTemplate = document.createElement('template');
-sliderTemplate.innerHTML = `<style>${styles}</style> ${html}`;
+const _template = document.createElement('template');
+_template.innerHTML = `<style>${styles}</style> ${html}`;
+
+if (window.ShadyCSS) {
+  window.ShadyCSS.prepareTemplate(_template, 'x-slider');
+}
 
 /**
  * An object representing either a touch event or a mouse event.
@@ -46,8 +50,12 @@ class XSlider extends HTMLElement {
      */
     super();
 
+    if (window.ShadyCSS) {
+      window.ShadyCSS.styleElement(this);
+    }
+
     this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(sliderTemplate.content.cloneNode(true));
+    this.shadowRoot.appendChild(_template.content.cloneNode(true));
 
     /**
      * The wrapper element enclosing the slides.
