@@ -706,16 +706,28 @@ class XSlider extends HTMLElement {
         this._updateSlidesA11y();
         this._focusSelectedSlide();
         this._updateAriaLiveDom();
+
+        if (window.ShadyCSS) {
+          window.ShadyCSS.styleSubtree(this);
+        }
         break;
 
       case 'navigation':
         // Calling `update()` instead of `_updateNavigation()` as adding/
         // removing navigation buttons causes the slidesWrapper to resize.
         this.update();
+
+        if (window.ShadyCSS) {
+          window.ShadyCSS.styleSubtree(this);
+        }
         break;
 
       case 'pagination':
         this._updatePagination();
+
+        if (window.ShadyCSS) {
+          window.ShadyCSS.styleSubtree(this);
+        }
         break;
 
       case 'disable-drag':
@@ -737,6 +749,10 @@ class XSlider extends HTMLElement {
         }
 
         this.update();
+
+        if (window.ShadyCSS) {
+          window.ShadyCSS.styleSubtree(this);
+        }
         break;
 
       case 'reduced-motion':
