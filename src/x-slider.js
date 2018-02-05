@@ -2,8 +2,8 @@ import styles from './x-slider.css';
 import html from './x-slider.html';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
 import {
-  clampAbs, booleanSetter, booleanGetter, intSetter, intGetter, normalizeEvent,
-  getCSSCustomProperty, setCSSCustomProperty,
+  clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
+  normalizeEvent, getCSSCustomProperty, setCSSCustomProperty,
 } from './utils.js';
 
 /**
@@ -537,7 +537,7 @@ class XSlider extends HTMLElement {
    * @private
    */
   _computePrevious(i) {
-    let previousSlideIndex;
+    let previousSlideIndex = i;
 
     // Wrap around is true only if loop is true.
     if (i > 0) {
@@ -550,7 +550,7 @@ class XSlider extends HTMLElement {
       previousSlideIndex = this._lastViewIndex;
     }
 
-    return previousSlideIndex;
+    return clamp(previousSlideIndex, 0, this._lastViewIndex);
   }
 
   /**
@@ -563,13 +563,14 @@ class XSlider extends HTMLElement {
   }
 
   /**
-   * Computes the previous index.
+   * Computes the next index.
    * @param {number} i The index of reference used to compure the next.
    * @return {number} The next index with respect to the input.
    * @private
    */
   _computeNext(i) {
-    let nextSlideIndex;
+    let nextSlideIndex = i;
+
     // Wrap around is true only if loop is true.
     if (i < this._lastViewIndex) {
       nextSlideIndex = i + 1;
@@ -581,7 +582,7 @@ class XSlider extends HTMLElement {
       nextSlideIndex = 0;
     }
 
-    return nextSlideIndex;
+    return clamp(nextSlideIndex, 0, this._lastViewIndex);
   }
 
 
@@ -1523,6 +1524,8 @@ of ${this._slides.length}`;
     const currentSlideIndex =
         this._getSlideDataIndexFromLayoutIndex(this._lastDraggedLayoutIndex);
 
+    let newSelected;
+
     if (diffX === 0) {
       this._decelVelocity = 0;
 
@@ -1532,7 +1535,7 @@ of ${this._slides.length}`;
       // distToCurrent is always going to be positive.
       const distToCurrent = this._slides[currentSlideIndex].position -
           this._wrapperTranslateX;
-      this.selected = distToCurrent > this._slidesWidth / 2 ?
+      newSelected = distToCurrent > this._slidesWidth / 2 ?
           this._computeNext(currentSlideIndex) : currentSlideIndex;
     } else {
       this._decelVelocity = clampAbs(diffX,
@@ -1559,8 +1562,11 @@ of ${this._slides.length}`;
         targetSlide = diffX < 0 ? this._computeNext(targetSlide) :
             this._computePrevious(targetSlide);
       }
-      this.selected = targetSlide;
+      newSelected = targetSlide;
     }
+
+    // Clamping to ensure that `selected` stays into its allowed values.
+    this.selected = clamp(newSelected, 0, this._lastViewIndex);
 
     requestAnimationFrame(this._decelerationStep.bind(this));
   }
