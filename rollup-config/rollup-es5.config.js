@@ -8,7 +8,7 @@ import cssnano from 'cssnano';
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
-const config = require('./package.json');
+const config = require('../package.json');
 
 export default {
   input: 'src/x-slider.js',

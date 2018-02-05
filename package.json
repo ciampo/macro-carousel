@@ -4,9 +4,9 @@
   "description": "Slider as a vanilla Web Component",
   "main": "src/x-slider.js",
   "scripts": {
-    "bundle-dev": "node_modules/.bin/rollup -c rollup-dev.config.js --watch",
-    "bundle-prod": "node_modules/.bin/rollup -c rollup-prod.config.js",
-    "bundle-es5": "node_modules/.bin/rollup -c rollup-es5.config.js",
+    "bundle-dev": "node_modules/.bin/rollup -c rollup-config/rollup-dev.config.js --watch",
+    "bundle-prod": "node_modules/.bin/rollup -c rollup-config/rollup-prod.config.js",
+    "bundle-es5": "node_modules/.bin/rollup -c rollup-config/rollup-es5.config.js",
     "test-lint": "eslint test *.js",
     "test-unit": "karma start",
     "test-e2e": "node run-e2e-tests.js",
