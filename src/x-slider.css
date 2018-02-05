@@ -1,6 +1,6 @@
-/*
-Consistency between navigation and pagination hover/active/focus styles
-*/
+/*******************************************************************************
+  Host and CSS properties
+*******************************************************************************/
 
 :host {
   position: relative;
@@ -18,7 +18,7 @@ Consistency between navigation and pagination hover/active/focus styles
   --x-slider-slide-min-height: 0px;
   --x-slider-slide-max-height: none;
 
-  --x-slider-transition-duration: 0.6s;
+  --x-slider-transition-duration: .6s;
   --x-slider-transition-timing-function: cubic-bezier(.25, .46, .45, .94);
 
   --x-slider-navigation-color: #000;
@@ -41,11 +41,15 @@ Consistency between navigation and pagination hover/active/focus styles
   display: none
 }
 
+/* focus-visible polyfill: no outline on :focus when it's not .focus-visible */
 :host-context(.js-focus-visible) :focus:not(.focus-visible),
 :host-context(.js-focus-visible) ::slotted(*:focus:not(.focus-visible)) {
   outline: 0;
 }
 
+/*******************************************************************************
+  External wrapper: fixed size, containment, bg color, touch-action, pointer.
+*******************************************************************************/
 #externalWrapper {
   height: 100%;
 
@@ -71,7 +75,10 @@ Consistency between navigation and pagination hover/active/focus styles
   cursor: default;
 }
 
-
+/*******************************************************************************
+  Slides wrapper: flexbox container, is the transitioning element when moving
+  the slides.
+*******************************************************************************/
 #slidesWrapper {
   display: flex;
   align-items: stretch;
@@ -91,6 +98,37 @@ Consistency between navigation and pagination hover/active/focus styles
   transition-timing-function: var(--x-slider-transition-timing-function);
 }
 
+/*******************************************************************************
+  Slides: width is calculated with a css formula
+*******************************************************************************/
+#slidesWrapper ::slotted(*) {
+  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
+  flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
+      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+
+  min-height: var(--x-slider-slide-min-height);
+  max-height: var(--x-slider-slide-max-height);
+
+  margin-right: var(--x-slider-gap);
+
+  /*
+   * Enforces the slides to keep their size even if the content requires
+   * a bigger slide size.
+   */
+  overflow: hidden;
+
+  outline: 0;
+
+  user-select: none;
+}
+
+:host([disable-drag]) #slidesWrapper ::slotted(*) {
+  user-select: auto;
+}
+
+/*******************************************************************************
+  Pagination styles
+*******************************************************************************/
 #pagination {
   display: none;
 }
@@ -173,48 +211,9 @@ Consistency between navigation and pagination hover/active/focus styles
   background-color: var(--x-slider-pagination-color-selected);
 }
 
-#slidesWrapper ::slotted(*) {
-  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
-  flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
-      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
-  align-self: stretch;
-
-  min-height: var(--x-slider-slide-min-height);
-  max-height: var(--x-slider-slide-max-height);
-
-  margin-right: var(--x-slider-gap);
-
-  /*
-   * Enforces the slides to keep their size even if the content requires
-   * a bigger slide size.
-   */
-  overflow: hidden;
-
-  outline: 0;
-
-  user-select: none;
-}
-
-:host([disable-drag]) #slidesWrapper ::slotted(*) {
-  user-select: auto;
-}
-
-#ariaSlot::slotted(*) {
-  position: absolute;
-
-  height: 1px;
-  width: 1px;
-
-  margin: -1px;
-  padding: 0;
-
-  clip: rect(0 0 0 0);
-
-  overflow: hidden;
-
-  border: 0;
-}
-
+/*******************************************************************************
+  Navigation styles
+*******************************************************************************/
 #navigation {
   display: none;
 }
@@ -284,7 +283,6 @@ Consistency between navigation and pagination hover/active/focus styles
   transform: rotateZ(180deg);
 }
 
-
 #navigation ::slotted(button)::before {
   top: 0;
   right: 0;
@@ -333,20 +331,39 @@ Consistency between navigation and pagination hover/active/focus styles
   opacity: .2;
 }
 
-/*
+/*******************************************************************************
+  aria-live styles
+*******************************************************************************/
+#aria-live ::slotted(*) {
+  position: absolute;
+
+  height: 1px;
+  width: 1px;
+
+  margin: -1px;
+  padding: 0;
+
+  clip: rect(0 0 0 0);
+
+  overflow: hidden;
+
+  border: 0;
+}
+
+/*******************************************************************************
  * Print styles:
  * - Show all slides and stack them vertically
  * - Eliminate the slide gap, show an outline
  * - make sure the page doesn't break a slide in half
  * - hide pagination and navigation buttons
- */
+*******************************************************************************/
 
 @media print {
   #slidesWrapper ::slotted(*) {
     margin-right: 0;
     margin-bottom: .2em;
 
-    outline: 1px solid black;
+    outline: 1px solid #000;
 
     color: #000;
 
