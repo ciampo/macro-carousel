@@ -5,6 +5,7 @@ import inlineSvg from 'postcss-inline-svg';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 
+import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
 const config = require('./package.json');
@@ -12,7 +13,7 @@ const config = require('./package.json');
 export default {
   input: 'src/x-slider.js',
   output: {
-    file: 'dist/x-slider.min.js',
+    file: 'dist/x-slider.es5.min.js',
     format: 'iife',
   },
   plugins: [
@@ -32,6 +33,27 @@ export default {
         conservativeCollapse: true,
         removeComments: true,
       },
+    }),
+    babel({
+      include: ['src/*.js'],
+      babelrc: false,
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            modules: false,
+            targets: {
+              browsers: [
+                '> 1%',
+                'last 2 versions',
+              ],
+            },
+          },
+        ],
+      ],
+      plugins: [
+        '@babel/external-helpers',
+      ],
     }),
     uglify({
       output: {
