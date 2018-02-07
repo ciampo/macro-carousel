@@ -59,7 +59,7 @@ var stampTemplate = function(template) {
 };
 
 // Download x-slider once the WebCompomnents polyfills have downloaded.
-window.addEventListener('WebComponentsReady', function(e) {
+var onWCReady = function() {
   var demoTemplate = document.querySelector('#demoTemplate');
   stampTemplate(demoTemplate);
 
@@ -78,4 +78,10 @@ window.addEventListener('WebComponentsReady', function(e) {
   script.defer = true;
 
   document.head.appendChild(script);
-});
+};
+
+if (window.WebComponents && window.WebComponents.ready === true) {
+  onWCReady();
+} else {
+  window.addEventListener('WebComponentsReady', onWCReady);
+}

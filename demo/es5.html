@@ -11,6 +11,13 @@
 </head>
 <body>
   <h1 id="title">Basic usage</h1>
+  <p>In order to make this demo work with older browsers, this demo is slightly different from the rest of the demos: (have a look at this page's source code)</p>
+  <ul>
+    <li>the transpiled version of `x-slider` is used instead (see demo.js)</li>
+    <li>the set of babel-polyfills is added before importing anything else</li>
+    <li>the custom-elements-es5-adapter is run for browsers supporting CustomElements v1</li>
+    <li>webcomponents-lite.js is used instead of webcomponents-loader.js</li>
+  </ul>
   <a id="backToIndex" href="index.html">See all demos</a>
 
   <template id="demoTemplate">
@@ -47,15 +54,15 @@
     </x-slider>
   </template>
 
-  <script defer src="js/third-party/polyfill.min.js" data-manual></script>
-  <!-- <script src="js/third-party/inert.min.js"></script> -->
-  <!-- <script src="js/third-party/focus-visible.js"></script> -->
+  <!-- ES5 babel-polyfill -->
+  <script defer src="js/third-party/polyfill.min.js"></script>
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
   <script defer src="js/third-party/prism.js" data-manual></script>
   <script defer src="js/demo.js"></script>
   <script>if (!window.customElements) { document.write('<!--'); }</script>
   <script defer src="js/third-party/custom-elements-es5-adapter.js"></script>
   <!--! do not remove -->
-   <!--While using webcomponents-lite.js, I I noticed that the WebComponentsReady event doesn't focus enough.... -->
   <script defer src="js/third-party/webcomponents-lite.js"></script>
 </body>
 </html>
