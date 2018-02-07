@@ -955,7 +955,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
 
     // Used to compute the slides's width.
     setCSSCustomProperty(this,
-        '--x-slider-internal-slides-per-view', `${this.slidesPerView}`);
+        '--x-slider__internal__slides-per-view', `${this.slidesPerView}`);
 
     // Recompute the index of the last view (aka max value for `selected`).
     this._lastViewIndex = this._wrapAround ? this._slides.length - 1 :

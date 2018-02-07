@@ -144,7 +144,7 @@ export function getCSSCustomProperty(element, propertyName) {
 export function setCSSCustomProperty(element, propertyName, propertyValue) {
   element.style.setProperty(propertyName, propertyValue);
   if (window.ShadyCSS) {
-    window.ShadyCSS.styleSubtree(element, {propertyName: propertyValue});
+    window.ShadyCSS.styleSubtree(element, {[propertyName]: propertyValue});
   }
 }
 

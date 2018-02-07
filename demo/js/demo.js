@@ -38,11 +38,9 @@ var unindent = function(text) {
 };
 
 
-var addDOM = function() {
-  var demoTemplate = document.querySelector('#demoTemplate');
-
+var stampTemplate = function(template) {
   // Append the first time to initialise the carousel.
-  document.body.appendChild(demoTemplate.content.cloneNode(true));
+  document.body.appendChild(template.content.cloneNode(true));
 
   // Append a second time to show the highlighted code snippet.
   // For some reason, prismjs doesn't automatically get the `x-slider`
@@ -54,7 +52,7 @@ var addDOM = function() {
   code.classList.add('language-markup');
   // Remove empty attribute values (ie `=""`) for boolean attributes.
   code.innerHTML = Prism.highlight(
-      unindent(demoTemplate.innerHTML).replace(/=""/g, ''),
+      unindent(template.innerHTML).replace(/=""/g, ''),
       Prism.languages.markup);
   pre.appendChild(code);
   document.body.appendChild(pre);
@@ -62,8 +60,8 @@ var addDOM = function() {
 
 // Download x-slider once the WebCompomnents polyfills have downloaded.
 window.addEventListener('WebComponentsReady', function(e) {
-  setTimeout(function() {
-    addDOM();
+  var demoTemplate = document.querySelector('#demoTemplate');
+  stampTemplate(demoTemplate);
 
   var script = document.createElement('script');
   var useEs5 = /es5/.test(window.location.href);
@@ -80,5 +78,4 @@ window.addEventListener('WebComponentsReady', function(e) {
   script.defer = true;
 
   document.head.appendChild(script);
-  }, 1000);
 });
