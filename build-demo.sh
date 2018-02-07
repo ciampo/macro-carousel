@@ -16,3 +16,6 @@ cp node_modules/focus-visible/dist/focus-visible.js demo/js/third-party
 # Add prism.js
 cp node_modules/prismjs/prism.js demo/js/third-party
 cp node_modules/prismjs/themes/prism.css demo/css/third-party
+
+# Add babel polyfill
+cp node_modules/babel-polyfill/dist/polyfill.min.js demo/js/third-party

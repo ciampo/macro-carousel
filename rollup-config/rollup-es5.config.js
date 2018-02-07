@@ -35,24 +35,24 @@ export default {
       },
     }),
     babel({
-      include: ['src/*.js'],
       babelrc: false,
       presets: [
         [
-          '@babel/preset-env',
+          'env',
           {
             modules: false,
             targets: {
               browsers: [
                 '> 1%',
                 'last 2 versions',
+                'ie >= 11',
               ],
             },
           },
         ],
       ],
       plugins: [
-        '@babel/external-helpers',
+        'external-helpers',
       ],
     }),
     uglify({
@@ -62,13 +62,6 @@ export default {
   @license https://github.com/ciampo/x-slider/blob/master/LICENSE
   ${config.name} ${config.version}
 */`,
-      },
-      mangle: {
-        keep_classnames: true,
-        keep_fnames: true,
-        properties: {
-          regex: /^_/,
-        },
       },
     }),
   ],

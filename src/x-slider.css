@@ -35,6 +35,8 @@
   --x-slider-pagination-size-dot: 8px;
   --x-slider-pagination-gap: 2px;
   --x-slider-pagination-height: 44px;
+
+  --x-slider-internal-slides-per-view: 1;
 }
 
 :host([hidden]) {
@@ -88,8 +90,6 @@
   max-height: var(--x-slider-slide-max-height);
 
   will-change: transform;
-
-  --x-slider__internal__slides-per-view: 1;
 }
 
 :host([transitioning]) #slidesWrapper {
@@ -102,9 +102,11 @@
   Slides: width is calculated with a css formula
 *******************************************************************************/
 #slidesWrapper ::slotted(*) {
+  flex-grow: 0;
+  flex-shrink: 0;
   /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
-  flex: 0 0 calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
-      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+  flex-basis: calc((100% - (var(--x-slider-internal-slides-per-view) - 1) *
+      var(--x-slider-gap)) / var(--x-slider-internal-slides-per-view));
 
   min-height: var(--x-slider-slide-min-height);
   max-height: var(--x-slider-slide-max-height);

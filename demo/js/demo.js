@@ -1,7 +1,9 @@
-const getQueryParamValue = (paramName, url = window.location.href)  => {
-  paramName = paramName.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp('[?&]' + paramName + '(=([^&#]*)|&|#|$)');
-  const results = regex.exec(url);
+/* eslint-disable no-var */
+var getQueryParamValue = function(paramName, url) {
+  var url = url || window.location.href;
+  var paramName = paramName.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + paramName + '(=([^&#]*)|&|#|$)');
+  var results = regex.exec(url);
   if (!results) {
     return null;
   }
@@ -12,53 +14,71 @@ const getQueryParamValue = (paramName, url = window.location.href)  => {
 };
 
 // See https://github.com/PolymerElements/marked-element/
-const unindent = text => {
+var unindent = function(text) {
   if (!text) {
     return text;
   }
 
-  const lines = text.replace(/\t/g, '  ').split('\n');
-  const indent = lines.reduce(function(prev, line) {
-    // Completely ignore blank lines.
+  var lines = text.replace(/\t/g, '  ').split('\n');
+  var indent = lines.reduce(function(prev, line) {
+    // Compvarely ignore blank lines.
     if (/^\s*$/.test(line)) {
       return prev;
     }
-    const lineIndent = line.match(/^(\s*)/)[0].length;
+    var lineIndent = line.match(/^(\s*)/)[0].length;
     if (prev === null) {
       return lineIndent;
     }
     return lineIndent < prev ? lineIndent : prev;
   }, null);
 
-  return lines.map(l => l.substr(indent)).join('\n');
+  return lines.map(function(l) {
+    return l.substr(indent);
+  }).join('\n');
 };
 
-const demoTemplate = document.querySelector('#demoTemplate');
 
-// Append the first time to initialise the carousel.
-document.body.appendChild(demoTemplate.content.cloneNode(true));
+var addDOM = function() {
+  var demoTemplate = document.querySelector('#demoTemplate');
 
-// Append a second time to show the highlighted code snippet.
-// For some reason, prismjs doesn't automatically get the `x-slider`
-// tagName, so to work around the problem I use its APIs imperatively
-// and I use innerHTML to get the right text to highlight.
-const pre = document.createElement('pre');
-pre.classList.add('language-markup');
-const code = document.createElement('code');
-code.classList.add('language-markup');
-// Remove empty attribute values (ie `=""`) for boolean attributes.
-code.innerHTML = Prism.highlight(
-    unindent(demoTemplate.innerHTML).replace(/=""/g, ''),
-    Prism.languages.markup);
-pre.appendChild(code);
-document.body.appendChild(pre);
+  // Append the first time to initialise the carousel.
+  document.body.appendChild(demoTemplate.content.cloneNode(true));
+
+  // Append a second time to show the highlighted code snippet.
+  // For some reason, prismjs doesn't automatically get the `x-slider`
+  // tagName, so to work around the problem I use its APIs imperatively
+  // and I use innerHTML to get the right text to highlight.
+  var pre = document.createElement('pre');
+  pre.classList.add('language-markup');
+  var code = document.createElement('code');
+  code.classList.add('language-markup');
+  // Remove empty attribute values (ie `=""`) for boolean attributes.
+  code.innerHTML = Prism.highlight(
+      unindent(demoTemplate.innerHTML).replace(/=""/g, ''),
+      Prism.languages.markup);
+  pre.appendChild(code);
+  document.body.appendChild(pre);
+};
 
 // Download x-slider once the WebCompomnents polyfills have downloaded.
-window.addEventListener('WebComponentsReady', function() {
-  const script = document.createElement('script');
-  const useDev = /localhost/.test(window.location.href) ||
+window.addEventListener('WebComponentsReady', function(e) {
+  setTimeout(function() {
+    addDOM();
+
+  var script = document.createElement('script');
+  var useEs5 = /es5/.test(window.location.href);
+  var useDev = /localhost/.test(window.location.href) ||
       getQueryParamValue('dev') === 'true';
-  script.src = `../dist/x-slider${useDev ? '' : '.min'}.js`;
+  var filename = 'x-slider';
+  if (useEs5) {
+    filename += '.es5';
+  }
+  if (!useDev || useEs5) {
+    filename += '.min';
+  }
+  script.src = '../dist/' + filename + '.js';
+  script.defer = true;
 
   document.head.appendChild(script);
+  }, 1000);
 });
