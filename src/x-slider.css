@@ -272,13 +272,25 @@
   width: var(--x-slider-navigation-icon-size);
   height: var(--x-slider-navigation-icon-size);
 
-  background-color: var(--x-slider-navigation-color);
+  /* Fallback for when mask-image is not supported: using a `<` character */
+  color: var(--x-slider-navigation-color);
+  content: '<';
+  font-size: calc(var(--x-slider-navigation-icon-size)* 0.85);
+  line-height: calc(var(--x-slider-navigation-icon-size)* 0.85);
+}
 
-  /* References:
-   * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
-   * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
-   */
-  mask-image: var(--x-slider-navigation-icon-mask);
+@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
+  #navigation ::slotted(button)::after {
+    background-color: var(--x-slider-navigation-color);
+
+    content: '';
+
+    /* References:
+    * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
+    * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
+    */
+    mask-image: var(--x-slider-navigation-icon-mask);
+  }
 }
 
 #navigation ::slotted(.x-slider-next)::after {
