@@ -13,10 +13,10 @@
   <h1 id="title">Basic usage</h1>
   <p>In order to make this demo work with older browsers, this demo is slightly different from the rest of the demos: (have a look at this page's source code)</p>
   <ul>
-    <li>the transpiled version of `x-slider` is used instead (see demo.js)</li>
-    <li>the set of babel-polyfills is added before importing anything else</li>
-    <li>the custom-elements-es5-adapter is run for browsers supporting CustomElements v1</li>
-    <li>webcomponents-lite.js is used instead of webcomponents-loader.js</li>
+    <li>the transpiled version of <code>&lt;x-slider&gt;</code> is used instead (see demo.js)</li>
+    <li>the set of <code>babel-polyfills</code> is added before importing anything else</li>
+    <li>the <code>custom-elements-es5-adapter</code> is run for browsers supporting CustomElements v1</li>
+    <li><code>webcomponents-lite.js</code> is used instead of <code>webcomponents-loader.js</code></li>
   </ul>
   <a id="backToIndex" href="index.html">See all demos</a>
 
@@ -46,7 +46,7 @@
       or also navigated by programmatically calling next(), previous(), or
       by setting the `selected` property.
     -->
-    <x-slider slides-per-view="2">
+    <x-slider slides-per-view="2" navigation>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
