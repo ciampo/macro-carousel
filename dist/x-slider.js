@@ -190,6 +190,9 @@ function setCSSCustomProperty(element, propertyName, propertyValue) {
   }
 }
 
+/**
+ * Markup and styles.
+ */
 const _template = document.createElement('template');
 _template.innerHTML = `<style>${css}</style> ${html}`;
 
