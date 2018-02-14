@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Avoiding flashing content (loading strategies) - x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">Avoiding flashing content (loading strategies)</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      x-slider {
+        height: 300px;
+        padding: 0 60px;
+      }
+
+      .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(to bottom right, #f0f0f0, #c0c0c0);
+        box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, .05);
+
+        color: white;
+        font-size: 5em;
+        font-family: sans-serif;
+      }
+
+      /*
+       * The :not(:defined) pseudo-selector allows to apply styles to a
+       * Custom Element before it's registered. Here we're making the slider
+       * a flex container, and the slider 100% its width (in this
+       * example, slidesPerView=1). This way, there isn't going to be any flash
+       * when the x-slider compoent gets registered as a Custom Element.
+       * To see the flash happen, see the base.html example.
+       * https://developers.google.com/web/fundamentals/web-components/customelements#prestyle
+       */
+      x-slider:not(:defined) {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+
+        /*
+         * Using margin instead of padding when the CE is not defined yet.
+         * Because of overflow: auto, using padding would reveal the
+         * next slide to the right. Using margin, the problem is avoided.
+         */
+        padding: 0;
+        margin: 0 60px;
+      }
+
+      x-slider:not(:defined) > .slide {
+        flex: 0 0 100%;
+      }
+    </style>
+
+    <x-slider navigation>
+      <article class="slide">Slide 1</article>
+      <article class="slide">Slide 2</article>
+      <article class="slide">Slide 3</article>
+      <article class="slide">Slide 4</article>
+    </x-slider>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
