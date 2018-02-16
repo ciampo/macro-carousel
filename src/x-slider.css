@@ -23,8 +23,8 @@
 
   --x-slider-navigation-color: #000;
   --x-slider-navigation-color-focus: var(--x-slider-navigation-color);
-  --x-slider-navigation-background-color: transparent;
-  --x-slider-navigation-background-color-focus: #f0f0f0;
+  --x-slider-navigation-color-background: transparent;
+  --x-slider-navigation-color-background-focus: #f0f0f0;
   --x-slider-navigation-button-size: 48px;
   --x-slider-navigation-icon-size: 24px;
   --x-slider-navigation-icon-mask: svg-load('./arrow-left.svg', fill: #000);
@@ -238,7 +238,7 @@
   padding: 0;
 
   background: none;
-  background-color: var(--x-slider-navigation-background-color);
+  background-color: var(--x-slider-navigation-color-background);
   border: 0;
   border-radius: 50%;
 
@@ -303,7 +303,7 @@
   bottom: 0;
   left: 0;
 
-  background-color: var(--x-slider-navigation-background-color-focus);
+  background-color: var(--x-slider-navigation-color-background-focus);
 
   opacity: 0;
 
