@@ -8,19 +8,25 @@
 (function() {
   const expect = chai.expect;
 
-  describe('x-slider', function() {
+  describe('Init', function() {
     before(wcutils.before());
     after(wcutils.after());
-    beforeEach(async function() {
+
+    it('declarative', function() {
       this.container.innerHTML = `<x-slider></x-slider>`;
-      return wcutils.waitForElement('x-slider')
-        .then(() => {
-          this.slider = this.container.querySelector('x-slider');
-        });
+
+      return wcutils.waitForElement('x-slider').then(() => {
+        expect(document.querySelector('x-slider').constructor.name)
+            .to.equal('XSlider');
+      });
     });
 
-    it('should be successfully registered as a XSlider', function() {
-      expect(this.slider.constructor.name).to.equal('XSlider');
+    it('programmatic', function() {
+      const slider = document.createElement('x-slider');
+
+      return wcutils.waitForElement('x-slider').then(() => {
+        expect(slider.constructor.name).to.equal('XSlider');
+      });
     });
   });
 })();
