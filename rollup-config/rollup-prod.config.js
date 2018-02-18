@@ -48,6 +48,8 @@ export default {
           regex: /^_/,
         },
       },
+      keep_classnames: true,
+      keep_fnames: true,
     }),
   ],
 };
