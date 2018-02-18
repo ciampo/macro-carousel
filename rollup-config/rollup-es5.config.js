@@ -1,39 +1,22 @@
-import html from 'rollup-plugin-html';
-
-import postcss from 'rollup-plugin-postcss';
-import inlineSvg from 'postcss-inline-svg';
-import autoprefixer from 'autoprefixer';
+import createRollupConfig from './rollup-base.config';
 import cssnano from 'cssnano';
-
-import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
+import babel from 'rollup-plugin-babel';
 
 const config = require('../package.json');
 
-export default {
-  input: 'src/x-slider.js',
-  output: {
-    file: 'dist/x-slider.es5.min.js',
-    format: 'iife',
+export default createRollupConfig(
+  'x-slider.es5.min.js',
+  [
+    cssnano()
+  ],
+  {
+    collapseWhitespace: true,
+    collapseBooleanAttributes: true,
+    conservativeCollapse: true,
+    removeComments: true,
   },
-  plugins: [
-    postcss({
-      inject: false,
-      plugins: [
-        inlineSvg,
-        autoprefixer({browsers: 'last 2 versions'}),
-        cssnano(),
-      ],
-    }),
-    html({
-      include: ['src/*.html'],
-      htmlMinifierOptions: {
-        collapseWhitespace: true,
-        collapseBooleanAttributes: true,
-        conservativeCollapse: true,
-        removeComments: true,
-      },
-    }),
+  [
     babel({
       babelrc: false,
       presets: [
@@ -64,5 +47,5 @@ export default {
 */`,
       },
     }),
-  ],
-};
+  ]
+);
