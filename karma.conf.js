@@ -1,4 +1,4 @@
-/* eslint max-len: ["off"], no-console: ["off"], require-jsdoc: 0 */
+/* eslint require-jsdoc: 0 */
 module.exports = function(config) {
   const configuration = {
     basePath: '',
@@ -6,8 +6,8 @@ module.exports = function(config) {
     files: [
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'tools/testing-helper.js',
-      'src/*.js',
-      'test/unit/*.js',
+      'dist/x-slider.min.js',
+      'test/unit/*.unittest.js'
     ],
     preprocessors: {},
     reporters: ['progress'],
@@ -18,6 +18,11 @@ module.exports = function(config) {
     browsers: ['Chrome', 'Firefox', 'Safari'],
     singleRun: true,
     concurrency: Infinity,
+    // to avoid DISCONNECTED messages
+    browserDisconnectTimeout : 10000, // default 2000
+    browserDisconnectTolerance : 1, // default 0
+    browserNoActivityTimeout : 4*60*1000, //default 10000
+    captureTimeout : 4*60*1000 //default 60000
   };
 
   config.set(configuration);
