@@ -47,3 +47,11 @@ window.wcutils.getCSSCustomProperty = function(elem, propertyName) {
   const cssStyles = getComputedStyle(elem);
   return String(cssStyles.getPropertyValue(propertyName)).trim();
 };
+
+window.wcutils.delay = function(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+window.wcutils.flush = function() {
+  return wcutils.delay(50);
+};
