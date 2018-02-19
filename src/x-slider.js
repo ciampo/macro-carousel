@@ -636,7 +636,7 @@ class XSlider extends HTMLElement {
         if (!Number.isFinite(parsedNewValue) ||
             parsedNewValue > this._lastViewIndex ||
             parsedNewValue < 0) {
-          this.selected = oldValue;
+          this.selected = oldValue || 0;
           return;
         }
 
