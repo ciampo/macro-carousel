@@ -1,5 +1,4 @@
 /* eslint max-len: ["off"] */
-
 (function() {
   const expect = chai.expect;
 
@@ -38,44 +37,63 @@
     '--x-slider-pagination-height': '44px',
   };
 
-  describe('Defaults', function() {
+  describe('Default value for', function() {
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `<x-slider></x-slider>`;
       return wcutils.waitForElement('x-slider')
-        .then(_ => {
+        .then(() => {
           this.slider = this.container.querySelector('x-slider');
         });
     });
 
     /**
-     * JS properties / attrs
+     * JS properties
      */
-    it('has correct default values for public properties', function() {
+    describe('property', () => {
       for ([propName, propDefaultValue] of Object.entries(jsProps)) {
-        console.log(propName);
-        expect(this.slider[propName]).to.equal(propDefaultValue);
-      }
-    });
-
-    /**
-     * JS functions
-     */
-    it('has public functions', function() {
-      for (functionName of jsFunc) {
-        expect(this.slider[functionName]).to.be.a('function');
+        let [name, value] = [propName, propDefaultValue];
+        it(`${name} should be ${value}`, function() {
+          expect(this.slider[name]).to.equal(value);
+        });
       }
     });
 
     /**
      * CSS custom properties
      */
-    it('has correct default values for public CSS custom properties', function() {
+    describe('CSS custom property', () => {
       for ([propName, propDefaultValue] of Object.entries(cssCustomProps)) {
-        expect(wcutils.getCSSCustomProperty(this.slider, propName))
-            .to.equal(propDefaultValue);
+        let [name, value] = [propName, propDefaultValue];
+        it(`${name} should be ${value}`, function() {
+          expect(wcutils.getCSSCustomProperty(this.slider, name))
+              .to.equal(value);
+        });
       }
     });
+  });
+
+  /**
+   * Publis functions
+   */
+  describe('Public function', function() {
+    before(wcutils.before());
+    after(wcutils.after());
+    beforeEach(async function() {
+      this.container.innerHTML = `<x-slider></x-slider>`;
+      return wcutils.waitForElement('x-slider')
+        .then(() => {
+          this.slider = this.container.querySelector('x-slider');
+        });
+    });
+
+
+    for (functionName of jsFunc) {
+      let name = functionName;
+      it(`${name} should exist`, function() {
+          expect(this.slider[name]).to.be.a('function');
+      });
+    }
   });
 })();
