@@ -76,7 +76,7 @@
       // Otherwise it rolls back to the previous value.
       propertyName: 'slidesPerView',
       tests: [
-        {value: 2, expected: 2},
+        {value: numberOfSlides, expected: numberOfSlides},
         {value: 0, expected: 1},
         {value: numberOfSlides + 1, expected: 1},
         {value: 'string', expected: 1},
