@@ -1,9 +1,5 @@
 /* eslint max-len: ["off"] */
 
-// TODO: reflect props and attrs:
-// - set a property, read the property and the attribute
-// - set an attribute, read the property and the attribute
-
 (function() {
   const expect = chai.expect;
 
