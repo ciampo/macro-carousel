@@ -744,8 +744,9 @@ class XSlider extends HTMLElement {
 
         // Accept only numbers greater than `1`.
         if (!Number.isFinite(parsedSlidesPerView) ||
-            parsedSlidesPerView < 1) {
-          this.slidesPerView = oldValue;
+            parsedSlidesPerView < 1 ||
+            parsedSlidesPerView > this._slides.length) {
+          this.slidesPerView = oldValue || 1;
           return;
         }
 
