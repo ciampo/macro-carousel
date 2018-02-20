@@ -50,6 +50,8 @@
 
     const allPropertyTests = [
       {
+        // selected has to be a Number in range [0, slides.length - 1].
+        // Otherwise it rolls back to the previous value.
         name: 'selected',
         tests: [
           {value: 2, expected: 2},
@@ -60,22 +62,35 @@
           {value: undefined, expected: 0},
           {value: {}, expected: 0},
           {value: true, expected: 0},
-        ]
-      }
+        ],
+      },
+      {
+        // truthy values set it to true, falsy values set it to false
+        name: 'loop',
+        tests: [
+          {value: true, expected: true},
+          {value: 2, expected: true},
+          {value: 'string', expected: true},
+          {value: {}, expected: true},
+          {value: 0, expected: false},
+          {value: null, expected: false},
+          {value: undefined, expected: false},
+        ],
+      },
     ];
 
+    // Since all tests are async function, the loop variable is saved to a local
+    // variable. An alternative approach would be to wrap the test in a closure.
     for (property of allPropertyTests) {
-      describe(`${property.name}`, () => {
+      let propertyName = property.name;
+      describe(`${propertyName}`, () => {
         for (test of property.tests) {
-          // Since all tests are async function, the current value of `test`
-          // is saved to a local variable. An alternative approach would be
-          // to wrap the test in a closure.
           let t = test;
-          it(`should be ${t.value}`, async function() {
+          it(`should be ${t.expected}`, async function() {
             await wcutils.flush();
-            this.slider.selected = t.value;
+            this.slider[propertyName] = t.value;
             await wcutils.flush();
-            expect(this.slider.selected).to.equal(t.expected);
+            expect(this.slider[propertyName]).to.equal(t.expected);
           });
         }
       });
