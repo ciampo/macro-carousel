@@ -7,7 +7,7 @@ module.exports = function(config) {
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'tools/testing-helper.js',
       'dist/x-slider.min.js',
-      'test/unit/*.unittest.js'
+      'test/unit/*.unittest.js',
     ],
     preprocessors: {},
     reporters: ['progress'],
@@ -19,10 +19,10 @@ module.exports = function(config) {
     singleRun: true,
     concurrency: Infinity,
     // to avoid DISCONNECTED messages
-    browserDisconnectTimeout : 10000, // default 2000
-    browserDisconnectTolerance : 1, // default 0
-    browserNoActivityTimeout : 4*60*1000, //default 10000
-    captureTimeout : 4*60*1000 //default 60000
+    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTolerance: 1, // default 0
+    browserNoActivityTimeout: 4 * 60 *1000, // default 10000
+    captureTimeout: 4 * 60 * 1000, // default 60000
   };
 
   config.set(configuration);
