@@ -26,7 +26,7 @@
         {value: undefined, expected: rollbackValue},
         {value: {}, expected: rollbackValue},
         {value: true, expected: rollbackValue},
-      ]
+      ];
     }
   };
 

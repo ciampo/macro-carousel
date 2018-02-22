@@ -55,3 +55,7 @@ window.wcutils.delay = function(ms) {
 window.wcutils.flush = function() {
   return wcutils.delay(50);
 };
+
+window.wcutils.camelCaseToDash =  function(myStr) {
+  return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+}
