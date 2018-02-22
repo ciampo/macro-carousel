@@ -59,3 +59,7 @@ window.wcutils.flush = function() {
 window.wcutils.camelCaseToDash =  function(myStr) {
   return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
 }
+
+window.wcutils.dashToCamelCase =  function(myStr) {
+  return myStr.replace(/-([a-z])/g, function(g) { return g[1].toUpperCase(); });
+}
