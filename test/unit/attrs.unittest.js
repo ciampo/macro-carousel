@@ -3,144 +3,87 @@
 (function() {
   const expect = chai.expect;
   const numberOfSlides = 4;
+
+  const generateTests = (type, rollbackValue, min, max) => {
+    if (type === 'boolean') {
+      return [
+        {value: '', expected: ''},
+        {value: -1, expected: '-1'},
+        {value: numberOfSlides, expected: `${numberOfSlides}`},
+        {value: 'string', expected: 'string'},
+        {value: null, expected: `${null}`},
+        {value: undefined, expected: `${undefined}`},
+        {value: {}, expected: `${{}}`},
+        {value: true, expected: `${true}`},
+        {value: false, expected: `${false}`},
+        {value: '_remove_attr_', expected: null},
+      ];
+    } else if (type === 'number') {
+      const randomValid = Math.floor(Math.random() * max) + min;
+      return [
+        {value: randomValid, expected: `${randomValid}`},
+        {value: '', expected: `${rollbackValue}`},
+        {value: min - 1, expected: `${rollbackValue}`},
+        {value: max + 1, expected: `${rollbackValue}`},
+        {value: 'string', expected: `${rollbackValue}`},
+        {value: null, expected: `${rollbackValue}`},
+        {value: undefined, expected: `${rollbackValue}`},
+        {value: {}, expected: `${rollbackValue}`},
+        {value: true, expected: `${rollbackValue}`},
+        {value: false, expected: `${rollbackValue}`},
+        {value: '_remove_attr_', expected: null},
+      ]
+    }
+  };
+
   const allAttrTests = [
     {
       // selected has to be a Number in range [0, slides.length - 1].
       // Otherwise it rolls back to the previous value.
       attributeName: 'selected',
-      tests: [
-        {value: 2, expected: '2'},
-        {value: '', expected: '0'},
-        {value: -1, expected: '0'},
-        {value: numberOfSlides, expected: '0'},
-        {value: 'string', expected: '0'},
-        {value: null, expected: '0'},
-        {value: undefined, expected: '0'},
-        {value: {}, expected: '0'},
-        {value: true, expected: '0'},
-        {value: false, expected: '0'},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('number', 0, 0, numberOfSlides - 1),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'loop',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'navigation',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'pagination',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'disable-drag',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
     {
       // slidesPerView has to be a Number in range [1, slides.length].
       // Otherwise it rolls back to the previous value.
       attributeName: 'slides-per-view',
-      tests: [
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: '', expected: '1'},
-        {value: -1, expected: '1'},
-        {value: numberOfSlides + 1, expected: '1'},
-        {value: 'string', expected: '1'},
-        {value: null, expected: '1'},
-        {value: undefined, expected: '1'},
-        {value: {}, expected: '1'},
-        {value: true, expected: '1'},
-        {value: false, expected: '1'},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('number', 1, 1, numberOfSlides),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'reduced-motion',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
     {
       // the value should be just the 'toString()' result,
       // unless the attribute is removed
       attributeName: 'auto-focus',
-      tests: [
-        {value: '', expected: ''},
-        {value: -1, expected: '-1'},
-        {value: numberOfSlides, expected: `${numberOfSlides}`},
-        {value: 'string', expected: 'string'},
-        {value: null, expected: `${null}`},
-        {value: undefined, expected: `${undefined}`},
-        {value: {}, expected: `${{}}`},
-        {value: true, expected: `${true}`},
-        {value: false, expected: `${false}`},
-        {value: '_remove_attr_', expected: null}
-      ],
+      tests: generateTests('boolean'),
     },
 
   ];

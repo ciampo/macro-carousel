@@ -3,114 +3,75 @@
 (function() {
   const expect = chai.expect;
   const numberOfSlides = 4;
+
+  const generateTests = (type, rollbackValue, min, max) => {
+    if (type === 'boolean') {
+      return [
+        {value: true, expected: true},
+        {value: 2, expected: true},
+        {value: 'string', expected: true},
+        {value: {}, expected: true},
+        {value: 0, expected: false},
+        {value: null, expected: false},
+        {value: undefined, expected: false},
+      ];
+    } else if (type === 'number') {
+      const randomValid = Math.floor(Math.random() * max) + min;
+      return [
+        {value: randomValid, expected: randomValid},
+        {value: min - 1, expected: rollbackValue},
+        {value: max + 1, expected: rollbackValue},
+        {value: 'string', expected: rollbackValue},
+        {value: null, expected: rollbackValue},
+        {value: undefined, expected: rollbackValue},
+        {value: {}, expected: rollbackValue},
+        {value: true, expected: rollbackValue},
+      ]
+    }
+  };
+
   const allPropertyTests = [
     {
       // selected has to be a Number in range [0, slides.length - 1].
       // Otherwise it rolls back to the previous value.
       propertyName: 'selected',
-      tests: [
-        {value: 2, expected: 2},
-        {value: -1, expected: 0},
-        {value: numberOfSlides, expected: 0},
-        {value: 'string', expected: 0},
-        {value: null, expected: 0},
-        {value: undefined, expected: 0},
-        {value: {}, expected: 0},
-        {value: true, expected: 0},
-      ],
+      tests: generateTests('number', 0, 0, numberOfSlides - 1),
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'loop',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'navigation',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'pagination',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'disableDrag',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
     {
       // slidesPerView has to be a Number in range [1, slides.length].
       // Otherwise it rolls back to the previous value.
       propertyName: 'slidesPerView',
-      tests: [
-        {value: numberOfSlides, expected: numberOfSlides},
-        {value: 0, expected: 1},
-        {value: numberOfSlides + 1, expected: 1},
-        {value: 'string', expected: 1},
-        {value: null, expected: 1},
-        {value: undefined, expected: 1},
-        {value: {}, expected: 1},
-        {value: true, expected: 1},
-      ],
+      tests: generateTests('number', 1, 1, numberOfSlides),
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'reducedMotion',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
     {
       // truthy values set it to true, falsy values set it to false
       propertyName: 'autoFocus',
-      tests: [
-        {value: true, expected: true},
-        {value: 2, expected: true},
-        {value: 'string', expected: true},
-        {value: {}, expected: true},
-        {value: 0, expected: false},
-        {value: null, expected: false},
-        {value: undefined, expected: false},
-      ],
+      tests: generateTests('boolean')
     },
   ];
 
