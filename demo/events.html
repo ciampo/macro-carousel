@@ -32,7 +32,7 @@
         font-family: sans-serif;
       }
 
-      #selected {
+      #selectedIndicator {
         font-weight: bold;
       }
 
@@ -41,29 +41,22 @@
       }
     </style>
 
-    <x-slider selected="1">
+    <x-slider>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
     </x-slider>
-    <p>The selected slide is <span id="selected"></span> (0-based)</p>
+    <p>The (0-based) selected slide index is <span id="selectedIndicator"></span></p>
 
     <script>
       const slider = document.querySelector('x-slider');
-      const selectedIndicator = document.querySelector('#selected');
+      const selectedIndicator = document.querySelector('#selectedIndicator');
 
       // The `x-slider-selected-changed` is fired every time that a new slide
       // is selected.
       slider.addEventListener('x-slider-selected-changed', e => {
         selectedIndicator.textContent = e.detail;
-      });
-
-      // Initial setup.
-      window.addEventListener('WebComponentsReady', function() {
-        customElements.whenDefined('x-slider').then(() => {
-          selectedIndicator.textContent = slider.selected;
-        });
       });
     </script>
   </template>
