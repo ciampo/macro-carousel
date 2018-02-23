@@ -51,7 +51,7 @@ function clamp(x, min = x, max = x) {
   let clamped = x;
 
   if (min > max) {
-    throw new RangeError('`min` should be lower than `max`');
+    throw new RangeError(`'min' ${min} should be lower than 'max' ${max}`);
   }
 
   if (x < min) {
@@ -662,7 +662,7 @@ class XSlider extends HTMLElement {
    * navigation and pagination.
    */
   update() {
-    // Debouncing resize.
+    // Debouncing update.
     clearTimeout(this._updateTimer);
     this._disableWrapperTransitions();
     this._updateTimer = setTimeout(() => {
@@ -1450,7 +1450,24 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       slide.element.setAttribute('role', 'listitem');
     });
 
-    this.update();
+    // Getting the value of _lastViewIndex before calling internalUpdate(),
+    // as _internalUpdate() will update its value.
+    // This is done to avoid a locking situation, e.g. when the carousel is
+    // initialised, selected wouldn't be assigned because of _lastViewIndex
+    // still being -1. When we parse the slides from the slot, we can compute
+    // _lastViewIndex, and then we can force an update on selected.
+    const shouldForceSelectedUpdate = this._slides.length > 0 &&
+        this._lastViewIndex === -1;
+
+    // Calling internalUpdate instead of update, to avoid race coniditions
+    // (update is debounced). This is because the number of slides is
+    // essential for computing the remaining internal values.
+    this._internalUpdate();
+
+    // See a few lines above.
+    if (shouldForceSelectedUpdate) {
+      this.selected = this.selected;
+    }
   }
 
 
