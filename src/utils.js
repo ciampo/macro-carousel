@@ -10,7 +10,7 @@ export function clamp(x, min = x, max = x) {
   let clamped = x;
 
   if (min > max) {
-    throw new RangeError('`min` should be lower than `max`');
+    throw new RangeError(`'min' ${min} should be lower than 'max' ${max}`);
   }
 
   if (x < min) {
