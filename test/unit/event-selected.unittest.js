@@ -3,7 +3,7 @@
 (function() {
   const expect = chai.expect;
 
-  const getSelectedEvent = (el, log) => new Promise(resolve => {
+  const getSelectedEvent = el => new Promise(resolve => {
     el.addEventListener('x-slider-selected-changed', resolve, {once: true});
   });
 
