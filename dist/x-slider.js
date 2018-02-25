@@ -319,13 +319,19 @@ class XSlider extends HTMLElement {
     this._lastViewIndex = -1;
 
     /**
+     * Whether the first/previous slide should infinite loop
+     * @type {boolean}
+     * @private
+     */
+    this._infiniteLoop = false;
+
+    /**
      * An internal index representing the "wrapAround" iteration about the
-     * selected index. If _wrapAround is false, its value doesn't change.
+     * selected index. If _infiniteLoop is false, its value doesn't change.
      * @type {number}
      * @private
      */
     this._selectedIteration = 0;
-
 
     /**
      * An internal index keeping track of the previous value for the layout
@@ -691,7 +697,7 @@ class XSlider extends HTMLElement {
     }
 
     this._computeSizes();
-    this._updateWrapAround();
+    this._updateInfiniteLoop();
     this._computeSlidesPerViewLayout();
     this._shiftSlides(this._slides.map(slide => slide.layoutIndex), true);
     this._slideTo(this.selected);
@@ -726,7 +732,7 @@ class XSlider extends HTMLElement {
     if (i > 0) {
       previousSlideIndex = i - 1;
     } else if (this.loop) {
-      if (this._wrapAround) {
+      if (this._infiniteLoop) {
         this._selectedIteration -= 1;
       }
 
@@ -758,7 +764,7 @@ class XSlider extends HTMLElement {
     if (i < this._lastViewIndex) {
       nextSlideIndex = i + 1;
     } else if (this.loop) {
-      if (this._wrapAround) {
+      if (this._infiniteLoop) {
         this._selectedIteration += 1;
       }
 
@@ -823,7 +829,7 @@ class XSlider extends HTMLElement {
           return;
         }
 
-        if (this._wrapAround) {
+        if (this._infiniteLoop) {
           const effectiveLayoutIndex = this.selected +
               this._selectedIteration * (this._lastViewIndex + 1);
 
@@ -880,7 +886,7 @@ class XSlider extends HTMLElement {
         break;
 
       case 'loop':
-        this._updateWrapAround();
+        this._updateInfiniteLoop();
         this._computeSlidesPerViewLayout();
 
         // Reset the slides 'layoutIndex', transform and position.
@@ -1142,12 +1148,12 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         '--x-slider__internal__slides-per-view', `${this.slidesPerView}`);
 
     // Recompute the index of the last view (aka max value for `selected`).
-    this._lastViewIndex = this._wrapAround ? this._slides.length - 1 :
+    this._lastViewIndex = this._infiniteLoop ? this._slides.length - 1 :
         this._computeLastViewIndex();
     // TODO: check if the wrapAround check makes sense. The idea is to not force
     // a new value for selected in case the slider is wrapping around. But
     // probably we need to recompute slide positions and translate to them
-    if (!this._wrapAround && this.selected > this._lastViewIndex) {
+    if (!this._infiniteLoop && this.selected > this._lastViewIndex) {
       this.selected = this._lastViewIndex;
     }
   }
@@ -1408,13 +1414,11 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * Decides whether to wrapAround or not based on the number of views.
    * @private
    */
-  _updateWrapAround() {
+  _updateInfiniteLoop() {
     // this._computeLastViewIndex() > 1 means that there are at least 2 slides
     // more than the number of slides in view. 2 extra slides are need in
     // order to successfully shift the slides and simulate an infinite loop.
-    this._wrapAround = this.loop && this._computeLastViewIndex() > 1;
-
-    // TODO: apply consequences (if there's any).
+    this._infiniteLoop = this.loop && this._computeLastViewIndex() > 1;
   }
 
 
@@ -1663,7 +1667,7 @@ of ${this._slides.length}`;
       }
     });
 
-    if (this._wrapAround) {
+    if (this._infiniteLoop) {
       let firstLayoutIndex;
 
       // Sometimes there's no slide to the left of the current one - in that
@@ -1693,7 +1697,7 @@ of ${this._slides.length}`;
       }
       this._shiftSlides(slidesToShift);
     } else {
-      // When _wrapAround is disabled, if we drag to the left of the first
+      // When _infiniteLoop is disabled, if we drag to the left of the first
       // slide, the algorithm can't find a value for slideIndex (as indexes
       // don't go negative in that case).
       slideIndex = slideIndex || 0;
