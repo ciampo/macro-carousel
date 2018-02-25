@@ -31,7 +31,6 @@
         {value: {}, expected: `${rollbackValue}`},
         {value: true, expected: `${rollbackValue}`},
         {value: false, expected: `${rollbackValue}`},
-        {value: '_remove_attr_', expected: null},
       ];
     }
   };
