@@ -63,3 +63,15 @@ window.wcutils.camelCaseToDash =  function(myStr) {
 window.wcutils.dashToCamelCase =  function(myStr) {
   return myStr.replace(/-([a-z])/g, function(g) { return g[1].toUpperCase(); });
 }
+
+
+/**
+ * Get a random integer between `min` and `max`.
+ *
+ * @param {number} min - min number
+ * @param {number} max - max number
+ * @return {number} a random integer
+ */
+window.wcutils.getRandomInt = function(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}

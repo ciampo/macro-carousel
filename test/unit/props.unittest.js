@@ -16,7 +16,7 @@
         {value: undefined, expected: false},
       ];
     } else if (type === 'number') {
-      const randomValid = Math.floor(Math.random() * max) + min;
+      const randomValid = wcutils.getRandomInt(min, max);
       return [
         {value: randomValid, expected: randomValid},
         {value: min - 1, expected: rollbackValue},
