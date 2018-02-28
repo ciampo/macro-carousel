@@ -75,3 +75,34 @@ window.wcutils.dashToCamelCase =  function(myStr) {
 window.wcutils.getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+window.wcutils.matrixToTransformObj = function(matrix) {
+  // this happens when there was no rotation yet in CSS
+  if(matrix === 'none') {
+    matrix = 'matrix(0,0,0,0,0)';
+  }
+  var obj = {},
+      values = matrix.match(/([-+]?[\d\.]+)/g);
+
+  obj.rotate = (Math.round(
+    Math.atan2(
+      parseFloat(values[1]),
+      parseFloat(values[0])) * (180/Math.PI)) || 0
+  ).toString() + 'deg';
+  obj.translate = values[5] ? values[4] + 'px, ' + values[5] + 'px' : (values[4] ? values[4] + 'px' : '');
+
+  return obj;
+}
+
+window.wcutils.appendStyles = function(doc, css) {
+  const head = doc.head || doc.getElementsByTagName('head')[0];
+  const style = doc.createElement('style');
+
+  style.type = 'text/css';
+  if (style.styleSheet){
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(doc.createTextNode(css));
+  }
+  head.appendChild(style);
+}
