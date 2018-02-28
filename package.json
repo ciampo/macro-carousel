@@ -10,7 +10,8 @@
     "test-lint": "eslint test *.js",
     "test": "npm run test-lint && echo test",
     "start": "node_modules/.bin/rollup -c rollup-config/rollup-dev-serve.config.js --watch",
-    "build": "npm run bundle-dev && npm run bundle-prod && npm run bundle-es5"
+    "build": "npm run bundle-dev && npm run bundle-prod && npm run bundle-es5",
+    "cypress:open": "cypress open"
   },
   "repository": {
     "type": "git",
