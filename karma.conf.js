@@ -7,7 +7,7 @@ module.exports = function(config) {
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'tools/testing-helper.js',
       'dist/x-slider.js',
-      'test/unit/*.unittest.js',
+      'test/unit/sizes.unittest.js',
     ],
     preprocessors: {},
     reporters: ['progress'],
@@ -15,8 +15,8 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome', 'Firefox', 'Safari'],
-    singleRun: true,
+    browsers: ['ChromeHeadless'],
+    singleRun: false,
     concurrency: Infinity,
     // to avoid DISCONNECTED messages
     browserDisconnectTimeout: 10000, // default 2000
