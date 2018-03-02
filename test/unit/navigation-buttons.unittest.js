@@ -5,7 +5,7 @@
 
   const numberOfSlides = 5;
 
-  const testCombinations = {
+  const disabledTestCombinations = {
     previous: [
       {loop: false, selected: 0, expectDisabled: true},
       {loop: false, selected: 1, expectDisabled: false},
@@ -24,7 +24,7 @@
     ]
   }
 
-  describe('The navigation button', function() {
+  describe('The', function() {
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
@@ -42,9 +42,9 @@
         });
     });
 
-    Object.keys(testCombinations).forEach(testBtn => {
-      describe(testBtn, function() {
-        testCombinations[testBtn].forEach(test => {
+    Object.keys(disabledTestCombinations).forEach(testBtn => {
+      describe(`${testBtn} navigation button`, function() {
+        disabledTestCombinations[testBtn].forEach(test => {
           it(`should${test.expectDisabled ? '' : ' not'} be disabled when loop is ${test.loop} and selected is ${test.selected}`, async function() {
             this.slider.loop = test.loop;
             this.slider.selected = test.selected;
@@ -55,6 +55,65 @@
         });
       });
     });
+  });
+
+  describe('Navigation buttons', function() {
+    before(wcutils.before());
+    after(wcutils.after());
+
+    it('are added and then removed from the light DOM when setting navigation to true and then false',  async function() {
+
+      this.container.innerHTML = `
+          <x-slider navigation>
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      this.slider = this.container.querySelector('x-slider');
+      this.previousBtn = this.container.querySelector('.x-slider-previous');
+      this.nextBtn = this.container.querySelector('.x-slider-next');
+
+      expect(this.previousBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(this.nextBtn.constructor.name).to.equal('HTMLButtonElement');
+
+      this.slider.navigation = false;
+      await window.wcutils.flush();
+
+      this.previousBtn = this.container.querySelector('.x-slider-previous');
+      this.nextBtn = this.container.querySelector('.x-slider-next');
+
+      expect(this.previousBtn).to.be.null;
+      expect(this.nextBtn).to.be.null;
+    });
+
+    it('are added and then removed from the light DOM when setting navigation to false and then true',  async function() {
+      this.container.innerHTML = `
+          <x-slider>
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      this.slider = this.container.querySelector('x-slider');
+      this.previousBtn = this.container.querySelector('.x-slider-previous');
+      this.nextBtn = this.container.querySelector('.x-slider-next');
+
+      expect(this.previousBtn).to.be.null;
+      expect(this.nextBtn).to.be.null;
+
+      this.slider.navigation = true;
+      await window.wcutils.flush();
+
+      this.previousBtn = this.container.querySelector('.x-slider-previous');
+      this.nextBtn = this.container.querySelector('.x-slider-next');
+
+      expect(this.previousBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(this.nextBtn.constructor.name).to.equal('HTMLButtonElement');
+    });
+
 
   });
 })();
