@@ -12,7 +12,7 @@
   const combinationToTest = {
     selected: [0, 1, 5, -1],
     slidesPerView: [1, 4],
-    gap: [0, 4, 16, 70]
+    gap: [0, 4, 16, 70],
   };
 
   describe('Slides width, slides gap and wrapper transition', function() {
@@ -36,7 +36,6 @@
       combinationToTest.slidesPerView.forEach(slidesPerViewValue => {
         combinationToTest.gap.forEach(gapValue => {
           it(`are correct when the gap is ${gapValue}, selected is ${selectedValue} and slidesPerView is ${slidesPerViewValue}`, async function() {
-
             // Update gap, force update
             this.slider.style.setProperty('--x-slider-gap', `${gapValue}px`);
             this.slider.update();
@@ -90,6 +89,5 @@
         });
       });
     });
-
   });
 })();

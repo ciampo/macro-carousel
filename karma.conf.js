@@ -7,7 +7,7 @@ module.exports = function(config) {
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'tools/testing-helper.js',
       'dist/x-slider.js',
-      'test/unit/sizes.unittest.js',
+      'test/*.js',
     ],
     preprocessors: {},
     reporters: ['progress'],

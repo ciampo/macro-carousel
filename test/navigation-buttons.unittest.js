@@ -21,8 +21,8 @@
       {loop: true, selected: 0, expectDisabled: false},
       {loop: true, selected: numberOfSlides - 2, expectDisabled: false},
       {loop: true, selected: numberOfSlides - 1, expectDisabled: false},
-    ]
-  }
+    ],
+  };
 
   describe('The', function() {
     before(wcutils.before());
@@ -61,8 +61,7 @@
     before(wcutils.before());
     after(wcutils.after());
 
-    it('are added and then removed from the light DOM when setting navigation to true and then false',  async function() {
-
+    it('are added and then removed from the light DOM when setting navigation to true and then false', async function() {
       this.container.innerHTML = `
           <x-slider navigation>
             ${[...Array(numberOfSlides).keys()]
@@ -71,24 +70,24 @@
           </x-slider>`;
       await wcutils.waitForElement('x-slider');
 
-      this.slider = this.container.querySelector('x-slider');
-      this.previousBtn = this.container.querySelector('.x-slider-previous');
-      this.nextBtn = this.container.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('x-slider');
+      let previousBtn = this.container.querySelector('.x-slider-previous');
+      let nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(this.previousBtn.constructor.name).to.equal('HTMLButtonElement');
-      expect(this.nextBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(previousBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(nextBtn.constructor.name).to.equal('HTMLButtonElement');
 
-      this.slider.navigation = false;
+      slider.navigation = false;
       await window.wcutils.flush();
 
-      this.previousBtn = this.container.querySelector('.x-slider-previous');
-      this.nextBtn = this.container.querySelector('.x-slider-next');
+      previousBtn = this.container.querySelector('.x-slider-previous');
+      nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(this.previousBtn).to.be.null;
-      expect(this.nextBtn).to.be.null;
+      expect(previousBtn).to.be.null;
+      expect(nextBtn).to.be.null;
     });
 
-    it('are added and then removed from the light DOM when setting navigation to false and then true',  async function() {
+    it('are added and then removed from the light DOM when setting navigation to false and then true', async function() {
       this.container.innerHTML = `
           <x-slider>
             ${[...Array(numberOfSlides).keys()]
@@ -97,23 +96,21 @@
           </x-slider>`;
       await wcutils.waitForElement('x-slider');
 
-      this.slider = this.container.querySelector('x-slider');
-      this.previousBtn = this.container.querySelector('.x-slider-previous');
-      this.nextBtn = this.container.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('x-slider');
+      let previousBtn = this.container.querySelector('.x-slider-previous');
+      let nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(this.previousBtn).to.be.null;
-      expect(this.nextBtn).to.be.null;
+      expect(previousBtn).to.be.null;
+      expect(nextBtn).to.be.null;
 
-      this.slider.navigation = true;
+      slider.navigation = true;
       await window.wcutils.flush();
 
-      this.previousBtn = this.container.querySelector('.x-slider-previous');
-      this.nextBtn = this.container.querySelector('.x-slider-next');
+      previousBtn = this.container.querySelector('.x-slider-previous');
+      nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(this.previousBtn.constructor.name).to.equal('HTMLButtonElement');
-      expect(this.nextBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(previousBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(nextBtn.constructor.name).to.equal('HTMLButtonElement');
     });
-
-
   });
 })();

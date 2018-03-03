@@ -28,7 +28,7 @@
         {value: {}, expected: rollbackValue},
         {value: true, expected: rollbackValue},
         {value: '_remove_attr_', expected: rollbackValue},
-      ]
+      ];
     }
   };
 
@@ -42,22 +42,22 @@
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'loop',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'navigation',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'pagination',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'disable-drag',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
     {
       // slidesPerView has to be a Number in range [1, slides.length].
@@ -68,12 +68,12 @@
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'reduced-motion',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
     {
       // truthy values set it to true, falsy values set it to false
       attributeName: 'auto-focus',
-      tests: generateTests('boolean')
+      tests: generateTests('boolean'),
     },
   ];
 
