@@ -5,8 +5,8 @@ module.exports = function(config) {
     frameworks: ['mocha', 'chai'],
     files: [
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
-      'tools/testing-helper.js',
       'dist/x-slider.js',
+      'test/helpers/testing-helper.js',
       'test/*.js',
     ],
     preprocessors: {},

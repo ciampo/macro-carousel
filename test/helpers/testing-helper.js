@@ -3,7 +3,7 @@ window.wcutils = {};
 /**
  * `waitForElement` waits for the browser to load the definition of the custom
  * element with the name `elementName`.
- * @returns a promise that resolves when the element has been defined.
+ * @return {Promise} a promise that resolves when the element has been defined.
  */
 window.wcutils.waitForElement = function(elementName) {
   return customElements.whenDefined(elementName);
@@ -43,27 +43,51 @@ window.wcutils.isHidden = function(elem) {
     (elem.getAttribute('aria-hidden') || '').toLowerCase() === 'true';
 };
 
+/**
+ * Reads the value og a CSS Custom Property
+ * @param {HTMLElement} elem The Element to read the property from
+ * @param {string} propertyName THe CSS Custom Property name
+ * @return {string} The value of the CSS Custom Property.
+ */
 window.wcutils.getCSSCustomProperty = function(elem, propertyName) {
   const cssStyles = getComputedStyle(elem);
   return String(cssStyles.getPropertyValue(propertyName)).trim();
 };
 
+/**
+ * Promisified setTimeout.
+ * @param {number} ms The delay
+ * @return {Promise}
+ */
 window.wcutils.delay = function(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+/**
+ * Arbitrary promisified delay of 50ms
+ * @return {Promise}
+ */
 window.wcutils.flush = function() {
   return wcutils.delay(50);
 };
 
-window.wcutils.camelCaseToDash =  function(myStr) {
+/**
+ * Converts a string from camelCase to dash-case.
+ * @param {string} myStr The camelCase string to convert
+ * @return {string} The converted dash-case string.
+ */
+window.wcutils.camelCaseToDash = function(myStr) {
   return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
-}
+};
 
-window.wcutils.dashToCamelCase =  function(myStr) {
-  return myStr.replace(/-([a-z])/g, function(g) { return g[1].toUpperCase(); });
-}
-
+/**
+ * Converts a string from camelCase to dash-case.
+ * @param {string} myStr The camelCase string to convert
+ * @return {string} The converted dash-case string.
+ */
+window.wcutils.dashToCamelCase = function(myStr) {
+  return myStr.replace(/-([a-z])/g, g => g[1].toUpperCase());
+};
 
 /**
  * Get a random integer between `min` and `max`.
@@ -74,35 +98,55 @@ window.wcutils.dashToCamelCase =  function(myStr) {
  */
 window.wcutils.getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
 
+
+/**
+ * @typedef {Object} TransformObj
+ * @property {string} rotate The rotate string value
+ * @property {number} translate The translate string value
+ */
+
+/**
+ * Converts a CSS transform matrix to a more human readable object
+ * @param {string} matrix The transform matrix
+ * @return {TransformObj} An object representing the transform
+ */
 window.wcutils.matrixToTransformObj = function(matrix) {
   // this happens when there was no rotation yet in CSS
-  if(matrix === 'none') {
+  if (matrix === 'none') {
     matrix = 'matrix(0,0,0,0,0)';
   }
-  var obj = {},
-      values = matrix.match(/([-+]?[\d\.]+)/g);
+  const obj = {};
+  const values = matrix.match(/([-+]?[\d\.]+)/g);
 
   obj.rotate = (Math.round(
     Math.atan2(
       parseFloat(values[1]),
-      parseFloat(values[0])) * (180/Math.PI)) || 0
+      parseFloat(values[0])) * (180 / Math.PI)) || 0
   ).toString() + 'deg';
-  obj.translate = values[5] ? values[4] + 'px, ' + values[5] + 'px' : (values[4] ? values[4] + 'px' : '');
+
+  obj.translate = values[5] ?
+      values[4] + 'px, ' + values[5] + 'px' :
+      (values[4] ? values[4] + 'px' : '');
 
   return obj;
-}
+};
 
+/**
+ * Appends styles to the head of a document
+ * @param {HTMLDocument} doc The document object
+ * @param {string} css The string of text containing CSS styles
+ */
 window.wcutils.appendStyles = function(doc, css) {
   const head = doc.head || doc.getElementsByTagName('head')[0];
   const style = doc.createElement('style');
 
   style.type = 'text/css';
-  if (style.styleSheet){
+  if (style.styleSheet) {
     style.styleSheet.cssText = css;
   } else {
     style.appendChild(doc.createTextNode(css));
   }
   head.appendChild(style);
-}
+};
