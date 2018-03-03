@@ -71,14 +71,20 @@
       const slider = document.querySelector('x-slider');
       const goToFirstSlideBtn = document.querySelector('#go-to-first');
 
-      // Initial setup.
-      window.addEventListener('WebComponentsReady', function() {
+      function onWCReady() {
         customElements.whenDefined('x-slider').then(() => {
           goToFirstSlideBtn.addEventListener('click', () => {
             slider.selected = 0;
           });
         });
-      });
+      };
+
+      // Initial setup.
+      if (window.WebComponents && window.WebComponents.ready === true) {
+        onWCReady();
+      } else {
+        window.addEventListener('WebComponentsReady', onWCReady);
+      }
     </script>
   </template>
 

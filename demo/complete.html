@@ -131,12 +131,6 @@
       slider.addEventListener('x-slider-selected-changed', e => {
         selectedIndicator.textContent = e.detail;
       });
-
-      window.addEventListener('WebComponentsReady', function() {
-        customElements.whenDefined('x-slider').then(() => {
-          selectedIndicator.textContent = slider.selected;
-        });
-      });
     </script>
   </template>
 

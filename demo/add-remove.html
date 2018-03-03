@@ -93,8 +93,7 @@
         checkRemoveBtnDisabledState();
       }
 
-      // Initial setup.
-      window.addEventListener('WebComponentsReady', function() {
+      function onWCReady() {
         customElements.whenDefined('x-slider').then(() => {
           appendBtn.addEventListener('click', appendSlide);
           removeBtn.addEventListener('click', removeSlide);
@@ -102,7 +101,14 @@
           appendBtn.removeAttribute('disabled');
           checkRemoveBtnDisabledState();
         });
-      });
+      }
+
+      // Initial setup.
+      if (window.WebComponents && window.WebComponents.ready === true) {
+        onWCReady();
+      } else {
+        window.addEventListener('WebComponentsReady', onWCReady);
+      }
     </script>
   </template>
   </template>

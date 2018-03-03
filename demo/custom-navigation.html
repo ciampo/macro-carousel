@@ -85,8 +85,7 @@
       const customPreviousBtn = document.querySelector('#custom-previous');
       const customNextBtn = document.querySelector('#custom-next');
 
-      // Initial setup.
-      window.addEventListener('WebComponentsReady', function() {
+      function onWCReady() {
         customElements.whenDefined('x-slider').then(() => {
           customPreviousBtn.addEventListener('click', () => {
             slider.previous();
@@ -95,7 +94,14 @@
             slider.next();
           });
         });
-      });
+      };
+
+      // Initial setup.
+      if (window.WebComponents && window.WebComponents.ready === true) {
+        onWCReady();
+      } else {
+        window.addEventListener('WebComponentsReady', onWCReady);
+      }
     </script>
   </template>
 

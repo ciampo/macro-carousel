@@ -133,15 +133,21 @@
         }
       };
 
-      // Initial setup.
-      window.addEventListener('WebComponentsReady', function() {
+      function onWCReady() {
         customElements.whenDefined('x-slider').then(() => {
           // Add resize handler.
           window.addEventListener('resize', resizeHandler);
           // Initial setup.
           resizeHandler();
         });
-      });
+      };
+
+      // Initial setup.
+      if (window.WebComponents && window.WebComponents.ready === true) {
+        onWCReady();
+      } else {
+        window.addEventListener('WebComponentsReady', onWCReady);
+      }
     </script>
   </template>
 
