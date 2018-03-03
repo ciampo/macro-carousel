@@ -2,7 +2,7 @@
 
 `<x-slider>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/x-slider/demo/))
 
-Latest version: 0.9.1
+Latest version: `0.9.1`
 
 **Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/x-slider/milestone/1) !**
 
