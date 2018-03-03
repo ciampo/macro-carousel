@@ -63,10 +63,6 @@ As browser support grows and the polyfills improve, these limitations should bec
 
 ## Test
 
-**note: the way integration tests work is very likely to change**
-
-*The testing environment is set up the same way as the [howto-components](https://github.com/GoogleChrome/howto-components) project.*
-
 Run `npm run test` to run all tests.
 
 
