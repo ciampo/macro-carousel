@@ -10,7 +10,7 @@ module.exports = function(config) {
       'test/*.js',
     ],
     preprocessors: {},
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -30,6 +30,17 @@ module.exports = function(config) {
           '-headless',
         ],
       },
+    },
+
+    // Code coverage options
+    preprocessors: {
+      'dist/x-slider.js': [
+        'coverage',
+      ],
+    },
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/',
     },
   };
 
