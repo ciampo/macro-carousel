@@ -148,5 +148,38 @@
       expect(paginationIndicators.length).to.equal(numberOfSlides);
       expect(paginationIndicators[0].constructor.name).to.equal('HTMLButtonElement');
     });
+
+    it('are always in sync with the number of slides', async function() {
+      this.container.innerHTML = `
+          <x-slider pagination>
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      const slider = this.container.querySelector('x-slider');
+      let paginationIndicators = getPaginationIndicators(this.container);
+
+      expect(paginationIndicators.length).to.equal(numberOfSlides);
+
+      const newSlide = document.createElement('article');
+      slider.appendChild(newSlide);
+      await window.wcutils.flush();
+
+      paginationIndicators = getPaginationIndicators(this.container);
+      expect(paginationIndicators.length).to.equal(numberOfSlides + 1);
+
+      const allSlides = slider.querySelectorAll('article');
+      const slidesToRemove = window.wcutils.getRandomInt(2, numberOfSlides);
+      for (let i = 0; i < slidesToRemove; i++) {
+        slider.removeChild(allSlides[i]);
+      }
+
+      await window.wcutils.flush();
+
+      paginationIndicators = getPaginationIndicators(this.container);
+      expect(paginationIndicators.length).to.equal(numberOfSlides + 1 - slidesToRemove);
+    });
   });
 })();

@@ -113,4 +113,52 @@
       expect(nextBtn.constructor.name).to.equal('HTMLButtonElement');
     });
   });
+
+  describe('The next navigation button', function() {
+    before(wcutils.before());
+    after(wcutils.after());
+
+    it('is updated when appending slides', async function() {
+      this.container.innerHTML = `
+          <x-slider navigation selected="${numberOfSlides - 1}">
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      const slider = this.container.querySelector('x-slider');
+      const nextBtn = slider.querySelector('.x-slider-next');
+
+      expect(nextBtn.disabled).to.be.true;
+
+      const newSlide = document.createElement('article');
+      slider.appendChild(newSlide);
+      await window.wcutils.flush();
+
+      expect(nextBtn.disabled).to.be.false;
+    });
+
+    it('is updated when removing slides', async function() {
+      this.container.innerHTML = `
+          <x-slider navigation selected="${numberOfSlides - 2}">
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      const slider = this.container.querySelector('x-slider');
+      const nextBtn = slider.querySelector('.x-slider-next');
+
+      expect(nextBtn.disabled).to.be.false;
+
+      const oneSlide = slider.querySelector('article');
+      slider.removeChild(oneSlide);
+
+      await window.wcutils.flush();
+
+      expect(nextBtn.disabled).to.be.true;
+    });
+  });
 })();
