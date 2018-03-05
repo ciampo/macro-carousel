@@ -34,7 +34,7 @@ module.exports = function(config) {
 
     // Code coverage options
     preprocessors: {
-      'dist/x-slider.js': [
+      'dist/x-slider-test.js': [
         'coverage',
       ],
     },

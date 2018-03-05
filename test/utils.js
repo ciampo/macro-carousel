@@ -63,29 +63,6 @@
     clientY: window.wcutils.getRandomInt(0, 100),
   });
 
-  const createSyntheticTouchEvent = (type, x, y) => {
-    const target = document.createElement('div');
-    const touchObj = new Touch({
-      identifier: Date.now(),
-      target: target,
-      clientX: x,
-      clientY: y,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: 0.5,
-    });
-
-    return new TouchEvent(type, {
-      cancelable: true,
-      bubbles: true,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj],
-      shiftKey: true,
-    });
-  };
-
   describe('The normalizeEvent function', function() {
     it('correctly processes MouseEvents', function() {
       const clickEv = createSyntheticClickEvent();
@@ -103,6 +80,31 @@
       expect(normalizedEv.id).to.be.null;
       expect(normalizedEv.event).to.equal(clickEv);
     });
+
+    const createSyntheticTouchEvent = type => {
+      let ev;
+
+      try {
+        ev = document.createEvent('TouchEvent');
+        ev.initTouchEvent(type, true, true);
+      } catch (err) {
+        try {
+          ev = document.createEvent('UIEvent');
+          ev.initUIEvent(type, true, true);
+        } catch (err) {
+          ev = document.createEvent('Event');
+          ev.initEvent(type, true, true);
+        }
+      }
+
+      ev.targetTouches = [];
+      ev.changedTouches = [{
+        clientX: window.wcutils.getRandomInt(0, 100),
+        clientY: window.wcutils.getRandomInt(0, 100),
+      }];
+
+      return ev;
+    };
 
     it('correctly processes TouchEvents', function() {
       const touchEv = createSyntheticTouchEvent('touchstart');
