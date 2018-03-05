@@ -5,10 +5,11 @@
   "main": "src/x-slider.js",
   "scripts": {
     "bundle-dev": "node_modules/.bin/rollup -c rollup-config/rollup-dev.config.js",
+    "bundle-test": "node_modules/.bin/rollup -c rollup-config/rollup-test.config.js",
     "bundle-prod": "node_modules/.bin/rollup -c rollup-config/rollup-prod.config.js",
     "bundle-es5": "node_modules/.bin/rollup -c rollup-config/rollup-es5.config.js",
     "test-lint": "eslint test *.js",
-    "test": "npm run test-lint && karma start",
+    "test": "npm run test-lint && npm run bundle-test && karma start",
     "start": "node_modules/.bin/rollup -c rollup-config/rollup-dev-serve.config.js --watch",
     "build": "npm run test -- --single-run && npm run bundle-dev && npm run bundle-prod && npm run bundle-es5"
   },
@@ -54,6 +55,7 @@
     "rollup-plugin-html": "^0.2.1",
     "rollup-plugin-livereload": "^0.6.0",
     "rollup-plugin-postcss": "^1.0.5",
+    "rollup-plugin-re": "^1.0.6",
     "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-uglify": "^3.0.0"
   },

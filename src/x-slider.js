@@ -16,11 +16,13 @@ if (window.ShadyCSS) {
   window.ShadyCSS.prepareTemplate(_template, 'x-slider');
 }
 
+// #if IS_REMOVE
 window.xSlider = window.xSlider || {};
 window.xSlider.__testonly__ = window.xSlider.__testonly__ || {};
 window.xSlider.__testonly__.clamp = clamp;
 window.xSlider.__testonly__.clampAbs = clampAbs;
 window.xSlider.__testonly__.normalizeEvent = normalizeEvent;
+// #endif
 
 /**
  * An object representing either a touch event or a mouse event.
