@@ -36,6 +36,8 @@
   --x-slider-pagination-gap: 2px;
   --x-slider-pagination-height: 44px;
 
+  --x-slider-fallback-message-color-background: #fff;
+
   --x-slider__internal__slides-per-view: 1;
 }
 
@@ -122,6 +124,19 @@
   outline: 0;
 
   user-select: none;
+}
+
+.slidesFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: .5em 1em;
+
+  width: 100%;
+
+  background-color: var(--x-slider-fallback-message-color-background);
 }
 
 :host([disable-drag]) #slidesWrapper ::slotted(*) {

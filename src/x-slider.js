@@ -380,6 +380,8 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
+
+    this._onSlidesSlotChange();
   }
 
   /**
@@ -1258,14 +1260,20 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    */
   _getSlides() {
     // Get light DOM in #slidesSlot, keep only Element nodes,
-    // create a SlideInfo object out of it.
-    return this._slidesSlot.assignedNodes()
+    let slideElements = this._slidesSlot.assignedNodes()
         .filter(node => node.nodeType === Node.ELEMENT_NODE)
-        .map((node, index) => ({
-          element: node,
-          layoutIndex: index,
-          position: this._computeSlidePosition(index),
-        })) || [];
+
+    // If there are no slides, get the fallbackMessage as a slide.
+    if (slideElements.length === 0) {
+      slideElements = [this.shadowRoot.querySelector('.slidesFallback')];
+    }
+
+    // Return an array of SlideInfo object, one per slide found.
+    return slideElements.map((node, index) => ({
+      element: node,
+      layoutIndex: index,
+      position: this._computeSlidePosition(index),
+    })) || [];
   }
 
   /**
