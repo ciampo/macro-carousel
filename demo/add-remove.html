@@ -60,7 +60,7 @@
 
       // Disables or enables the removeBtn based on how many slides are left.
       function checkRemoveBtnDisabledState() {
-        if (slides.length > 1) {
+        if (slides.length > 0) {
           removeBtn.removeAttribute('disabled');
         } else {
           // Disable the removeBtn when there's only one slide left.
@@ -110,7 +110,6 @@
         window.addEventListener('WebComponentsReady', onWCReady);
       }
     </script>
-  </template>
   </template>
 
   <script defer src="js/third-party/inert.min.js"></script>
