@@ -381,7 +381,7 @@ class XSlider extends HTMLElement {
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
 
-    this._onSlidesSlotChange();
+    // this._onSlidesSlotChange();
   }
 
   /**
