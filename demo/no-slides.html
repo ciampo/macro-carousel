@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>No slides - x-slider demo</title>
+
+  <link rel="stylesheet" href="css/third-party/prism.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <h1 id="title">No slides</h1>
+  <a id="backToIndex" href="index.html">See all demos</a>
+
+  <template id="demoTemplate">
+    <style>
+      /*
+        The `No content available` message typography styles (like `color`,
+        `font-*`, ...) can be applied directly to the `x-slider` tag.
+        The fallback message background can be set via the
+        `--x-slider-fallback-message-color-background` CSS Custom Property.
+      */
+      x-slider {
+        height: 300px;
+        max-width: 800px;
+
+        margin: 0 auto;
+
+        color: #fff;
+
+        font-family: Roboto, arial, sans-serif;
+        font-weight: 300;
+        font-size: 1.5rem;
+
+        --x-slider-fallback-message-color-background: #103e69;
+      }
+    </style>
+
+    <!--
+     When there are no slides in the light DOM associated to `slot#slidesSlot`,
+     the carousel shows a `No content available` message.
+    -->
+    <x-slider></x-slider>
+  </template>
+
+  <script defer src="js/third-party/inert.min.js"></script>
+  <script defer src="js/third-party/focus-visible.js"></script>
+  <script defer src="js/third-party/prism.js" data-manual></script>
+  <script defer src="js/demo.js"></script>
+  <script defer src="js/third-party/webcomponents-loader.js"></script>
+</body>
+</html>
