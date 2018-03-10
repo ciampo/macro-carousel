@@ -557,8 +557,6 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
-
-    // this._onSlidesSlotChange();
   }
 
   /**
@@ -693,11 +691,6 @@ class XSlider extends HTMLElement {
     // once before the update() function.
     if (this._slides.length === 0) {
       this._onSlidesSlotChange();
-
-      // If there's really no slide ヾ(-_- )ゞ.
-      if (this._slides.length === 0) {
-        return;
-      }
     }
 
     this._computeSizes();
@@ -817,12 +810,12 @@ class XSlider extends HTMLElement {
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
+    if (this._slides.length === 0) {
+      this._onSlidesSlotChange();
+    }
+
     switch (name) {
       case 'selected':
-        if (this._slides.length === 0) {
-          return;
-        }
-
         const parsedNewValue = parseInt(newValue, 10);
 
         // Accept only numbers between `0` and `this._lastViewIndex`.
@@ -874,6 +867,7 @@ class XSlider extends HTMLElement {
 
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
+          bubbles: true,
         }));
 
         // Apply a11y changes immediately only if the slider is not
@@ -929,10 +923,6 @@ class XSlider extends HTMLElement {
         break;
 
       case 'slides-per-view':
-        if (this._slides.length === 0) {
-          return;
-        }
-
         const parsedSlidesPerView = parseInt(newValue, 10);
 
         // Accept only numbers greater than `1`.
@@ -1143,10 +1133,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _computeSlidesPerViewLayout() {
-    if (this._slides.length === 0) {
-      return;
-    }
-
     // Used to compute the slides's width.
     setCSSCustomProperty(this,
         '--x-slider__internal__slides-per-view', `${this.slidesPerView}`);
@@ -1180,10 +1166,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _getSlideDataIndexFromLayoutIndex(layoutIndex) {
-    if (this._slides.length === 0) {
-      return;
-    }
-
     let positiveLayoutIndex = layoutIndex;
     while (positiveLayoutIndex < 0) {
       positiveLayoutIndex += this._slides.length;
@@ -1199,10 +1181,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _shiftSlides(slidesInViewIndexes, force = false) {
-    if (this._slides.length === 0) {
-      return;
-    }
-
     let dataIndex;
     slidesInViewIndexes.forEach(inViewIndex => {
       if (force ||
@@ -1259,7 +1237,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _focusSelectedSlide() {
-    if (this._slides.length === 0 || !this.autoFocus) {
+    if (!this.autoFocus) {
       return;
     }
 
@@ -1300,10 +1278,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _updatePagination() {
-    if (!this._paginationSlot || this._slides.length === 0) {
-      return;
-    }
-
     if (!this.pagination || (this.pagination &&
         this._paginationSlot.assignedNodes().length !==
         this._lastViewIndex + 1)) {
@@ -1373,10 +1347,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _updateNavigation() {
-    if (!this._navigationSlot || this._slides.length === 0) {
-      return;
-    }
-
     if (!this.navigation || (this.navigation &&
         this._navigationSlot.assignedNodes().length !== 2)) {
       // remove all navigation slot assigned nodes and their ev listeners
@@ -1436,14 +1406,19 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _getSlides() {
-    // Get light DOM in #slidesSlot, keep only Element nodes,
-    let slideElements = this._slidesSlot.assignedNodes()
-        .filter(node => node.nodeType === Node.ELEMENT_NODE);
+    // Always use {flatten: true} in order to pick up the fallback content.
 
-    // If there are no slides, get the fallbackMessage as a slide.
-    if (slideElements.length === 0) {
-      slideElements = [this.shadowRoot.querySelector('.slidesFallback')];
-    }
+    // Remove text nodes (if they are around, they may cause the text content
+    // to not be picked up)
+    this._slidesSlot.assignedNodes({flatten: true}).forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE && node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    });
+
+    // Get light DOM in #slidesSlot, keep only Element nodes.
+    let slideElements = this._slidesSlot.assignedNodes({flatten: true})
+        .filter(node => node.nodeType === Node.ELEMENT_NODE);
 
     // Return an array of SlideInfo object, one per slide found.
     return slideElements.map((node, index) => ({
@@ -1493,10 +1468,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _updateAriaLiveDom() {
-    if (!this._ariaSlot || this._slides.length === 0) {
-      return;
-    }
-
     if (this._ariaSlot.assignedNodes().length !== 1) {
       this._ariaLiveRegion = document.createElement('div');
       this._ariaLiveRegion.setAttribute('slot', 'ariaSlot');
