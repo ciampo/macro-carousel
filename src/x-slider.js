@@ -690,6 +690,7 @@ class XSlider extends HTMLElement {
 
         this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
           detail: this.selected,
+          bubbles: true,
         }));
 
         // Apply a11y changes immediately only if the slider is not
