@@ -39,6 +39,7 @@
       expect(document.activeElement).to.equal(this.slides[selected]);
     });
 
+    // TODO: testing reduced motion on drag events
     it('setting reducedMotion disables transitions', function() {
       this.slider.reducedMotion = true;
 
@@ -62,6 +63,74 @@
       expect(wrapperTransformObj.translate).to.equal(expectedWrapperTranslate);
     });
 
-    // TODO: testing reduced motion on drag events
+    it('slider and slides have correct roles', function() {
+      expect(this.slider.getAttribute('role')).to.equal('list');
+
+      this.slides.forEach(s => {
+        expect(s.getAttribute('role')).to.equal('listitem');
+      });
+    });
+
+    it('slides have tabindex=-1', function() {
+      this.slides.forEach(s => {
+        expect(s.getAttribute('tabindex')).to.equal('-1');
+      });
+    });
+
+    it('slides have correct `aria-hidden` and `inert` values depending on their visibility', async function() {
+      const checkSlides = () => {
+        this.slides.forEach((s, i) => {
+          const visible = Math.abs(i - this.slider.selected) < this.slider.slidesPerView;
+          expect(s.hasAttribute('inert')).to.equal(!visible);
+          expect(s.getAttribute('aria-hidden'))
+              .to.equal(visible ? 'false' : 'true');
+        });
+      };
+
+      this.slider.selected = 1;
+      await window.wcutils.flush();
+      checkSlides();
+
+      this.slider.slidesPerView = 2;
+      this.slider.selected = 0;
+      await window.wcutils.flush();
+      checkSlides();
+    });
+
+    it('the aria-live region correctly update its text', async function() {
+      // check aria-atomic and aria-live=polite
+      const liveRegion = this.slider.querySelector('[slot=ariaSlot]');
+      expect(liveRegion.getAttribute('aria-live')).to.equal('polite');
+      expect(liveRegion.getAttribute('aria-atomic')).to.equal('true');
+
+      expect(liveRegion.textContent).to.equal(`Item 1 of 3 visible`);
+
+      this.slider.slidesPerView = 2;
+      this.slider.selected = 1;
+      await window.wcutils.flush();
+      expect(liveRegion.textContent).to.equal(`Items 2 and 3 of 3 visible`);
+    });
+
+    it('navigation buttons have a correct aria-label', async function() {
+      this.slider.navigation = true;
+      await window.wcutils.flush();
+
+      const prevBtn = this.slider.querySelector('.x-slider-previous');
+      const nextBtn = this.slider.querySelector('.x-slider-next');
+
+      expect(prevBtn.getAttribute('aria-label')).to.equal('Go to previous item');
+      expect(nextBtn.getAttribute('aria-label')).to.equal('Go to next item');
+    });
+
+    it('paginationIndicators have a correct aria-label', async function() {
+      this.slider.pagination = true;
+      await window.wcutils.flush();
+
+      const paginationIndicators = this.slider.querySelectorAll('[slot=paginationSlot]');
+
+      paginationIndicators.forEach((pi, i) => {
+        expect(pi.getAttribute('aria-label')).to.equal(`Go to item ${i + 1}`);
+      });
+    });
   });
 })();
