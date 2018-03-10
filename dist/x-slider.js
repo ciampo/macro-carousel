@@ -689,9 +689,9 @@ class XSlider extends HTMLElement {
     // (see https://github.com/whatwg/dom/issues/447)
     // Here, we're making sure that the `slot-changed callback runs at least
     // once before the update() function.
-    if (this._slides.length === 0) {
-      this._onSlidesSlotChange();
-    }
+    // if (this._slides.length === 0) {
+    //   this._onSlidesSlotChange();
+    // }
 
     this._computeSizes();
     this._updateInfiniteLoop();
@@ -1486,9 +1486,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         slidesIndexesString += ' and ';
       }
     }
-    this._ariaLiveRegion.textContent = `
-Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString}
-of ${this._slides.length}`;
+    this._ariaLiveRegion.textContent = `Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString} of ${this._slides.length} visible`;
   }
 
 
