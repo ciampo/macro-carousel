@@ -1,4 +1,5 @@
 /* eslint max-len: ["off"] */
+/* eslint no-console: ["off"] */
 
 (function() {
   const expect = chai.expect;
@@ -20,6 +21,8 @@
     });
 
     it('when setting selected in the markup', async function() {
+      const evListenerPromise = getSelectedEvent(window);
+
       const selected = 1;
       this.container.innerHTML = `
 <x-slider selected="${selected}">
@@ -27,9 +30,19 @@
   <div>Slide 2</div>
 </x-slider>`;
 
-      const slider = document.querySelector('x-slider');
-      const event = await getSelectedEvent(slider);
+      const event = await evListenerPromise;
       expect(event.detail).to.equal(selected);
+    });
+
+    it('when creating the element programmatically', async function() {
+      const slide = document.createElement('article');
+      const slider = document.createElement('x-slider');
+      slider.appendChild(slide);
+      this.container.appendChild(slider);
+
+      const event = await getSelectedEvent(slider);
+
+      expect(event.detail).to.equal(0);
     });
 
     it('when setting selected programmatically', async function() {

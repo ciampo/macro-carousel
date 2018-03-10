@@ -95,3 +95,5 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 **`x-slider-selected-changed`**: `CustomEvent`
 
 `event.detail` contains the index of the new selected slide.
+
+*This event is not fired if the carousel is initialised without any slide in its light DOM.*
