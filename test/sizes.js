@@ -90,4 +90,115 @@
       });
     });
   });
+
+  const getHeight = el => parseInt(window.getComputedStyle(el)['height']);
+
+  describe('Slides height', function() {
+    before(wcutils.before());
+    after(wcutils.after());
+    beforeEach(async function() {
+      this.container.innerHTML = `
+<x-slider class="slider">
+  <article class="slide one">Slide 1</article>
+  <article class="slide two">Slide 2</article>
+  <article class="slide three">Slide 3</article>
+  <article class="slide four">Slide 4</article>
+  <article class="slide five">Slide 5</article>
+</x-slider>`;
+      return wcutils.waitForElement('x-slider')
+        .then(() => {
+          this.slider = this.container.querySelector('x-slider');
+          this.slides = this.slider.querySelectorAll('.slide');
+          this.one = this.slides[0];
+          this.two = this.slides[1];
+          this.three = this.slides[2];
+          this.four = this.slides[3];
+          this.five = this.slides[4];
+        });
+    });
+    afterEach(wcutils.removeStyles);
+
+    it('the tallest slide pushes the slider and the other slides', async function() {
+      const setHeight = 400;
+      wcutils.appendStyles(`
+      .one {
+        height: ${setHeight}px;
+      }`);
+
+      await wcutils.flush();
+
+      expect(getHeight(this.slider)).to.equal(setHeight);
+      expect(getHeight(this.two)).to.equal(setHeight);
+    });
+
+    it('slides without an explicit height (or align-self) stretch to the height of the slider', async function() {
+      const setHeight = 300;
+      const minHeight = 150;
+      const slideFiveHeight = 200;
+
+      wcutils.appendStyles(`
+      .slider {
+        height: ${setHeight}px;
+        --x-slider-slide-min-height: ${minHeight}px;
+      }
+
+      .four {
+        align-self: flex-start;
+      }
+
+      .five {
+        height: ${slideFiveHeight}px;
+      }`);
+
+      await wcutils.flush();
+
+      expect(getHeight(this.slider)).to.equal(setHeight);
+
+      [this.one, this.two, this.three].forEach(s => {
+        expect(getHeight(s)).to.equal(setHeight);
+      });
+
+      expect(getHeight(this.four)).to.equal(minHeight);
+
+      expect(getHeight(this.five)).to.equal(slideFiveHeight);
+    });
+
+    it('when no height is set, the slide with the most content pushes everything else', async function() {
+      this.three.innerHTML = `
+      <h1>I'm slide 3</h1>
+      <p>I'm</p>
+      <p>the</p>
+      <p>tallest!</p>`;
+
+      await wcutils.flush();
+
+      const expectedHeight = getHeight(this.three);
+
+      expect(getHeight(this.slider)).to.equal(expectedHeight);
+
+      this.slides.forEach(s => {
+        expect(getHeight(s)).to.equal(expectedHeight);
+      });
+    });
+
+    it(`the slider's height wins over slides' height`, async function() {
+      const sliderHeight = 250;
+      const slidesHeight = 400;
+
+      wcutils.appendStyles(`
+      .slider {
+        height: ${sliderHeight}px;
+      }
+
+      .slides {
+        height: ${slidesHeight}px;
+      }`);
+
+      expect(getHeight(this.slider)).to.equal(sliderHeight);
+
+      this.slides.forEach(s => {
+        expect(getHeight(s)).to.equal(sliderHeight);
+      });
+    });
+  });
 })();

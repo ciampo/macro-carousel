@@ -138,9 +138,11 @@ window.wcutils.matrixToTransformObj = function(matrix) {
  * @param {HTMLDocument} doc The document object
  * @param {string} css The string of text containing CSS styles
  */
-window.wcutils.appendStyles = function(doc, css) {
+window.wcutils.appendStyles = function(css) {
+  const doc = document;
   const head = doc.head || doc.getElementsByTagName('head')[0];
   const style = doc.createElement('style');
+  style.setAttribute('data-test-styles', '');
 
   style.type = 'text/css';
   if (style.styleSheet) {
@@ -149,4 +151,15 @@ window.wcutils.appendStyles = function(doc, css) {
     style.appendChild(doc.createTextNode(css));
   }
   head.appendChild(style);
+};
+
+/**
+* Removes the styles appended with wcutils.appendStyles.
+*/
+window.wcutils.removeStyles = function() {
+  const styles = Array.prototype.slice.call(
+      document.querySelectorAll('[data-test-styles]'));
+  styles.forEach(styleTag => {
+    document.head.removeChild(styleTag);
+  });
 };
