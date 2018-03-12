@@ -15,7 +15,6 @@ Latest version: `0.9.1`
 - Customisable styles though CSS custom properties
 - Focused on a11y
 
-
 ## Setup
 
 ### Installing dependencies
@@ -26,11 +25,9 @@ Run `npm install` to install all local dependencies.
 
 For enhancing the a11y of the carousel, it's best to also install the `inert` and `focus-visible` polyfills, listed as `peerDependencies`. Have a look at the demos to see them in use.
 
-
 ### Running the project locally
 
 Run `npm run start` to start a local dev server and open the `demo/` page in your browser.
-
 
 ## Usage:
 
@@ -50,23 +47,29 @@ For more examples, look at the demos ([Live demo](https://ciampo.github.io/x-sli
 
 ## Browser support
 
-In order for this Web Component to work on all evergreen browsers, you may need to add the [WebComponent polyfills suite](https://github.com/webcomponents/webcomponentsjs) to your page. (*Please note that this repository focuses on the `x-slider` Web Component, and not on the polyfills*)
+### WebComponent Polyfills suite
 
-For browsers not supporting ES6 classes, a possible solution is to transpile the `x-slider` code to ES5 and use the [`custom-elements-es5-adapter.js`](https://github.com/webcomponents/webcomponentsjs#custom-elements-es5-adapterjs) polyfill. However, at the moment none of the demos in this repository show this technique yet.
+In order for this Web Component to work on all evergreen browsers, you may need to add the [WebComponent polyfills suite](https://github.com/webcomponents/webcomponentsjs) to your page. (*Please note that this repository focuses on the `x-slider` Web Component, and not on the polyfills*)
 
 All the demos in this repository already make use of the polyfills (by using [`webcomponents-loader.js`](https://github.com/webcomponents/webcomponentsjs#webcomponents-loaderjs)). The source code of the `x-slider` Web Component also makes optional calls to the `ShadyCSS` polyfill.
 
 Because of the [`ShadyCSS` polyfill limitations](https://github.com/webcomponents/shadycss#limitations), certain style rules are not applied in polyfilled browsers:
-- all the rules that rely on the `:host-context()` selector are not polyfilled correctly
+
+- all the rules that rely on the `:host-context()` selector are not polyfilled correctly (these rules are mainly around using the `focus-visible` polyfill)
 - some of the more complex selectors using `:host()` are also not supported. This mainly impact the hover/focus states on navigation buttons.
-- normally, external styles have the priority over the internal Web Component styles. But sometimes, after the polyfill's transformation, some internal selectors end up having a higher specificity then the external ones. This is quite an edge case, but keep an eye for it
+- normally, external styles have the priority over the internal Web Component styles. But sometimes, after the polyfill's transformation, some internal selectors end up having a higher specificity then the external ones. This is quite an edge case, but keep an eye for it (e.g.: the [custom navigation demo](./demo/custom-navigation.html) uses the `!important` keyword to force some styles).
+
+For browsers not supporting ES6 classes, the tranpiled ES5 version can be used instead (`x-slider.es5.min.js`), together with the  [`custom-elements-es5-adapter.js`](https://github.com/webcomponents/webcomponentsjs#custom-elements-es5-adapterjs) polyfill. The [es5 demo](./demo/es5.html) shows how to do that.
 
 As browser support grows and the polyfills improve, these limitations should become less and less frequent and problematic.
+
+### Other known cross-browser limitations
+
+In order to change the color of the navigation button arrow, this project makes use of the `mask-image` CSS property. Unofruntaly, when this CSS feature is not supported, the color defined through `--x-slider-navigation-color-focus` is not going to be applied correctly to the arrow.
 
 ## Test
 
 Run `npm run test` to run all tests.
-
 
 ## Whishlist
 
