@@ -482,7 +482,7 @@ class XSlider extends HTMLElement {
   /**
    * Used for upgrading properties in case this element is upgraded lazily.
    * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
-   * @param {any} prop
+   * @param {*} prop
    * @private
    */
   _upgradeProperty(prop) {
@@ -1694,7 +1694,7 @@ class XSliderButton extends HTMLElement {
   /**
    * Used for upgrading properties in case this element is upgraded lazily.
    * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
-   * @param {any} prop
+   * @param {*} prop
    * @private
    */
   _upgradeProperty(prop) {
@@ -1733,7 +1733,6 @@ class XSliderButton extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#x-slider-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
