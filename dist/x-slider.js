@@ -1925,8 +1925,10 @@ class XSliderButton extends HTMLElement {
         if (this.disabled) {
           this._defaultTabIndex = this.getAttribute('tabindex');
           this.removeAttribute('tabindex');
+          this.setAttribute('aria-disabled', 'true');
         } else {
           this.setAttribute('tabindex', this._defaultTabIndex);
+          this.setAttribute('aria-disabled', 'false');
         }
         break;
     }
