@@ -229,7 +229,7 @@
 }
 
 /*******************************************************************************
-  Navigation styles
+  Navigation styles (rest of styles is in x-slider-nav-button.css)
 *******************************************************************************/
 #navigation {
   display: none;
@@ -239,30 +239,13 @@
   display: block;
 }
 
-#navigation ::slotted(button) {
+#navigation ::slotted(*) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  min-width: var(--x-slider-navigation-button-size);
-  min-height: var(--x-slider-navigation-button-size);
-  padding: 0;
-
-  background: none;
-  background-color: var(--x-slider-navigation-color-background);
-  border: 0;
-  border-radius: 50%;
-
-  overflow: hidden;
-
-  cursor: pointer;
 }
 
-:host([pagination]) #navigation ::slotted(button) {
+:host([pagination]) #navigation ::slotted(*) {
   top: calc(50% - var(--x-slider-pagination-height) / 2);
 }
 
@@ -272,92 +255,6 @@
 
 #navigation ::slotted(.x-slider-next) {
   right: 0;
-}
-
-#navigation ::slotted(button)::before,
-#navigation ::slotted(button)::after {
-  position: absolute;
-
-  content: '';
-}
-
-#navigation ::slotted(button)::after {
-  top: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
-  right: calc((var(--x-slider-navigation-button-size) - var(--x-slider-navigation-icon-size)) / 2);
-  width: var(--x-slider-navigation-icon-size);
-  height: var(--x-slider-navigation-icon-size);
-
-  /* Fallback for when mask-image is not supported: using a `<` character */
-  color: var(--x-slider-navigation-color);
-  content: '<';
-  font-size: calc(var(--x-slider-navigation-icon-size)* 0.85);
-  line-height: calc(var(--x-slider-navigation-icon-size)* 0.85);
-}
-
-@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
-  #navigation ::slotted(button)::after {
-    background-color: var(--x-slider-navigation-color);
-
-    content: '';
-
-    /* References:
-    * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
-    * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
-    */
-    mask-image: var(--x-slider-navigation-icon-mask);
-  }
-}
-
-#navigation ::slotted(.x-slider-next)::after {
-  transform: rotateZ(180deg);
-}
-
-#navigation ::slotted(button)::before {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  background-color: var(--x-slider-navigation-color-background-focus);
-
-  opacity: 0;
-
-  will-change: opacity;
-}
-
-/*
- * Show the bg circle when the button is not disabled and is hovered, active,
- * focused or keyboard-focused (thanks to the focus-visible polyfill).
- */
-#navigation ::slotted(button:hover:not(:disabled))::before,
-#navigation ::slotted(button:active:not(:disabled))::before,
-#navigation ::slotted(button:focus:not(:disabled))::before,
-:host-context(.js-focus-visible) #navigation ::slotted(button.focus-visible)::before {
-  opacity: 1;
-}
-
-#navigation ::slotted(button:hover:not(:disabled))::after,
-#navigation ::slotted(button:active:not(:disabled))::after,
-#navigation ::slotted(button:focus:not(:disabled))::after,
-:host-context(.js-focus-visible) #navigation ::slotted(button.focus-visible)::after {
-  background-color: var(--x-slider-navigation-color-focus);
-}
-
-/*
- * Do not show the bg circle if the button is focused (but not active or not hovered)
- * and doesn't have a focused-visible class. This means, do not leave the bg showing
- * after the user clicks on the button.
- */
-:host-context(.js-focus-visible) #navigation ::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::before {
-  opacity: 0;
-}
-
-:host-context(.js-focus-visible) #navigation ::slotted(button:focus:not(:active):not(:hover):not(.focus-visible))::after {
-  background-color: var(--x-slider-navigation-color);
-}
-
-#navigation ::slotted(button[disabled]) {
-  opacity: .2;
 }
 
 /*******************************************************************************

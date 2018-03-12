@@ -1,0 +1,125 @@
+/*******************************************************************************
+  Host and CSS properties
+*******************************************************************************/
+
+:host {
+  position: relative;
+
+  display: inline-flex;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  contain: paint;
+}
+
+:host([disabled]) {
+  opacity: .2;
+}
+
+.content {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: var(--x-slider-navigation-button-size);
+  min-height: var(--x-slider-navigation-button-size);
+
+  background-color: var(--x-slider-navigation-color-background);
+}
+
+/*
+ * bg colored circle.
+ */
+.content::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 0;
+
+  background-color: var(--x-slider-navigation-color-background-focus);
+
+  opacity: 0;
+
+  will-change: opacity;
+
+  content: '';
+}
+
+.icon {
+  position: relative;
+
+  z-index: 1;
+
+  width: var(--x-slider-navigation-icon-size);
+  height: var(--x-slider-navigation-icon-size);
+
+  /*
+   * Fallback for when mask-image is not supported:
+   * using the SVG as a background. Only issue, the icon color
+   * won't change.
+  */
+  color: var(--x-slider-navigation-color);
+
+  background: var(--x-slider-navigation-icon-mask);
+}
+
+@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
+  .icon {
+    background: var(--x-slider-navigation-color);
+
+    /* References:
+    * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
+    * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
+    */
+    mask-image: var(--x-slider-navigation-icon-mask);
+  }
+}
+
+:host([flipped]) .icon {
+  transform: rotateZ(180deg);
+}
+
+/*
+ * Show the bg circle when the button is not disabled and is hovered, active,
+ * focused or keyboard-focused (thanks to the focus-visible polyfill).
+ */
+:host(:hover:not([disabled])) .content::before,
+:host(:active:not([disabled])) .content::before,
+:host(:focus:not([disabled])) .content::before,
+:host(.focus-visible) .content::before {
+  opacity: 1;
+}
+
+/*
+ * Do not show the bg circle if the button is focused (but not active or not hovered)
+ * and doesn't have a focused-visible class. This means, do not leave the bg showing
+ * after the user clicks on the button.
+ */
+:host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .content::before {
+  opacity: 0;
+}
+
+@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
+  /*
+   * Same as rules above, but for the icon's color.
+   */
+  :host(:hover:not([disabled])) .icon,
+  :host(:active:not([disabled])) .icon,
+  :host(:focus:not([disabled])) .icon,
+  :host(.focus-visible) .icon {
+    background: var(--x-slider-navigation-color-focus);
+  }
+
+  :host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .icon {
+    background: var(--x-slider-navigation-color);
+  }
+}

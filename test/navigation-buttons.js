@@ -74,8 +74,8 @@
       let previousBtn = this.container.querySelector('.x-slider-previous');
       let nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(previousBtn.constructor.name).to.equal('HTMLButtonElement');
-      expect(nextBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(previousBtn.constructor.name).to.equal('XSliderButton');
+      expect(nextBtn.constructor.name).to.equal('XSliderButton');
 
       slider.navigation = false;
       await window.wcutils.flush();
@@ -109,8 +109,8 @@
       previousBtn = this.container.querySelector('.x-slider-previous');
       nextBtn = this.container.querySelector('.x-slider-next');
 
-      expect(previousBtn.constructor.name).to.equal('HTMLButtonElement');
-      expect(nextBtn.constructor.name).to.equal('HTMLButtonElement');
+      expect(previousBtn.constructor.name).to.equal('XSliderButton');
+      expect(nextBtn.constructor.name).to.equal('XSliderButton');
     });
   });
 

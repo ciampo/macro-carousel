@@ -1,5 +1,7 @@
-import styles from './x-slider.css';
-import html from './x-slider.html';
+import sliderHtml from './x-slider.html';
+import sliderStyles from './x-slider.css';
+import buttonHtml from './x-slider-nav-button.html';
+import buttonStyles from './x-slider-nav-button.css';
 import {getEvtListenerOptions} from './passiveEventListeners.js';
 import {
   clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
@@ -9,11 +11,14 @@ import {
 /**
  * Markup and styles.
  */
-const _template = document.createElement('template');
-_template.innerHTML = `<style>${styles}</style> ${html}`;
+const _sliderTemplate = document.createElement('template');
+_sliderTemplate.innerHTML = `<style>${sliderStyles}</style> ${sliderHtml}`;
+const _buttonTemplate = document.createElement('template');
+_buttonTemplate.innerHTML = `<style>${buttonStyles}</style> ${buttonHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(_template, 'x-slider');
+  window.ShadyCSS.prepareTemplate(_sliderTemplate, 'x-slider');
+  window.ShadyCSS.prepareTemplate(_buttonTemplate, 'x-slider-nav-button');
 }
 
 // #if IS_REMOVE
@@ -58,12 +63,8 @@ class XSlider extends HTMLElement {
      */
     super();
 
-    if (window.ShadyCSS) {
-      window.ShadyCSS.styleElement(this);
-    }
-
     this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(_template.content.cloneNode(true));
+    this.shadowRoot.appendChild(_sliderTemplate.content.cloneNode(true));
 
     /**
      * The wrapper element enclosing the slides.
@@ -354,8 +355,17 @@ class XSlider extends HTMLElement {
    * @private
    */
   connectedCallback() {
+    // Shim Shadow DOM styles. This needs to be run in `connectedCallback()`
+    // because if you shim Custom Properties (CSS variables) the element
+    // will need access to its parent node.
+    if (window.ShadyCSS) {
+      window.ShadyCSS.styleElement(this);
+    }
+
     // Setting role=list (we set role=listitem for the slides)
-    this.setAttribute('role', 'list');
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'list');
+    }
 
     // Setup the component.
     this._upgradeProperty('selected');
@@ -398,8 +408,8 @@ class XSlider extends HTMLElement {
     }
 
     if (this.navigation) {
-      this._prevButton.removeEventListener('click', this);
-      this._nextButton.removeEventListener('click', this);
+      this._prevButton.removeEventListener('x-slider-nav-button-clicked', this);
+      this._nextButton.removeEventListener('x-slider-nav-button-clicked', this);
     }
 
     if (this.pagination) {
@@ -434,7 +444,7 @@ class XSlider extends HTMLElement {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (e.type === 'click' && this.navigation) {
+    } else if (e.type === 'x-slider-nav-button-clicked' && this.navigation) {
       if (e.target === this._prevButton) {
         this.previous();
       } else if (e.target === this._nextButton) {
@@ -477,7 +487,7 @@ class XSlider extends HTMLElement {
    */
   _upgradeProperty(prop) {
     if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
+      const value = this[prop];
       delete this[prop];
       this[prop] = value;
     }
@@ -1157,10 +1167,13 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _createNavigationButton(className) {
-    const btn = document.createElement('button');
+    const btn = document.createElement('x-slider-nav-button');
     btn.classList.add(className);
     btn.setAttribute('slot', 'navigationSlot');
-    btn.addEventListener('click', this);
+    btn.addEventListener('x-slider-nav-button-clicked', this);
+    if (/next/.test(className)) {
+      btn.setAttribute('flipped', '');
+    }
     return btn;
   }
 
@@ -1174,7 +1187,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         this._navigationSlot.assignedNodes().length !== 2)) {
       // remove all navigation slot assigned nodes and their ev listeners
       this._navigationSlot.assignedNodes().forEach(button => {
-        button.removeEventListener('click', this);
+        button.removeEventListener('x-slider-nav-button-clicked', this);
         this.removeChild(button);
       });
 
@@ -1258,8 +1271,13 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   _onSlidesSlotChange() {
     this._slides = this._getSlides();
     this._slides.forEach(slide => {
-      slide.element.setAttribute('tabindex', -1);
-      slide.element.setAttribute('role', 'listitem');
+      if (!slide.element.hasAttribute('tabindex')) {
+        slide.element.setAttribute('tabindex', -1);
+      }
+
+      if (this.getAttribute('role') === 'list') {
+        slide.element.setAttribute('role', 'listitem');
+      }
     });
 
     // Getting the value of _lastViewIndex before calling internalUpdate(),
@@ -1309,7 +1327,9 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         slidesIndexesString += ' and ';
       }
     }
+    /* eslint-disable max-len */
     this._ariaLiveRegion.textContent = `Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString} of ${this._slides.length} visible`;
+    /* eslint-enable max-len */
   }
 
 
@@ -1619,4 +1639,164 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
+/**
+ * A buttons
+ */
+class XSliderButton extends HTMLElement {
+  /**
+   * Creates a new instance of XSlider.
+   * @constructor
+   */
+  constructor() {
+    /*
+     * Runs anytime a new instance is created (in HTML or JS).
+     * The construtor is a good place to create shadow DOM, though you should
+     * avoid touching any attributes or light DOM children as they may not
+     * be available yet.
+     */
+    super();
+
+    this.attachShadow({mode: 'open'});
+    this.shadowRoot.appendChild(_buttonTemplate.content.cloneNode(true));
+  }
+
+  /**
+   * `connectedCallback()` fires when the element is inserted into the DOM.
+   * It's a good place to set the initial `role`, `tabindex`, internal state,
+   * and install event listeners.
+   */
+  connectedCallback() {
+    // Shim Shadow DOM styles. This needs to be run in `connectedCallback()`
+    // because if you shim Custom Properties (CSS variables) the element
+    // will need access to its parent node.
+    if (window.ShadyCSS) {
+      window.ShadyCSS.styleElement(this);
+    }
+
+    this._defaultTabIndex = 0;
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button');
+    }
+
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', this._defaultTabIndex);
+    } else {
+      this._defaultTabIndex = this.getAttribute('tabindex');
+    }
+
+    this._upgradeProperty('disabled');
+
+    this.addEventListener('keydown', this);
+    this.addEventListener('click', this);
+  }
+
+  /**
+   * Used for upgrading properties in case this element is upgraded lazily.
+   * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
+   * @param {any} prop
+   * @private
+   */
+  _upgradeProperty(prop) {
+    if (this.hasOwnProperty(prop)) {
+      const value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
+  }
+
+  /**
+   * An array of the observed attributes.
+   * @static
+   */
+  static get observedAttributes() {
+    return [
+      'disabled',
+    ];
+  }
+
+  /**
+   * Whether the button is disabled.
+   * @type {boolean}
+   * @default false
+   */
+  set disabled(flag) {
+    booleanSetter(this, 'disabled', flag);
+  }
+
+  get disabled() {
+    return booleanGetter(this, 'disabled');
+  }
+
+  /**
+   * Called whenever an observedAttribute's value changes.
+   * @param {string} name The attribute's local name.
+   * @param {*} oldValue The attribute's previous value.
+   * @param {*} newValue The attribute's new value.
+   * @fires XSlider#x-slider-selected-changed
+   * @private
+   */
+  attributeChangedCallback(name, oldValue, newValue) {
+    switch (name) {
+      case 'disabled':
+        if (oldValue === newValue) {
+          return;
+        }
+
+        if (this.disabled) {
+          this._defaultTabIndex = this.getAttribute('tabindex');
+          this.removeAttribute('tabindex');
+        } else {
+          this.setAttribute('tabindex', this._defaultTabIndex);
+        }
+        break;
+    }
+  }
+
+  /**
+   * Defining handleEvent allows to pass `this` as the callback to every
+   * `addEventListener` and `removeEventListener`. This avoids the need of
+   * binding every function. See
+   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
+   *
+   * @param {Event} e Any event.
+   * @private
+   */
+  handleEvent(e) {
+    if (this.disabled) {
+      e.preventDefault();
+      return;
+    }
+
+    // Click
+    if (e.type === 'click') {
+      this._onClick();
+
+    // Space / Enter
+    } else if (e.type === 'keydown' &&
+        (e.keyCode === 32 || e.keyCode === 13)) {
+      // preventDefault called to avoid page scroll when hitting spacebar.
+      e.preventDefault();
+      this._onClick();
+    }
+  }
+
+  /**
+   * Fired when the selected slide changes.
+   * @event XSlider#x-slider-nav-button-clicked
+   * @type {Object}
+   */
+
+  /**
+   * Called when the button is clicked / pressed.
+   * @fires XSlider#x-slider-nav-button-clicked
+   * @private
+   */
+  _onClick() {
+    this.dispatchEvent(new CustomEvent('x-slider-nav-button-clicked'));
+  }
+}
+
+
+window.customElements.define('x-slider-nav-button', XSliderButton);
 window.customElements.define('x-slider', XSlider);
