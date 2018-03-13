@@ -33,6 +33,8 @@
     '--x-slider-pagination-color-selected': '#000',
     '--x-slider-pagination-size-clickable': '24px',
     '--x-slider-pagination-size-dot': '8px',
+    '--x-slider-pagination-border': '1px solid  #999',
+    '--x-slider-pagination-border-selected': '1px solid  #000',
     '--x-slider-pagination-gap': '2px',
     '--x-slider-pagination-height': '44px',
     '--x-slider-fallback-message-color-background': '#fff',

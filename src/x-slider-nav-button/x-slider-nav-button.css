@@ -6,6 +6,8 @@
   position: relative;
 
   display: inline-flex;
+  min-width: var(--x-slider-navigation-button-size);
+  min-height: var(--x-slider-navigation-button-size);
 
   border-radius: 50%;
 
@@ -20,15 +22,19 @@
   opacity: .2;
 }
 
-.content {
-  position: relative;
+.content,
+.content::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
 
+.content {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  min-width: var(--x-slider-navigation-button-size);
-  min-height: var(--x-slider-navigation-button-size);
 
   background-color: var(--x-slider-navigation-color-background);
 }
@@ -37,12 +43,6 @@
  * bg colored circle.
  */
 .content::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
   z-index: 0;
 
   background-color: var(--x-slider-navigation-color-background-focus);

@@ -87,6 +87,8 @@ navigation and pagination. Useful to *reset* the state of the carousel.
 | `--x-slider-pagination-color-selected` | The color of the selected pagination dot | `#000` |
 | `--x-slider-pagination-size-clickable` | The clickable area around the pagination dot | `24px` |
 | `--x-slider-pagination-size-dot` | The size of the pagination dot | `8px` |
+| `--x-slider-pagination-border` | The border of the pagination dot | `1px solid var(--x-slider-pagination-color)` |
+| `--x-slider-pagination-border-selected` | THe border of the selected pagination dot | `1px solid var(--x-slider-pagination-color-selected)` |
 | `--x-slider-pagination-gap` | The gap between the pagination dots | `2px` |
 | `--x-slider-pagination-height` | The height of the pagination dots section | `44px` |
 

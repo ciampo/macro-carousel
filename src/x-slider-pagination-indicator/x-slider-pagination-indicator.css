@@ -45,6 +45,10 @@
   will-change: opacity;
 }
 
+.content::after {
+  border: var(--x-slider-pagination-border);
+}
+
 :host(:hover) .content::before,
 :host(.focus-visible) .content::before {
   opacity: .2;
@@ -52,5 +56,6 @@
 
 :host(.selected) .content::after {
   background-color: var(--x-slider-pagination-color-selected);
+  border: var(--x-slider-pagination-border-selected);
 }
 

@@ -18,10 +18,11 @@ module.exports = function(config) {
     browsers: ['FirefoxHeadless', 'ChromeHeadless', 'Safari'],
     concurrency: Infinity,
     // to avoid DISCONNECTED messages
-    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTimeout: 10 * 1000, // default 2000
     browserDisconnectTolerance: 1, // default 0
-    browserNoActivityTimeout: 4 * 60 *1000, // default 10000
+    browserNoActivityTimeout: 4 * 60 * 1000, // default 10000
     captureTimeout: 4 * 60 * 1000, // default 60000,
+    processKillTimeout: 10 * 1000, // default 2000
 
     customLaunchers: {
       FirefoxHeadless: {
