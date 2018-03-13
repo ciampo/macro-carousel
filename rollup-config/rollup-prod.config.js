@@ -7,7 +7,7 @@ const config = require('../package.json');
 export default createRollupConfig(
   'x-slider.min.js',
   [
-    cssnano()
+    cssnano(),
   ],
   {
     collapseWhitespace: true,

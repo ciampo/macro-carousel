@@ -1,29 +1,19 @@
 import sliderHtml from './x-slider.html';
 import sliderStyles from './x-slider.css';
-import buttonHtml from './x-slider-nav-button.html';
-import buttonStyles from './x-slider-nav-button.css';
-import indicatorHtml from './x-slider-pagination-indicator.html';
-import indicatorStyles from './x-slider-pagination-indicator.css';
-import { getEvtListenerOptions } from './passiveEventListeners.js';
+import {getEvtListenerOptions} from '../passiveEventListeners';
 import {
   clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
   normalizeEvent, getCSSCustomProperty, setCSSCustomProperty,
-} from './utils.js';
+} from '../utils';
 
 /**
  * Markup and styles.
  */
 const _sliderTemplate = document.createElement('template');
 _sliderTemplate.innerHTML = `<style>${sliderStyles}</style> ${sliderHtml}`;
-const _buttonTemplate = document.createElement('template');
-_buttonTemplate.innerHTML = `<style>${buttonStyles}</style> ${buttonHtml}`;
-const _indicatorTemplate = document.createElement('template');
-_indicatorTemplate.innerHTML = `<style>${indicatorStyles}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
   window.ShadyCSS.prepareTemplate(_sliderTemplate, 'x-slider');
-  window.ShadyCSS.prepareTemplate(_buttonTemplate, 'x-slider-nav-button');
-  window.ShadyCSS.prepareTemplate(_indicatorTemplate, 'x-slider-pagination-indicator');
 }
 
 // #if IS_REMOVE
@@ -444,7 +434,8 @@ class XSlider extends HTMLElement {
       this._onSlidesSlotChange();
 
     // Pagination indicators
-    } else if (e.type === 'x-slider-pagination-indicator-clicked' && this.pagination) {
+    } else if (e.type === 'x-slider-pagination-indicator-clicked' &&
+        this.pagination) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
@@ -1120,7 +1111,8 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         this._lastViewIndex + 1)) {
       // Remove all the assignedNodes of pagination slot and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
-        indicatorEl.removeEventListener('x-slider-pagination-indicator-clicked', this);
+        indicatorEl
+            .removeEventListener('x-slider-pagination-indicator-clicked', this);
         this.removeChild(indicatorEl);
       });
       this._paginationIndicators.length = 0;
@@ -1161,7 +1153,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _onPaginationClicked(e) {
-    console.log('Clicketeclick');
     this.selected = parseInt(e.target.textContent, 10);
   }
 
@@ -1644,260 +1635,4 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
-/**
- * A navigation button.
- */
-class XSliderNavButton extends HTMLElement {
-  /**
-   * Creates a new instance of XSlider.
-   * @constructor
-   */
-  constructor() {
-    /*
-     * Runs anytime a new instance is created (in HTML or JS).
-     * The construtor is a good place to create shadow DOM, though you should
-     * avoid touching any attributes or light DOM children as they may not
-     * be available yet.
-     */
-    super();
-
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(_buttonTemplate.content.cloneNode(true));
-  }
-
-  /**
-   * `connectedCallback()` fires when the element is inserted into the DOM.
-   * It's a good place to set the initial `role`, `tabindex`, internal state,
-   * and install event listeners.
-   */
-  connectedCallback() {
-    // Shim Shadow DOM styles. This needs to be run in `connectedCallback()`
-    // because if you shim Custom Properties (CSS variables) the element
-    // will need access to its parent node.
-    if (window.ShadyCSS) {
-      window.ShadyCSS.styleElement(this);
-    }
-
-    this._defaultTabIndex = 0;
-
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'button');
-    }
-
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', this._defaultTabIndex);
-    } else {
-      this._defaultTabIndex = this.getAttribute('tabindex');
-    }
-
-    this._upgradeProperty('disabled');
-
-    this.addEventListener('keydown', this);
-    this.addEventListener('click', this);
-  }
-
-  /**
-   * Used for upgrading properties in case this element is upgraded lazily.
-   * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
-   * @param {*} prop
-   * @private
-   */
-  _upgradeProperty(prop) {
-    if (this.hasOwnProperty(prop)) {
-      const value = this[prop];
-      delete this[prop];
-      this[prop] = value;
-    }
-  }
-
-  /**
-   * An array of the observed attributes.
-   * @static
-   */
-  static get observedAttributes() {
-    return [
-      'disabled',
-    ];
-  }
-
-  /**
-   * Whether the button is disabled.
-   * @type {boolean}
-   * @default false
-   */
-  set disabled(flag) {
-    booleanSetter(this, 'disabled', flag);
-  }
-
-  get disabled() {
-    return booleanGetter(this, 'disabled');
-  }
-
-  /**
-   * Called whenever an observedAttribute's value changes.
-   * @param {string} name The attribute's local name.
-   * @param {*} oldValue The attribute's previous value.
-   * @param {*} newValue The attribute's new value.
-   * @private
-   */
-  attributeChangedCallback(name, oldValue, newValue) {
-    switch (name) {
-      case 'disabled':
-        if (oldValue === newValue) {
-          return;
-        }
-
-        if (this.disabled) {
-          this._defaultTabIndex = this.getAttribute('tabindex');
-          this.removeAttribute('tabindex');
-          this.setAttribute('aria-disabled', 'true');
-        } else {
-          this.setAttribute('tabindex', this._defaultTabIndex);
-          this.setAttribute('aria-disabled', 'false');
-        }
-        break;
-    }
-  }
-
-  /**
-   * Defining handleEvent allows to pass `this` as the callback to every
-   * `addEventListener` and `removeEventListener`. This avoids the need of
-   * binding every function. See
-   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
-   *
-   * @param {Event} e Any event.
-   * @private
-   */
-  handleEvent(e) {
-    if (this.disabled) {
-      e.preventDefault();
-      return;
-    }
-
-    // Click
-    if (e.type === 'click') {
-      this._onClick();
-
-    // Space / Enter
-    } else if (e.type === 'keydown' &&
-        (e.keyCode === 32 || e.keyCode === 13)) {
-      // preventDefault called to avoid page scroll when hitting spacebar.
-      e.preventDefault();
-      this._onClick();
-    }
-  }
-
-  /**
-   * Fired when the selected slide changes.
-   * @event XSlider#x-slider-nav-button-clicked
-   * @type {Object}
-   */
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-nav-button-clicked
-   * @private
-   */
-  _onClick() {
-    this.dispatchEvent(new CustomEvent('x-slider-nav-button-clicked'));
-  }
-}
-
-/**
- * A pagination indicator button.
- */
-class XSliderPaginationIndicator extends HTMLElement {
-  /**
-   * Creates a new instance of XSlider.
-   * @constructor
-   */
-  constructor() {
-    /*
-     * Runs anytime a new instance is created (in HTML or JS).
-     * The construtor is a good place to create shadow DOM, though you should
-     * avoid touching any attributes or light DOM children as they may not
-     * be available yet.
-     */
-    super();
-
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(_indicatorTemplate.content.cloneNode(true));
-  }
-
-  /**
-   * `connectedCallback()` fires when the element is inserted into the DOM.
-   * It's a good place to set the initial `role`, `tabindex`, internal state,
-   * and install event listeners.
-   */
-  connectedCallback() {
-    // Shim Shadow DOM styles. This needs to be run in `connectedCallback()`
-    // because if you shim Custom Properties (CSS variables) the element
-    // will need access to its parent node.
-    if (window.ShadyCSS) {
-      window.ShadyCSS.styleElement(this);
-    }
-
-    this._defaultTabIndex = 0;
-
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'button');
-    }
-
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', this._defaultTabIndex);
-    } else {
-      this._defaultTabIndex = this.getAttribute('tabindex');
-    }
-
-    this.addEventListener('keydown', this);
-    this.addEventListener('click', this);
-  }
-
-  /**
-   * Defining handleEvent allows to pass `this` as the callback to every
-   * `addEventListener` and `removeEventListener`. This avoids the need of
-   * binding every function. See
-   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
-   *
-   * @param {Event} e Any event.
-   * @private
-   */
-  handleEvent(e) {
-    if (this.disabled) {
-      e.preventDefault();
-      return;
-    }
-
-    // Click
-    if (e.type === 'click') {
-      this._onClick();
-
-    // Space / Enter
-    } else if (e.type === 'keydown' &&
-        (e.keyCode === 32 || e.keyCode === 13)) {
-      // preventDefault called to avoid page scroll when hitting spacebar.
-      e.preventDefault();
-      this._onClick();
-    }
-  }
-
-  /**
-   * Fired when the selected slide changes.
-   * @event XSlider#x-slider-pagination-indicator-clicked
-   * @type {Object}
-   */
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-pagination-indicator-clicked
-   * @private
-   */
-  _onClick() {
-    this.dispatchEvent(new CustomEvent('x-slider-pagination-indicator-clicked'));
-  }
-}
-
-
-window.customElements.define('x-slider-nav-button', XSliderNavButton);
-window.customElements.define('x-slider-pagination-indicator', XSliderPaginationIndicator);
 window.customElements.define('x-slider', XSlider);

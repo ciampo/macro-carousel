@@ -12,6 +12,6 @@ export default createRollupConfig(
       contentBase: '',
       port: 8080,
     }),
-    livereload('dist')
+    livereload('dist'),
   ]
 );
