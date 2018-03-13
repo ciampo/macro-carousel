@@ -166,66 +166,22 @@
   font-size: 0;
 }
 
-#pagination ::slotted(button) {
-  position: relative;
-
+#pagination ::slotted(x-slider-pagination-indicator) {
   width: var(--x-slider-pagination-size-clickable);
   height: var(--x-slider-pagination-size-clickable);
 
   margin: 0 calc(var(--x-slider-pagination-gap) / 2);
   padding: 0;
 
-  border: none;
-  background: none;
-
   font-size: inherit;
-
-  cursor: pointer;
 
   opacity: .8;
 }
 
-#pagination ::slotted(button)::before,
-#pagination ::slotted(button)::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
 
-  transform: translate(-50%, -50%);
-
-  display: block;
-
-  width: var(--x-slider-pagination-size-dot);
-  height: var(--x-slider-pagination-size-dot);
-
-  border-radius: 50%;
-  box-sizing: border-box;
-
-  background-color: var(--x-slider-pagination-color);
-
-  content: '';
-}
-
-#pagination ::slotted(button)::before {
-  transform: translate(-50%, -50%) scale(2);
-
-  opacity: 0;
-
-  will-change: opacity;
-}
-
-#pagination ::slotted(button:hover),
-#pagination ::slotted(.disabled) {
+#pagination ::slotted(x-slider-pagination-indicator:hover),
+#pagination ::slotted(x-slider-pagination-indicator.selected) {
   opacity: 1;
-}
-
-#pagination ::slotted(button:active)::before,
-#pagination ::slotted(button.focus-visible)::before {
-  opacity: .2;
-}
-
-#pagination ::slotted(.disabled)::after {
-  background-color: var(--x-slider-pagination-color-selected);
 }
 
 /*******************************************************************************
@@ -239,13 +195,13 @@
   display: block;
 }
 
-#navigation ::slotted(*) {
+#navigation ::slotted(x-slider-nav-button) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 
-:host([pagination]) #navigation ::slotted(*) {
+:host([pagination]) #navigation ::slotted(x-slider-nav-button) {
   top: calc(50% - var(--x-slider-pagination-height) / 2);
 }
 

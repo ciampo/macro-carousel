@@ -1,0 +1,56 @@
+/*******************************************************************************
+  Host and CSS properties
+*******************************************************************************/
+
+:host {
+  position: relative;
+
+  display: inline-flex;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  contain: paint;
+}
+
+.content::before,
+.content::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  display: block;
+
+  width: var(--x-slider-pagination-size-dot);
+  height: var(--x-slider-pagination-size-dot);
+
+  border-radius: 50%;
+  box-sizing: border-box;
+
+  background-color: var(--x-slider-pagination-color);
+
+  content: '';
+}
+
+.content::before {
+  transform: translate(-50%, -50%) scale(2);
+
+  opacity: 0;
+
+  will-change: opacity;
+}
+
+:host(:hover) .content::before,
+:host(.focus-visible) .content::before {
+  opacity: .2;
+}
+
+:host(.selected) .content::after {
+  background-color: var(--x-slider-pagination-color-selected);
+}
+

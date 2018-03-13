@@ -42,19 +42,6 @@
         font-size: 5em;
         font-family: sans-serif;
       }
-
-      /*
-       * Bonus: since the pagination buttons are exposed in the light DOM,
-       * you can target them via the button[slot="paginationSlot"] selector.
-       * The selected pagination dot is the one with the `disabled` class.
-       * This approach is quite tricky and advanced, and is on purposed not
-       * documented in the main docs as it may change in the next releases,
-       * when I'll focus more on extensibility and customisation.
-       */
-       button[slot="paginationSlot"].disabled::after {
-         border: 2px solid var(--x-slider-pagination-color-selected);
-         background-color: transparent;
-       }
     </style>
 
     <!-- `pagination` adds the pagination indicators (dots) -->
