@@ -9,11 +9,11 @@ import {
 /**
  * Markup and styles.
  */
-const _sliderTemplate = document.createElement('template');
-_sliderTemplate.innerHTML = `<style>${sliderStyles}</style> ${sliderHtml}`;
+const template = document.createElement('template');
+template.innerHTML = `<style>${sliderStyles}</style> ${sliderHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(_sliderTemplate, 'x-slider');
+  window.ShadyCSS.prepareTemplate(template, 'x-slider');
 }
 
 // #if IS_REMOVE
@@ -59,7 +59,7 @@ class XSlider extends HTMLElement {
     super();
 
     this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(_sliderTemplate.content.cloneNode(true));
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
 
     /**
      * The wrapper element enclosing the slides.
