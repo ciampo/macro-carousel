@@ -23,7 +23,7 @@
   ];
 
   const getPaginationIndicators = (container) =>
-      container.querySelectorAll('button[slot="paginationSlot"]');
+      container.querySelectorAll('x-slider-pagination-indicator[slot="paginationSlot"]');
 
   describe('There should be', function() {
     before(wcutils.before());
@@ -92,7 +92,7 @@
 
           paginationIndicators.forEach((indicator, indicatorIndex) => {
             // true is the indicatorIndex is the same at the currently selected slide.
-            expect(indicator.classList.contains('disabled')).to.equal(indicatorIndex === s);
+            expect(indicator.classList.contains('selected')).to.equal(indicatorIndex === s);
           });
         }
       });
