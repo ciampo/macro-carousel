@@ -27,7 +27,7 @@
   --x-slider-navigation-color-background-focus: #f0f0f0;
   --x-slider-navigation-button-size: 48px;
   --x-slider-navigation-icon-size: 24px;
-  --x-slider-navigation-icon-mask: svg-load('./arrow-left.svg', fill: #000);
+  --x-slider-navigation-icon-mask: svg-load('../arrow-left.svg', fill: #000);
 
   --x-slider-pagination-color: #999;
   --x-slider-pagination-color-selected: #000;
