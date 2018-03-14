@@ -50,13 +50,12 @@
 
       this.slider.reducedMotion = true;
 
-      expect(this.slider._transitioning).to.be.false;
-      expect(window.getComputedStyle(this.wrapper)['transition-duration'])
-          .to.equal('0s');
-      expect(window.getComputedStyle(this.wrapper)['transition-delay'])
-          .to.equal('0s');
-
       this.slider.selected = 2;
+
+      // Call update to trigger _enableWrapperTransitions.
+      // Because reduceMotion is true, the transitions should be disabled anyway.
+      this.slider.update();
+      await wcutils.delay(150);
 
       // Get wrapper computed transform
       const wrapperTranslateX = window.getComputedStyle(this.wrapper)['transform'];
@@ -68,6 +67,12 @@
 
       const expectedWrapperTranslate = `${- this.slider.selected * (slidesGap + slidesWidth)}px, 0px`;
       expect(wrapperTransformObj.translate).to.equal(expectedWrapperTranslate);
+
+      expect(this.slider._transitioning).to.be.false;
+      expect(window.getComputedStyle(this.wrapper)['transition-duration'])
+          .to.equal('0s');
+      expect(window.getComputedStyle(this.wrapper)['transition-delay'])
+          .to.equal('0s');
 
       this.slider.reducedMotion = false;
 
