@@ -57,7 +57,8 @@
     "rollup-plugin-postcss": "^1.0.5",
     "rollup-plugin-re": "^1.0.6",
     "rollup-plugin-serve": "^0.4.2",
-    "rollup-plugin-uglify": "^3.0.0"
+    "rollup-plugin-uglify": "^3.0.0",
+    "simulant": "^0.2.2"
   },
   "peerDependencies": {
     "wicg-inert": "1.x",
