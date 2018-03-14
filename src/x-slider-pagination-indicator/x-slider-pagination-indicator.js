@@ -1,18 +1,23 @@
-import buttonClassCreator from '../x-slider-button/x-slider-button';
+import XSliderButton from '../x-slider-button/x-slider-button';
 import indicatorHtml from './x-slider-pagination-indicator.html';
 import indicatorStyles from './x-slider-pagination-indicator.css';
 
-const template = document.createElement('template');
-template.innerHTML = `<style>${indicatorStyles}</style> ${indicatorHtml}`;
+const paginationTmpl = document.createElement('template');
+paginationTmpl.innerHTML = `<style>${indicatorStyles}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template, 'x-slider-pagination-indicator');
+  window.ShadyCSS.prepareTemplate(paginationTmpl,
+      'x-slider-pagination-indicator');
 }
 
 /**
  * A pagination indicator button.
  */
-class XSliderPaginationIndicator extends buttonClassCreator(template) {
+class XSliderPaginationIndicator extends XSliderButton {
+  static get template() {
+    return paginationTmpl;
+  }
+
   /**
    * Fired when the button is clicked / pressed.
    * @event XSlider#x-slider-pagination-indicator-clicked

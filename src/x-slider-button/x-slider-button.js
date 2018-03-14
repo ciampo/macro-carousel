@@ -3,7 +3,7 @@ import {booleanSetter, booleanGetter} from '../utils';
 /**
  * A generic button.
  */
-export default (template) => class XSliderButton extends HTMLElement {
+export default class XSliderButton extends HTMLElement {
   /**
    * Creates a new instance of XSlider.
    * @constructor
@@ -17,6 +17,9 @@ export default (template) => class XSliderButton extends HTMLElement {
      */
     super();
 
+    // Get the template property on the actual instance
+    // (and not on the XSliderButton class).
+    const template = Object.getPrototypeOf(this).constructor.template;
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
@@ -142,4 +145,4 @@ export default (template) => class XSliderButton extends HTMLElement {
       this._onClick && this._onClick();
     }
   }
-};
+}

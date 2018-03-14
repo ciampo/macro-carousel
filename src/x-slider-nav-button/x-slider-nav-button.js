@@ -1,18 +1,22 @@
-import buttonClassCreator from '../x-slider-button/x-slider-button';
+import XSliderButton from '../x-slider-button/x-slider-button';
 import buttonHtml from './x-slider-nav-button.html';
 import buttonStyles from './x-slider-nav-button.css';
 
-const template = document.createElement('template');
-template.innerHTML = `<style>${buttonStyles}</style> ${buttonHtml}`;
+const buttonTmpl = document.createElement('template');
+buttonTmpl.innerHTML = `<style>${buttonStyles}</style> ${buttonHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template, 'x-slider-nav-button');
+  window.ShadyCSS.prepareTemplate(buttonTmpl, 'x-slider-nav-button');
 }
 
 /**
  * A navigation button.
  */
-class XSliderNavButton extends buttonClassCreator(template) {
+class XSliderNavButton extends XSliderButton {
+  static get template() {
+    return buttonTmpl;
+  }
+
   /**
    * Fired when the button is clicked / pressed.
    * @event XSlider#x-slider-nav-button-clicked
