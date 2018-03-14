@@ -112,6 +112,34 @@
       expect(previousBtn.constructor.name).to.equal('XSliderNavButton');
       expect(nextBtn.constructor.name).to.equal('XSliderNavButton');
     });
+
+    it('selects the previous and next slide when clicked', async function() {
+      this.container.innerHTML = `
+          <x-slider navigation>
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      const slider = this.container.querySelector('x-slider');
+      const previousBtn = slider.querySelector('.x-slider-previous');
+      const nextBtn = slider.querySelector('.x-slider-next');
+
+      // Next all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(slider.selected).to.equal(selectedIndex);
+        wcutils.fireEvent(nextBtn, 'click');
+        expect(slider.selected).to.equal(Math.min(selectedIndex + 1, numberOfSlides - 1));
+      });
+
+      // Previous all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(slider.selected).to.equal(numberOfSlides - selectedIndex - 1);
+        wcutils.fireEvent(previousBtn, 'click');
+        expect(slider.selected).to.equal(Math.max(0, numberOfSlides - selectedIndex - 2));
+      });
+    });
   });
 
   describe('The next navigation button', function() {

@@ -181,5 +181,24 @@
       paginationIndicators = getPaginationIndicators(this.container);
       expect(paginationIndicators.length).to.equal(numberOfSlides + 1 - slidesToRemove);
     });
+
+    it('select the corresponding slide when clicked', async function() {
+      this.container.innerHTML = `
+          <x-slider pagination>
+            ${[...Array(numberOfSlides).keys()]
+                .map(i => `<article>Slide ${i}</article>`)
+                .join('\n')}
+          </x-slider>`;
+      await wcutils.waitForElement('x-slider');
+
+      const slider = this.container.querySelector('x-slider');
+      let paginationIndicators = getPaginationIndicators(this.container);
+
+      // Next all the way
+      Array.prototype.slice.call(paginationIndicators, 0).forEach((btn, i) => {
+        wcutils.fireEvent(btn, 'click');
+        expect(slider.selected).to.equal(i);
+      });
+    });
   });
 })();
