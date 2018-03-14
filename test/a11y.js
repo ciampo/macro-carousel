@@ -132,5 +132,37 @@
         expect(pi.getAttribute('aria-label')).to.equal(`Go to item ${i + 1}`);
       });
     });
+
+    it('pressing the arrow keys on the slider selects previous/next slides', function() {
+      const numberOfSlides = 3;
+
+      // Right arrow all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(this.slider.selected).to.equal(selectedIndex);
+        simulant.fire(this.slider, 'keydown', {keyCode: 39});
+        expect(this.slider.selected).to.equal(Math.min(selectedIndex + 1, numberOfSlides - 1));
+      });
+
+      // Left arrow all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(this.slider.selected).to.equal(numberOfSlides - selectedIndex - 1);
+        simulant.fire(this.slider, 'keydown', {keyCode: 37});
+        expect(this.slider.selected).to.equal(Math.max(0, numberOfSlides - selectedIndex - 2));
+      });
+
+      // Up arrow all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(this.slider.selected).to.equal(selectedIndex);
+        simulant.fire(this.slider, 'keydown', {keyCode: 40});
+        expect(this.slider.selected).to.equal(Math.min(selectedIndex + 1, numberOfSlides - 1));
+      });
+
+      // Down arrow all the way
+      [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
+        expect(this.slider.selected).to.equal(numberOfSlides - selectedIndex - 1);
+        simulant.fire(this.slider, 'keydown', {keyCode: 38});
+        expect(this.slider.selected).to.equal(Math.max(0, numberOfSlides - selectedIndex - 2));
+      });
+    });
   });
 })();
