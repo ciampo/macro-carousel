@@ -55,17 +55,13 @@
     });
   });
 
-  const createSyntheticClickEvent = () => new MouseEvent('click', {
-    view: window,
-    bubbles: true,
-    cancelable: true,
-    clientX: window.wcutils.getRandomInt(0, 100),
-    clientY: window.wcutils.getRandomInt(0, 100),
-  });
-
   describe('The normalizeEvent function', function() {
     it('correctly processes MouseEvents', function() {
-      const clickEv = createSyntheticClickEvent();
+      // const clickEv = createSyntheticClickEvent();
+      const clickEv = simulant('click', {
+        clientX: window.wcutils.getRandomInt(0, 100),
+        clientY: window.wcutils.getRandomInt(0, 100),
+      });
       const normalizedEv = testFns.normalizeEvent(clickEv);
 
       expect(normalizedEv).to.be.an('object');
