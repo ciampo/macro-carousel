@@ -132,23 +132,14 @@ export default (template) => class XSliderButton extends HTMLElement {
 
     // Click
     if (e.type === 'click') {
-      this._onClick();
+      this._onClick && this._onClick();
 
     // Space / Enter
     } else if (e.type === 'keydown' &&
         (e.keyCode === 32 || e.keyCode === 13)) {
       // preventDefault called to avoid page scroll when hitting spacebar.
       e.preventDefault();
-      this._onClick();
+      this._onClick && this._onClick();
     }
-  }
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-nav-button-clicked
-   * @private
-   */
-  _onClick() {
-    // To be implemented by the subclass.
   }
 };
