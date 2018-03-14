@@ -40,7 +40,14 @@
     });
 
     // TODO: testing reduced motion on drag events
-    it('setting reducedMotion disables transitions', function() {
+    it('setting reducedMotion disables transitions', async function() {
+      await wcutils.flush();
+
+      const initialTransitionDuration =
+          window.getComputedStyle(this.wrapper)['transition-duration'];
+      const initialTransitionDelay =
+          window.getComputedStyle(this.wrapper)['transition-delay'];
+
       this.slider.reducedMotion = true;
 
       expect(this.slider._transitioning).to.be.false;
@@ -61,6 +68,16 @@
 
       const expectedWrapperTranslate = `${- this.slider.selected * (slidesGap + slidesWidth)}px, 0px`;
       expect(wrapperTransformObj.translate).to.equal(expectedWrapperTranslate);
+
+      this.slider.reducedMotion = false;
+
+      await wcutils.flush();
+
+      expect(this.slider._transitioning).to.be.true;
+      expect(window.getComputedStyle(this.wrapper)['transition-duration'])
+          .to.equal(initialTransitionDuration);
+      expect(window.getComputedStyle(this.wrapper)['transition-delay'])
+          .to.equal(initialTransitionDelay);
     });
 
     it('slider and slides have correct roles', function() {
