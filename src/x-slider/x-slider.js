@@ -904,6 +904,10 @@ class XSlider extends HTMLElement {
    * @private
    */
   _enableWrapperTransitions() {
+    if (this.reducedMotion) {
+      return;
+    }
+
     // Double rAF is necessary to wait for 'selected' to take effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
