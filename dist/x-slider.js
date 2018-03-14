@@ -1081,10 +1081,6 @@ class XSlider extends HTMLElement {
    * @private
    */
   _enableWrapperTransitions() {
-    if (this.reducedMotion) {
-      return;
-    }
-
     // Double rAF is necessary to wait for 'selected' to take effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1817,7 +1813,7 @@ window.customElements.define('x-slider', XSlider);
 /**
  * A generic button.
  */
-var buttonClassCreator = (template) => class XSliderButton extends HTMLElement {
+class XSliderButton extends HTMLElement {
   /**
    * Creates a new instance of XSlider.
    * @constructor
@@ -1831,6 +1827,9 @@ var buttonClassCreator = (template) => class XSliderButton extends HTMLElement {
      */
     super();
 
+    // Get the template property on the actual instance
+    // (and not on the XSliderButton class).
+    const template = Object.getPrototypeOf(this).constructor.template;
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
@@ -1946,42 +1945,37 @@ var buttonClassCreator = (template) => class XSliderButton extends HTMLElement {
 
     // Click
     if (e.type === 'click') {
-      this._onClick();
+      this._onClick && this._onClick();
 
     // Space / Enter
     } else if (e.type === 'keydown' &&
         (e.keyCode === 32 || e.keyCode === 13)) {
       // preventDefault called to avoid page scroll when hitting spacebar.
       e.preventDefault();
-      this._onClick();
+      this._onClick && this._onClick();
     }
   }
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-nav-button-clicked
-   * @private
-   */
-  _onClick() {
-    // To be implemented by the subclass.
-  }
-};
+}
 
 var buttonHtml = "<div class=\"content\">\n  <div class=\"icon\"></div>\n</div>\n";
 
 var css$1 = "/*******************************************************************************\n  Host and CSS properties\n*******************************************************************************/\n\n:host {\n  position: relative;\n\n  display: -webkit-inline-box;\n\n  display: -ms-inline-flexbox;\n\n  display: inline-flex;\n  min-width: var(--x-slider-navigation-button-size);\n  min-height: var(--x-slider-navigation-button-size);\n\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n\n  contain: paint;\n}\n\n:host([disabled]) {\n  opacity: .2;\n}\n\n.content,\n.content::before {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n}\n\n.content {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  background-color: var(--x-slider-navigation-color-background);\n}\n\n/*\n * bg colored circle.\n */\n.content::before {\n  z-index: 0;\n\n  background-color: var(--x-slider-navigation-color-background-focus);\n\n  opacity: 0;\n\n  will-change: opacity;\n\n  content: '';\n}\n\n.icon {\n  position: relative;\n\n  z-index: 1;\n\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n\n  /*\n   * Fallback for when mask-image is not supported:\n   * using the SVG as a background. Only issue, the icon color\n   * won't change.\n  */\n  color: var(--x-slider-navigation-color);\n\n  background: var(--x-slider-navigation-icon-mask);\n}\n\n@supports ((-webkit-mask-image: var(--x-slider-navigation-icon-mask)) or (mask-image: var(--x-slider-navigation-icon-mask))) {\n  .icon {\n    background: var(--x-slider-navigation-color);\n\n    /* References:\n    * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image\n    * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris\n    */\n    -webkit-mask-image: var(--x-slider-navigation-icon-mask);\n            mask-image: var(--x-slider-navigation-icon-mask);\n  }\n}\n\n:host([flipped]) .icon {\n  -webkit-transform: rotateZ(180deg);\n          transform: rotateZ(180deg);\n}\n\n/*\n * Show the bg circle when the button is not disabled and is hovered, active,\n * focused or keyboard-focused (thanks to the focus-visible polyfill).\n */\n:host(:hover:not([disabled])) .content::before,\n:host(:active:not([disabled])) .content::before,\n:host(:focus:not([disabled])) .content::before,\n:host(.focus-visible) .content::before {\n  opacity: 1;\n}\n\n/*\n * Do not show the bg circle if the button is focused (but not active or not hovered)\n * and doesn't have a focused-visible class. This means, do not leave the bg showing\n * after the user clicks on the button.\n */\n:host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .content::before {\n  opacity: 0;\n}\n\n@supports ((-webkit-mask-image: var(--x-slider-navigation-icon-mask)) or (mask-image: var(--x-slider-navigation-icon-mask))) {\n  /*\n   * Same as rules above, but for the icon's color.\n   */\n  :host(:hover:not([disabled])) .icon,\n  :host(:active:not([disabled])) .icon,\n  :host(:focus:not([disabled])) .icon,\n  :host(.focus-visible) .icon {\n    background: var(--x-slider-navigation-color-focus);\n  }\n\n  :host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .icon {\n    background: var(--x-slider-navigation-color);\n  }\n}\n";
 
-const template$1 = document.createElement('template');
-template$1.innerHTML = `<style>${css$1}</style> ${buttonHtml}`;
+const buttonTmpl = document.createElement('template');
+buttonTmpl.innerHTML = `<style>${css$1}</style> ${buttonHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template$1, 'x-slider-nav-button');
+  window.ShadyCSS.prepareTemplate(buttonTmpl, 'x-slider-nav-button');
 }
 
 /**
  * A navigation button.
  */
-class XSliderNavButton extends buttonClassCreator(template$1) {
+class XSliderNavButton extends XSliderButton {
+  static get template() {
+    return buttonTmpl;
+  }
+
   /**
    * Fired when the button is clicked / pressed.
    * @event XSlider#x-slider-nav-button-clicked
@@ -2004,17 +1998,22 @@ var indicatorHtml = "<div class=\"content\"></div>\n";
 
 var css$2 = "/*******************************************************************************\n  Host and CSS properties\n*******************************************************************************/\n\n:host {\n  position: relative;\n\n  display: -webkit-inline-box;\n\n  display: -ms-inline-flexbox;\n\n  display: inline-flex;\n\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n\n  contain: paint;\n}\n\n.content::before,\n.content::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n\n  -webkit-transform: translate(-50%, -50%);\n\n          transform: translate(-50%, -50%);\n\n  display: block;\n\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n\n  border-radius: 50%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n\n  background-color: var(--x-slider-pagination-color);\n\n  content: '';\n}\n\n.content::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n.content::after {\n  border: var(--x-slider-pagination-border);\n}\n\n:host(:hover) .content::before,\n:host(.focus-visible) .content::before {\n  opacity: .2;\n}\n\n:host(.selected) .content::after {\n  background-color: var(--x-slider-pagination-color-selected);\n  border: var(--x-slider-pagination-border-selected);\n}\n\n";
 
-const template$2 = document.createElement('template');
-template$2.innerHTML = `<style>${css$2}</style> ${indicatorHtml}`;
+const paginationTmpl = document.createElement('template');
+paginationTmpl.innerHTML = `<style>${css$2}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template$2, 'x-slider-pagination-indicator');
+  window.ShadyCSS.prepareTemplate(paginationTmpl,
+      'x-slider-pagination-indicator');
 }
 
 /**
  * A pagination indicator button.
  */
-class XSliderPaginationIndicator extends buttonClassCreator(template$2) {
+class XSliderPaginationIndicator extends XSliderButton {
+  static get template() {
+    return paginationTmpl;
+  }
+
   /**
    * Fired when the button is clicked / pressed.
    * @event XSlider#x-slider-pagination-indicator-clicked
