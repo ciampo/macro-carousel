@@ -2,7 +2,7 @@
 module.exports = function(config) {
   const configuration = {
     basePath: '',
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'chai-spies', 'chai'],
     files: [
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'node_modules/simulant/dist/simulant.umd.js',
