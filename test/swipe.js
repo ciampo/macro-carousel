@@ -33,8 +33,7 @@
 
       const mult = direction === 'right' ? -1 : 1;
 
-      const initialMouseX = direction === 'right' ?
-        bodyWidth * 0.05 : bodyWidth * 0.95;
+      const initialMouseX = direction === 'right' ? 1 : bodyWidth - 1;
       let mouseX = initialMouseX;
 
       simulant.fire(slider._externalWrapper, 'mousedown', {
@@ -72,7 +71,7 @@
         clientY: 0,
       });
 
-      await wcutils.delay(0);
+      await wcutils.flush();
 
       expect(slider.getAttribute('pointer-down')).to.be.null;
     };
