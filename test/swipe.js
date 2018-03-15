@@ -22,9 +22,11 @@
     });
 
     it('swipe gestures change selected slide', async function() {
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 300;
+      const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
@@ -83,9 +85,13 @@
     });
 
     it('very long swipes trigger a bigger change in the selected slide', async function() {
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 700;
+      // Long swipes between 500 and 800 px give +1
+      // Long swipes over 800 px give + 2
+      const distanceTravelled = Math.min(799, Math.max(700, carouselWidth * 0.9));
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
@@ -117,9 +123,11 @@
     });
 
     it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 100;
+      const distanceTravelled =  carouselWidth * 0.1;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
@@ -153,10 +161,12 @@
       expect(this.slider.selected).to.equal(0);
     });
 
-    it('a paused long swip triggers a change in the selected slide', async function() {
+    it('a paused long swipe triggers a change in the selected slide', async function() {
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 450;
+      const distanceTravelled = carouselWidth * 0.8;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
@@ -195,9 +205,11 @@
 
       await wcutils.flush();
 
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 300;
+      const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
@@ -260,9 +272,11 @@
 
       await wcutils.flush();
 
+      const carouselWidth = this.slider.getBoundingClientRect().width;
+
       let mouseX = 10;
 
-      const distanceTravelled = 300;
+      const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
