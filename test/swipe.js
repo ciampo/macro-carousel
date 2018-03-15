@@ -127,7 +127,7 @@
 
       let mouseX = 10;
 
-      const distanceTravelled =  carouselWidth * 0.1;
+      const distanceTravelled = carouselWidth * 0.1;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;
