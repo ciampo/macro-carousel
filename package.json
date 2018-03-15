@@ -10,8 +10,9 @@
     "bundle-es5": "node_modules/.bin/rollup -c rollup-config/rollup-es5.config.js",
     "test-lint": "eslint test *.js",
     "test": "npm run test-lint && npm run bundle-test && karma start",
+    "test-watch": "npm run test -- --no-single-run",
     "start": "node_modules/.bin/rollup -c rollup-config/rollup-dev-serve.config.js --watch",
-    "build": "npm run test -- --single-run && npm run bundle-dev && npm run bundle-prod && npm run bundle-es5"
+    "build": "npm run test && npm run bundle-dev && npm run bundle-prod && npm run bundle-es5"
   },
   "repository": {
     "type": "git",
