@@ -1,5 +1,7 @@
 # `<x-slider>`
 
+[![Build Status](https://travis-ci.org/ciampo/x-slider.svg?branch=master)](https://travis-ci.org/ciampo/x-slider)
+
 `<x-slider>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/x-slider/demo/))
 
 Latest version: `0.9.1`
