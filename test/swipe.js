@@ -1,4 +1,5 @@
 /* eslint max-len: ["off"] */
+/* eslint no-console: ["off"] */
 
 (function() {
   const expect = chai.expect;
@@ -28,13 +29,15 @@
 
       const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -53,6 +56,8 @@
         clientY: 0,
       });
 
+      await wcutils.flush();
+
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(1);
 
@@ -62,6 +67,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -80,26 +87,31 @@
         clientY: 0,
       });
 
+      await wcutils.flush();
+
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(0);
     });
 
     it('very long swipes trigger a bigger change in the selected slide', async function() {
+      console.log('long swipe ==================================');
       const carouselWidth = this.slider.getBoundingClientRect().width;
 
       let mouseX = 10;
 
-      // Long swipes between 500 and 800 px give +1
-      // Long swipes over 800 px give + 2
       const distanceTravelled = carouselWidth * 0.9;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
+
+      console.log('long swipe', distanceTravelled, window.innerWidth);
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -117,6 +129,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(2);
@@ -129,13 +143,15 @@
 
       const distanceTravelled = carouselWidth * 0.1;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -156,6 +172,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(0);
@@ -168,13 +186,15 @@
 
       const distanceTravelled = carouselWidth * 0.8;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -195,6 +215,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(1);
@@ -211,13 +233,15 @@
 
       const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -236,6 +260,8 @@
         clientY: 0,
       });
 
+      await wcutils.flush();
+
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(numberOfSlides - 1);
 
@@ -245,6 +271,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
 
@@ -263,6 +291,8 @@
         clientY: 0,
       });
 
+      await wcutils.flush();
+
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(0);
     });
@@ -278,13 +308,15 @@
 
       const distanceTravelled = carouselWidth * 0.4;
       const steps = 5;
-      const interval = 100 / steps;
+      const interval = 30 / steps;
       const increment = distanceTravelled / steps;
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
 
@@ -302,6 +334,8 @@
         clientX: mouseX,
         clientY: 0,
       });
+
+      await wcutils.flush();
 
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(0);
