@@ -11,7 +11,7 @@ module.exports = function(config) {
       'test/*.js',
     ],
     preprocessors: {},
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress', 'coverage', 'coveralls'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -42,7 +42,7 @@ module.exports = function(config) {
       ],
     },
     coverageReporter: {
-      type: 'html',
+      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
       dir: 'coverage/',
     },
   };
