@@ -31,7 +31,7 @@ For enhancing the a11y of the carousel, it's best to also install the `inert` an
 
 Run `npm run start` to start a local dev server and open the `demo/` page in your browser.
 
-## Usage:
+## Usage
 
 Please read the [full documentation](./docs/x-slider.md)
 
