@@ -10,7 +10,9 @@
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
-      wcutils.appendStyles(`x-slider {width: 800px}`);
+      wcutils.appendStyles(`
+      html,body {min-width: 800px}
+      x-slider {width: 800px}`);
       this.container.innerHTML = `
       <x-slider>
         ${[...Array(numberOfSlides).keys()]
@@ -24,7 +26,7 @@
     });
 
     const swipe = async function(slider, type, direction, withPause) {
-      const distanceTravelled = type === 'short' ? 300 : 740;
+      const distanceTravelled = type === 'short' ? 360 : 740;
 
       const mult = direction === 'right' ? -1 : 1;
 
@@ -72,6 +74,8 @@
     };
 
     it('swipe gestures change selected slide', async function() {
+      this.timeout(5000);
+
       await wcutils.flush();
 
       await swipe(this.slider, 'short', 'right');
@@ -84,6 +88,8 @@
     });
 
     it('very long swipes trigger a bigger change in the selected slide', async function() {
+      this.timeout(5000);
+
       await wcutils.flush();
 
       await swipe(this.slider, 'long', 'right');
