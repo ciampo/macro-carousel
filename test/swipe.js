@@ -23,8 +23,8 @@
         });
     });
 
-    const swipe = async function(slider, type, direction) {
-      const distanceTravelled = type === 'short' ? 300 : 700;
+    const swipe = async function(slider, type, direction, withPause) {
+      const distanceTravelled = type === 'short' ? 100 : 790;
 
       const mult = direction === 'right' ? -1 : 1;
 
@@ -37,7 +37,11 @@
       });
       await wcutils.delay(0);
 
-      expect(slider.getAttribute('pointer-down')).to.not.be.null;
+      if (slider.disableDrag) {
+        expect(slider.getAttribute('pointer-down')).to.be.null;
+      } else {
+        expect(slider.getAttribute('pointer-down')).to.not.be.null;
+      }
 
       mouseX = mouseX + (mult * distanceTravelled);
 
@@ -52,6 +56,10 @@
         clientY: 0,
       });
       await wcutils.delay(10);
+
+      if (withPause) {
+        await wcutils.delay(200);
+      }
 
       simulant.fire(window, 'mouseup', {
         clientX: mouseX,
@@ -69,6 +77,8 @@
       await swipe(this.slider, 'short', 'right');
       expect(this.slider.selected).to.equal(1);
 
+      await wcutils.flush();
+
       await swipe(this.slider, 'short', 'left');
       expect(this.slider.selected).to.equal(0);
     });
@@ -80,209 +90,47 @@
       expect(this.slider.selected).to.equal(2);
     });
 
-    // it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
-    //   this.timeout(5000);
+    it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
+      this.timeout(5000);
 
-    //   const carouselWidth = this.slider.getBoundingClientRect().width;
+      await wcutils.flush();
 
-    //   let mouseX = 10;
+      await swipe(this.slider, 'short', 'right', true);
+      expect(this.slider.selected).to.equal(0);
+    });
 
-    //   const distanceTravelled = carouselWidth * 0.1;
-    //   const steps = 5;
-    //   const interval = 30 / steps;
-    //   const increment = distanceTravelled / steps;
+    it('a paused long swipe triggers a change in the selected slide', async function() {
+      this.timeout(5000);
 
-    //   simulant.fire(this.slider._externalWrapper, 'mousedown', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
+      await wcutils.flush();
 
-    //   await wcutils.flush();
+      await swipe(this.slider, 'long', 'right', true);
+      expect(this.slider.selected).to.equal(1);
+    });
 
-    //   expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
+    it('swipe gestures when loop is active', async function() {
+      this.timeout(5000);
+      this.slider.loop = true;
 
-    //   for (let i = 0; i < steps; i++) {
-    //     await wcutils.delay(interval);
+      await wcutils.flush();
 
-    //     mouseX -= increment;
-    //     simulant.fire(window, 'mousemove', {
-    //       clientX: mouseX,
-    //       clientY: 0,
-    //     });
-    //   }
+      await swipe(this.slider, 'short', 'left');
+      expect(this.slider.selected).to.equal(numberOfSlides - 1);
 
-    //   // Pause
-    //   await wcutils.delay(200);
+      await wcutils.flush();
 
-    //   simulant.fire(window, 'mouseup', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
+      await swipe(this.slider, 'short', 'right');
+      expect(this.slider.selected).to.equal(0);
+    });
 
-    //   await wcutils.flush();
+    it('nothing happens when drag is disabled', async function() {
+      this.timeout(5000);
+      this.slider.disableDrag = true;
 
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-    //   expect(this.slider.selected).to.equal(0);
-    // });
+      await wcutils.flush();
 
-    // it('a paused long swipe triggers a change in the selected slide', async function() {
-    //   const carouselWidth = this.slider.getBoundingClientRect().width;
-
-    //   let mouseX = 10;
-
-    //   const distanceTravelled = carouselWidth * 0.8;
-    //   const steps = 5;
-    //   const interval = 30 / steps;
-    //   const increment = distanceTravelled / steps;
-
-    //   simulant.fire(this.slider._externalWrapper, 'mousedown', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
-
-    //   for (let i = 0; i < steps; i++) {
-    //     await wcutils.delay(interval);
-
-    //     mouseX -= increment;
-    //     simulant.fire(window, 'mousemove', {
-    //       clientX: mouseX,
-    //       clientY: 0,
-    //     });
-    //   }
-
-    //   // Pause
-    //   await wcutils.delay(200);
-
-    //   simulant.fire(window, 'mouseup', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-    //   expect(this.slider.selected).to.equal(1);
-    // });
-
-    // it('swipe gestures when loop is active', async function() {
-    //   this.slider.loop = true;
-
-    //   await wcutils.flush();
-
-    //   const carouselWidth = this.slider.getBoundingClientRect().width;
-
-    //   let mouseX = 10;
-
-    //   const distanceTravelled = carouselWidth * 0.4;
-    //   const steps = 5;
-    //   const interval = 30 / steps;
-    //   const increment = distanceTravelled / steps;
-
-    //   simulant.fire(this.slider._externalWrapper, 'mousedown', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
-
-    //   for (let i = 0; i < steps; i++) {
-    //     await wcutils.delay(interval);
-
-    //     mouseX += increment;
-    //     simulant.fire(window, 'mousemove', {
-    //       clientX: mouseX,
-    //       clientY: 0,
-    //     });
-    //   }
-
-    //   simulant.fire(window, 'mouseup', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-    //   expect(this.slider.selected).to.equal(numberOfSlides - 1);
-
-    //   await wcutils.delay(1000);
-
-    //   simulant.fire(this.slider._externalWrapper, 'mousedown', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.not.be.null;
-
-    //   for (let i = 0; i < steps; i++) {
-    //     await wcutils.delay(interval);
-
-    //     mouseX -= increment;
-    //     simulant.fire(window, 'mousemove', {
-    //       clientX: mouseX,
-    //       clientY: 0,
-    //     });
-    //   }
-
-    //   simulant.fire(window, 'mouseup', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-    //   expect(this.slider.selected).to.equal(0);
-    // });
-
-    // it('nothing happens when drag is disabled', async function() {
-    //   this.slider.disableDrag = true;
-
-    //   await wcutils.flush();
-
-    //   const carouselWidth = this.slider.getBoundingClientRect().width;
-
-    //   let mouseX = 10;
-
-    //   const distanceTravelled = carouselWidth * 0.4;
-    //   const steps = 5;
-    //   const interval = 30 / steps;
-    //   const increment = distanceTravelled / steps;
-
-    //   simulant.fire(this.slider._externalWrapper, 'mousedown', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-
-    //   for (let i = 0; i < steps; i++) {
-    //     await wcutils.delay(interval);
-
-    //     mouseX -= increment;
-    //     simulant.fire(window, 'mousemove', {
-    //       clientX: mouseX,
-    //       clientY: 0,
-    //     });
-    //   }
-
-    //   simulant.fire(window, 'mouseup', {
-    //     clientX: mouseX,
-    //     clientY: 0,
-    //   });
-
-    //   await wcutils.flush();
-
-    //   expect(this.slider.getAttribute('pointer-down')).to.be.null;
-    //   expect(this.slider.selected).to.equal(0);
-    // });
+      await swipe(this.slider, 'short', 'right');
+      expect(this.slider.selected).to.equal(0);
+    });
   });
 })();
