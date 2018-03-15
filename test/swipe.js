@@ -24,7 +24,7 @@
     });
 
     const swipe = async function(slider, type, direction, withPause) {
-      const distanceTravelled = type === 'short' ? 100 : 740;
+      const distanceTravelled = type === 'short' ? 300 : 740;
 
       const mult = direction === 'right' ? -1 : 1;
 
