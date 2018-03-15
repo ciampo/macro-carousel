@@ -1541,7 +1541,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     const lastPoint = this._trackingPoints[this._trackingPoints.length - 1];
     const firstPoint = this._trackingPoints[0];
     const diffX = (lastPoint.x - firstPoint.x) || 0;
-    console.log(this._trackingPoints.map(p => p.x));
 
     this._selectedIteration =
         Math.floor(this._lastDraggedLayoutIndex / this._slides.length);
@@ -1582,7 +1581,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       if (diffX > 0) {
         slidesToMove -= 1;
       }
-      console.log(`moved by ${slidesToMove}; velocity ${diffX}, ${Math.abs(diffX) / thresholdStep} times the step, wrapper is ${this._wrapperWidth}px`);
 
       // Finally, apply next/prev for [slidesToMove] times and set the new value
       // of selected.
