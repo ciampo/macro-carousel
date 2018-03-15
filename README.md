@@ -1,6 +1,7 @@
 # `<x-slider>`
 
 [![Build Status](https://travis-ci.org/ciampo/x-slider.svg?branch=master)](https://travis-ci.org/ciampo/x-slider)
+[![Coverage Status](https://coveralls.io/repos/github/ciampo/x-slider/badge.svg)](https://coveralls.io/github/ciampo/x-slider)
 
 `<x-slider>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/x-slider/demo/))
 
