@@ -56,7 +56,7 @@
       expect(this.slider.getAttribute('pointer-down')).to.be.null;
       expect(this.slider.selected).to.equal(1);
 
-      await wcutils.delay(1000);
+      // await wcutils.delay(1000);
 
       simulant.fire(this.slider._externalWrapper, 'mousedown', {
         clientX: mouseX,
@@ -91,7 +91,7 @@
 
       // Long swipes between 500 and 800 px give +1
       // Long swipes over 800 px give + 2
-      const distanceTravelled = Math.min(799, Math.max(700, carouselWidth * 0.9));
+      const distanceTravelled = carouselWidth * 0.9;
       const steps = 5;
       const interval = 100 / steps;
       const increment = distanceTravelled / steps;

@@ -24,6 +24,15 @@ window.xSlider.__testonly__.clampAbs = clampAbs;
 window.xSlider.__testonly__.normalizeEvent = normalizeEvent;
 // #endif
 
+
+// A fraction of the slider width, a size used to compute
+// by how many slides whould the slider move after a swipe.
+const _velocityThresholdFactor = 0.5;
+
+// How many slides more than slidesPerView can be swiped
+// at the highest swiped velocity.
+const _velocityMaxAdditionalSlides = 2;
+
 /**
  * An object representing either a touch event or a mouse event.
  * @typedef {object} NormalisedPointerEvent
@@ -302,14 +311,6 @@ class XSlider extends HTMLElement {
      * @private
      */
     this._minDecelVelocity = 20;
-
-    /**
-     * If the velocity is higher than a threshold, the number of slides that
-     * / the carousel is moving by increases by 1.
-     * @type {number}
-     * @private
-     */
-    this._slidesToMoveVelocityThresholds = [500, 800];
 
     /**
      * The value for the friction strength used when decelerating.
@@ -1565,11 +1566,14 @@ Add CSS units to its value to avoid breaking the slides layout.`);
           this._minDecelVelocity, this._maxDecelVelocity);
 
       let slidesToMove = 1;
-      this._slidesToMoveVelocityThresholds.forEach(threshold => {
-        if (Math.abs(diffX) > threshold) {
-          slidesToMove += 1;
-        }
-      });
+
+      // In case the velocity is quite high, move by an additional
+      // number of slides.
+      const thresholdStep = this._wrapperWidth * _velocityThresholdFactor;
+      while (Math.abs(diffX) > thresholdStep * slidesToMove &&
+          slidesToMove < this.slidesPerView + _velocityMaxAdditionalSlides) {
+        slidesToMove += 1;
+      }
 
       // If dragging left, we subtract 1 to slidesToMove, as the current slide
       // would already be a previous slide with respect to where we started
