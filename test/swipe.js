@@ -6,13 +6,15 @@
 
   const numberOfSlides = 4;
 
+  const bodyWidth = 300;
+
   describe('Drag —', function() {
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
       wcutils.appendStyles(`
-      html,body {min-width: 800px}
-      x-slider {width: 800px}`);
+      html,body {min-width: ${bodyWidth}px}
+      x-slider {width: ${bodyWidth}px}`);
       this.container.innerHTML = `
       <x-slider>
         ${[...Array(numberOfSlides).keys()]
@@ -26,11 +28,13 @@
     });
 
     const swipe = async function(slider, type='short', direction='right', withPause=false) {
-      const distanceTravelled = type === 'short' ? 360 : 740;
+      const distanceTravelled = type === 'short' ?
+        bodyWidth * 0.45 : bodyWidth * 0.9;
 
       const mult = direction === 'right' ? -1 : 1;
 
-      const initialMouseX = 400;
+      const initialMouseX = direction === 'right' ?
+        bodyWidth * 0.05 : bodyWidth * 0.95;
       let mouseX = initialMouseX;
 
       simulant.fire(slider._externalWrapper, 'mousedown', {
