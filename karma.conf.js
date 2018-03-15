@@ -8,7 +8,7 @@ module.exports = function(config) {
       'node_modules/simulant/dist/simulant.umd.js',
       'dist/x-slider-test.js',
       'test/helpers/testing-helper.js',
-      'test/swipe.js',
+      'test/*.js',
     ],
     preprocessors: {},
     reporters: ['progress', 'coverage', 'coveralls'],
@@ -17,8 +17,9 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     singleRun: true,
-    browsers: ['FirefoxHeadless'],
+    browsers: ['ChromeHeadless', 'FirefoxHeadless', 'Safari'],
     concurrency: Infinity,
+
     // to avoid DISCONNECTED messages
     browserDisconnectTimeout: 10 * 1000, // default 2000
     browserDisconnectTolerance: 1, // default 0
