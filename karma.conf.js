@@ -17,7 +17,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     singleRun: true,
-    browsers: ['ChromeHeadless', 'FirefoxHeadless', 'Safari'],
+    browsers: ['FirefoxHeadless'],
     concurrency: Infinity,
     // to avoid DISCONNECTED messages
     browserDisconnectTimeout: 10 * 1000, // default 2000

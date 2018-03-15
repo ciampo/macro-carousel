@@ -25,7 +25,7 @@
         });
     });
 
-    const swipe = async function(slider, type, direction, withPause) {
+    const swipe = async function(slider, type='short', direction='right', withPause=false) {
       const distanceTravelled = type === 'short' ? 360 : 740;
 
       const mult = direction === 'right' ? -1 : 1;
