@@ -7,3 +7,7 @@ node_js:
 addons:
   chrome: stable
   firefox: latest
+
+cache:
+  directories:
+    - node_modules

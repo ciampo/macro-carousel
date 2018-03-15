@@ -1570,7 +1570,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       // In case the velocity is quite high, move by an additional
       // number of slides.
       const thresholdStep = this._wrapperWidth * _velocityThresholdFactor;
-      console.log('x-slider', diffX, thresholdStep);
       while (Math.abs(diffX) > thresholdStep * slidesToMove &&
           slidesToMove < this.slidesPerView + _velocityMaxAdditionalSlides) {
         slidesToMove += 1;
@@ -1582,6 +1581,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       if (diffX > 0) {
         slidesToMove -= 1;
       }
+      console.log(`moved by ${slidesToMove}; velocity ${diffX}, ${Math.abs(diffX) / thresholdStep} times the step, wrapper is ${this._wrapperWidth}px`);
 
       // Finally, apply next/prev for [slidesToMove] times and set the new value
       // of selected.
