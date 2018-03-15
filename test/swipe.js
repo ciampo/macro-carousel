@@ -10,7 +10,7 @@
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
-      // wcutils.appendStyles(`x-slider {width: 800px}`);
+      wcutils.appendStyles(`x-slider {width: 800px}`);
       this.container.innerHTML = `
       <x-slider>
         ${[...Array(numberOfSlides).keys()]
@@ -24,11 +24,11 @@
     });
 
     const swipe = async function(slider, type, direction, withPause) {
-      const distanceTravelled = type === 'short' ? 100 : 790;
+      const distanceTravelled = type === 'short' ? 100 : 740;
 
       const mult = direction === 'right' ? -1 : 1;
 
-      const initialMouseX = direction === 'right' ? 0 : 800;
+      const initialMouseX = 400;
       let mouseX = initialMouseX;
 
       simulant.fire(slider._externalWrapper, 'mousedown', {
