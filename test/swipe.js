@@ -29,7 +29,7 @@
 
     const swipe = async function(slider, type='short', direction='right', withPause=false) {
       const distanceTravelled = type === 'short' ?
-        bodyWidth * 0.45 : bodyWidth * 0.9;
+        bodyWidth * 0.45 : bodyWidth * 0.8;
 
       const mult = direction === 'right' ? -1 : 1;
 
@@ -77,17 +77,10 @@
     };
 
     it('swipe gestures change selected slide', async function() {
-      this.timeout(5000);
-
       await wcutils.flush();
 
       await swipe(this.slider, 'short', 'right');
       expect(this.slider.selected).to.equal(1);
-
-      await wcutils.flush();
-
-      await swipe(this.slider, 'short', 'left');
-      expect(this.slider.selected).to.equal(0);
     });
 
     it('very long swipes trigger a bigger change in the selected slide', async function() {
