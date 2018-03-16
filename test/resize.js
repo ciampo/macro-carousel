@@ -34,11 +34,6 @@
 
       // Transitions are disabled while resizing.
       expect(spied).to.have.been.called();
-
-      await wcutils.delay(100);
-
-      // Transitions are enabled again.
-      expect(this.slider._transitioning).to.be.true;
     });
   });
 })();

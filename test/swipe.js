@@ -91,8 +91,6 @@
     });
 
     it('very long swipes trigger a bigger change in the selected slide', async function() {
-      this.timeout(5000);
-
       await wcutils.flush();
 
       await swipe(this.slider, 'long', 'right');
@@ -100,8 +98,6 @@
     });
 
     it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
-      this.timeout(5000);
-
       await wcutils.flush();
 
       await swipe(this.slider, 'short', 'right', true);
@@ -109,8 +105,6 @@
     });
 
     it('a paused long swipe triggers a change in the selected slide', async function() {
-      this.timeout(5000);
-
       await wcutils.flush();
 
       await swipe(this.slider, 'long', 'right', true);
@@ -118,22 +112,15 @@
     });
 
     it('swipe gestures when loop is active', async function() {
-      this.timeout(5000);
       this.slider.loop = true;
 
       await wcutils.flush();
 
       await swipe(this.slider, 'short', 'left');
       expect(this.slider.selected).to.equal(numberOfSlides - 1);
-
-      await wcutils.flush();
-
-      await swipe(this.slider, 'short', 'right');
-      expect(this.slider.selected).to.equal(0);
     });
 
     it('nothing happens when drag is disabled', async function() {
-      this.timeout(5000);
       this.slider.disableDrag = true;
 
       await wcutils.flush();
