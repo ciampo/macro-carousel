@@ -26,6 +26,11 @@ module.exports = function(config) {
     browserNoActivityTimeout: 4 * 60 * 1000, // default 10000
     captureTimeout: 4 * 60 * 1000, // default 60000,
     processKillTimeout: 10 * 1000, // default 2000
+    client: {
+      mocha: {
+        timeout: 6000, // 6 seconds - upped from 2 seconds
+      },
+    },
 
     customLaunchers: {
       FirefoxHeadless: {
