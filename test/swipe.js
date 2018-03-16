@@ -83,43 +83,43 @@
       expect(this.slider.selected).to.equal(1);
     });
 
-    it('very long swipes trigger a bigger change in the selected slide', async function() {
-      await wcutils.flush();
+    // it('very long swipes trigger a bigger change in the selected slide', async function() {
+    //   await wcutils.flush();
 
-      await swipe(this.slider, 'long', 'right');
-      expect(this.slider.selected).to.equal(2);
-    });
+    //   await swipe(this.slider, 'long', 'right');
+    //   expect(this.slider.selected).to.equal(2);
+    // });
 
-    it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
-      await wcutils.flush();
+    // it('a paused short swipe doesn\'t trigger a change in the selected slide', async function() {
+    //   await wcutils.flush();
 
-      await swipe(this.slider, 'short', 'right', true);
-      expect(this.slider.selected).to.equal(0);
-    });
+    //   await swipe(this.slider, 'short', 'right', true);
+    //   expect(this.slider.selected).to.equal(0);
+    // });
 
-    it('a paused long swipe triggers a change in the selected slide', async function() {
-      await wcutils.flush();
+    // it('a paused long swipe triggers a change in the selected slide', async function() {
+    //   await wcutils.flush();
 
-      await swipe(this.slider, 'long', 'right', true);
-      expect(this.slider.selected).to.equal(1);
-    });
+    //   await swipe(this.slider, 'long', 'right', true);
+    //   expect(this.slider.selected).to.equal(1);
+    // });
 
-    it('swipe gestures when loop is active', async function() {
-      this.slider.loop = true;
+    // it('swipe gestures when loop is active', async function() {
+    //   this.slider.loop = true;
 
-      await wcutils.flush();
+    //   await wcutils.flush();
 
-      await swipe(this.slider, 'short', 'left');
-      expect(this.slider.selected).to.equal(numberOfSlides - 1);
-    });
+    //   await swipe(this.slider, 'short', 'left');
+    //   expect(this.slider.selected).to.equal(numberOfSlides - 1);
+    // });
 
-    it('nothing happens when drag is disabled', async function() {
-      this.slider.disableDrag = true;
+    // it('nothing happens when drag is disabled', async function() {
+    //   this.slider.disableDrag = true;
 
-      await wcutils.flush();
+    //   await wcutils.flush();
 
-      await swipe(this.slider, 'short', 'right');
-      expect(this.slider.selected).to.equal(0);
-    });
+    //   await swipe(this.slider, 'short', 'right');
+    //   expect(this.slider.selected).to.equal(0);
+    // });
   });
 })();
