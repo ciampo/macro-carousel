@@ -27,7 +27,7 @@ window.xSlider.__testonly__.normalizeEvent = normalizeEvent;
 
 // A fraction of the slider width, a size used to compute
 // by how many slides whould the slider move after a swipe.
-const _velocityThresholdFactor = 0.5;
+const _velocityThresholdFactor = 0.45;
 
 // How many slides more than slidesPerView can be swiped
 // at the highest swiped velocity.

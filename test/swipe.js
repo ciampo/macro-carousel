@@ -29,7 +29,7 @@
 
     const swipe = async function(slider, type='short', direction='right', withPause=false) {
       const distanceTravelled = type === 'short' ?
-        bodyWidth * 0.45 : bodyWidth * 0.8;
+        bodyWidth * 0.4 : bodyWidth * 0.8;
 
       const mult = direction === 'right' ? -1 : 1;
 
