@@ -32,11 +32,8 @@
       // Resize event.
       simulant.fire(window, 'resize');
 
-      await wcutils.delay(0);
-
       // Transitions are disabled while resizing.
       expect(spied).to.have.been.called();
-      expect(this.slider._transitioning).to.be.false;
 
       await wcutils.delay(100);
 
