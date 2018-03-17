@@ -8,20 +8,20 @@
     after(wcutils.after());
 
     it('the selected value is still correct', function() {
-      this.container.innerHTML = `<x-slider></x-slider>`;
+      this.container.innerHTML = `<macro-carousel></macro-carousel>`;
 
-      return wcutils.waitForElement('x-slider').then(() => {
-        expect(document.querySelector('x-slider').selected)
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        expect(document.querySelector('macro-carousel').selected)
             .to.equal(0);
       });
     });
 
     it('the slidesPerView value is still correct', function() {
       const slidesPerView = 2;
-      this.container.innerHTML = `<x-slider slides-per-view="${slidesPerView}"></x-slider>`;
+      this.container.innerHTML = `<macro-carousel slides-per-view="${slidesPerView}"></macro-carousel>`;
 
-      return wcutils.waitForElement('x-slider').then(() => {
-        expect(document.querySelector('x-slider').slidesPerView)
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        expect(document.querySelector('macro-carousel').slidesPerView)
             .to.equal(1);
       });
     });

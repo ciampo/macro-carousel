@@ -3,4 +3,4 @@
 npm-debug.log.*
 node_modules
 coverage
-dist/x-slider-test.js
+dist/macro-carousel-test.js

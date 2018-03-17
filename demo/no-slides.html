@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>No slides - x-slider demo</title>
+  <title>No slides - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -17,11 +17,11 @@
     <style>
       /*
         The `No content available` message typography styles (like `color`,
-        `font-*`, ...) can be applied directly to the `x-slider` tag.
+        `font-*`, ...) can be applied directly to the `macro-carousel` tag.
         The fallback message background can be set via the
-        `--x-slider-fallback-message-color-background` CSS Custom Property.
+        `--macro-carousel-fallback-message-color-background` CSS Custom Property.
       */
-      x-slider {
+      macro-carousel {
         height: 300px;
         max-width: 800px;
 
@@ -33,7 +33,7 @@
         font-weight: 300;
         font-size: 1.5rem;
 
-        --x-slider-fallback-message-color-background: #103e69;
+        --macro-carousel-fallback-message-color-background: #103e69;
       }
     </style>
 
@@ -41,7 +41,7 @@
      When there are no slides in the light DOM associated to `slot#slidesSlot`,
      the carousel shows a `No content available` message.
     -->
-    <x-slider></x-slider>
+    <macro-carousel></macro-carousel>
   </template>
 
   <script defer src="js/third-party/inert.min.js"></script>

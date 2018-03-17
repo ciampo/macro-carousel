@@ -5,17 +5,17 @@
   const expect = chai.expect;
 
   const getSelectedEvent = el => new Promise(resolve => {
-    el.addEventListener('x-slider-selected-changed', resolve, {once: true});
+    el.addEventListener('macro-carousel-selected-changed', resolve, {once: true});
   });
 
-  describe('The x-slider-selected-changed event is fired', function() {
+  describe('The macro-carousel-selected-changed event is fired', function() {
     before(wcutils.before());
     after(wcutils.after());
 
     it('when the element is initialised', async function() {
-      this.container.innerHTML = `<x-slider><div>Slide 1</div></x-slider>`;
+      this.container.innerHTML = `<macro-carousel><div>Slide 1</div></macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const event = await getSelectedEvent(slider);
       expect(event.detail).to.equal(0);
     });
@@ -25,10 +25,10 @@
 
       const selected = 1;
       this.container.innerHTML = `
-<x-slider selected="${selected}">
+<macro-carousel selected="${selected}">
   <div>Slide 1</div>
   <div>Slide 2</div>
-</x-slider>`;
+</macro-carousel>`;
 
       const event = await evListenerPromise;
       expect(event.detail).to.equal(selected);
@@ -36,7 +36,7 @@
 
     it('when creating the element programmatically', async function() {
       const slide = document.createElement('article');
-      const slider = document.createElement('x-slider');
+      const slider = document.createElement('macro-carousel');
       slider.appendChild(slide);
       this.container.appendChild(slider);
 
@@ -47,13 +47,13 @@
 
     it('when setting selected programmatically', async function() {
       this.container.innerHTML = `
-<x-slider>
+<macro-carousel>
   <div>Slide 1</div>
   <div>Slide 2</div>
   <div>Slide 3</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
       slider.selected = 2;
@@ -64,12 +64,12 @@
 
     it('when calling next()', async function() {
       this.container.innerHTML = `
-<x-slider>
+<macro-carousel>
   <div>Slide 1</div>
   <div>Slide 2</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const selecter = slider.selected;
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
@@ -81,12 +81,12 @@
 
     it('when calling previous()', async function() {
       this.container.innerHTML = `
-<x-slider selected="1">
+<macro-carousel selected="1">
   <div>Slide 1</div>
   <div>Slide 2</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const selecter = slider.selected;
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
@@ -98,12 +98,12 @@
 
     it('when calling previous()', async function() {
       this.container.innerHTML = `
-<x-slider selected="1">
+<macro-carousel selected="1">
   <div>Slide 1</div>
   <div>Slide 2</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const selecter = slider.selected;
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
@@ -115,13 +115,13 @@
 
     it('when removing slides', async function() {
       this.container.innerHTML = `
-<x-slider selected="2">
+<macro-carousel selected="2">
   <div class="slide">Slide 1</div>
   <div>Slide 2</div>
   <div>Slide 3</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
       const slide = document.querySelector('.slide');
@@ -133,15 +133,15 @@
 
     it('when changing slidesPerView', async function() {
       this.container.innerHTML = `
-<x-slider selected="4">
+<macro-carousel selected="4">
   <div>Slide 1</div>
   <div>Slide 2</div>
   <div>Slide 3</div>
   <div>Slide 4</div>
   <div>Slide 5</div>
-</x-slider>`;
+</macro-carousel>`;
 
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       await wcutils.flush();
       const evListenerPromise = getSelectedEvent(slider);
       slider.slidesPerView = 3;

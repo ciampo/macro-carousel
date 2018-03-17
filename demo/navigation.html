@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Default navigation - x-slider demo</title>
+  <title>Default navigation - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -15,9 +15,9 @@
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         height: 300px;
-        padding: 0 calc(10px + var(--x-slider-navigation-button-size));
+        padding: 0 calc(10px + var(--macro-carousel-navigation-button-size));
         margin: 0 10px;
       }
 
@@ -36,12 +36,12 @@
     </style>
 
     <!-- `navigation` adds previous and next buttons -->
-    <x-slider navigation>
+    <macro-carousel navigation>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
-    </x-slider>
+    </macro-carousel>
   </template>
 
   <script defer src="js/third-party/inert.min.js"></script>

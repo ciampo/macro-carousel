@@ -29,16 +29,16 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-      <x-slider navigation>
+      <macro-carousel navigation>
         ${[...Array(numberOfSlides).keys()]
             .map(i => `<article>Slide ${i}</article>`)
             .join('\n')}
-      </x-slider>`;
-      return wcutils.waitForElement('x-slider')
+      </macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
-          this.previousBtn = this.slider.querySelector('.x-slider-previous');
-          this.nextBtn = this.slider.querySelector('.x-slider-next');
+          this.slider = this.container.querySelector('macro-carousel');
+          this.previousBtn = this.slider.querySelector('.macro-carousel-previous');
+          this.nextBtn = this.slider.querySelector('.macro-carousel-next');
         });
     });
 
@@ -63,16 +63,16 @@
 
     it('are added and then removed from the light DOM when setting navigation to true and then false', async function() {
       this.container.innerHTML = `
-          <x-slider navigation>
+          <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      let previousBtn = this.container.querySelector('.x-slider-previous');
-      let nextBtn = this.container.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      let previousBtn = this.container.querySelector('.macro-carousel-previous');
+      let nextBtn = this.container.querySelector('.macro-carousel-next');
 
       expect(previousBtn.constructor.name).to.equal('XSliderNavButton');
       expect(nextBtn.constructor.name).to.equal('XSliderNavButton');
@@ -80,8 +80,8 @@
       slider.navigation = false;
       await window.wcutils.flush();
 
-      previousBtn = this.container.querySelector('.x-slider-previous');
-      nextBtn = this.container.querySelector('.x-slider-next');
+      previousBtn = this.container.querySelector('.macro-carousel-previous');
+      nextBtn = this.container.querySelector('.macro-carousel-next');
 
       expect(previousBtn).to.be.null;
       expect(nextBtn).to.be.null;
@@ -89,16 +89,16 @@
 
     it('are added and then removed from the light DOM when setting navigation to false and then true', async function() {
       this.container.innerHTML = `
-          <x-slider>
+          <macro-carousel>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      let previousBtn = this.container.querySelector('.x-slider-previous');
-      let nextBtn = this.container.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      let previousBtn = this.container.querySelector('.macro-carousel-previous');
+      let nextBtn = this.container.querySelector('.macro-carousel-next');
 
       expect(previousBtn).to.be.null;
       expect(nextBtn).to.be.null;
@@ -106,8 +106,8 @@
       slider.navigation = true;
       await window.wcutils.flush();
 
-      previousBtn = this.container.querySelector('.x-slider-previous');
-      nextBtn = this.container.querySelector('.x-slider-next');
+      previousBtn = this.container.querySelector('.macro-carousel-previous');
+      nextBtn = this.container.querySelector('.macro-carousel-next');
 
       expect(previousBtn.constructor.name).to.equal('XSliderNavButton');
       expect(nextBtn.constructor.name).to.equal('XSliderNavButton');
@@ -115,16 +115,16 @@
 
     it('selects the previous and next slide when clicked', async function() {
       this.container.innerHTML = `
-          <x-slider navigation>
+          <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      const previousBtn = slider.querySelector('.x-slider-previous');
-      const nextBtn = slider.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      const previousBtn = slider.querySelector('.macro-carousel-previous');
+      const nextBtn = slider.querySelector('.macro-carousel-next');
 
       // Next all the way
       [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
@@ -143,16 +143,16 @@
 
     it('selects the previous and next slide when spacebar is pressed', async function() {
       this.container.innerHTML = `
-          <x-slider navigation>
+          <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      const previousBtn = slider.querySelector('.x-slider-previous');
-      const nextBtn = slider.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      const previousBtn = slider.querySelector('.macro-carousel-previous');
+      const nextBtn = slider.querySelector('.macro-carousel-next');
 
       // Next all the way
       [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
@@ -171,16 +171,16 @@
 
     it('selects the previous and next slide when enter key is pressed', async function() {
       this.container.innerHTML = `
-          <x-slider navigation>
+          <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      const previousBtn = slider.querySelector('.x-slider-previous');
-      const nextBtn = slider.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      const previousBtn = slider.querySelector('.macro-carousel-previous');
+      const nextBtn = slider.querySelector('.macro-carousel-next');
 
       // Next all the way
       [...Array(numberOfSlides).keys()].forEach(selectedIndex => {
@@ -204,15 +204,15 @@
 
     it('is updated when appending slides', async function() {
       this.container.innerHTML = `
-          <x-slider navigation selected="${numberOfSlides - 1}">
+          <macro-carousel navigation selected="${numberOfSlides - 1}">
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      const nextBtn = slider.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      const nextBtn = slider.querySelector('.macro-carousel-next');
 
       expect(nextBtn.disabled).to.be.true;
 
@@ -225,15 +225,15 @@
 
     it('is updated when removing slides', async function() {
       this.container.innerHTML = `
-          <x-slider navigation selected="${numberOfSlides - 2}">
+          <macro-carousel navigation selected="${numberOfSlides - 2}">
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
-      const nextBtn = slider.querySelector('.x-slider-next');
+      const slider = this.container.querySelector('macro-carousel');
+      const nextBtn = slider.querySelector('.macro-carousel-next');
 
       expect(nextBtn.disabled).to.be.false;
 

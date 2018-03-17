@@ -23,21 +23,21 @@
   ];
 
   const getPaginationIndicators = (container) =>
-      container.querySelectorAll('x-slider-pagination-indicator[slot="paginationSlot"]');
+      container.querySelectorAll('macro-carousel-pagination-indicator[slot="paginationSlot"]');
 
   describe('There should be', function() {
     before(wcutils.before());
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-      <x-slider pagination>
+      <macro-carousel pagination>
         ${[...Array(numberOfSlides).keys()]
             .map(i => `<article>Slide ${i}</article>`)
             .join('\n')}
-      </x-slider>`;
-      return wcutils.waitForElement('x-slider')
+      </macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
         });
     });
 
@@ -63,14 +63,14 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-      <x-slider pagination>
+      <macro-carousel pagination>
         ${[...Array(numberOfSlides).keys()]
             .map(i => `<article>Slide ${i}</article>`)
             .join('\n')}
-      </x-slider>`;
-      return wcutils.waitForElement('x-slider')
+      </macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
         });
     });
 
@@ -105,14 +105,14 @@
 
     it('are added and then removed from the light DOM when setting pagination to true and then false', async function() {
       this.container.innerHTML = `
-          <x-slider pagination>
+          <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       expect(paginationIndicators.length).to.equal(numberOfSlides);
@@ -128,14 +128,14 @@
 
     it('are added and then removed from the light DOM when setting pagination to false and then true', async function() {
       this.container.innerHTML = `
-          <x-slider>
+          <macro-carousel>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       expect(paginationIndicators.length).to.equal(0);
@@ -151,14 +151,14 @@
 
     it('are always in sync with the number of slides', async function() {
       this.container.innerHTML = `
-          <x-slider pagination>
+          <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       expect(paginationIndicators.length).to.equal(numberOfSlides);
@@ -184,14 +184,14 @@
 
     it('select the corresponding slide when clicked', async function() {
       this.container.innerHTML = `
-          <x-slider pagination>
+          <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way
@@ -203,14 +203,14 @@
 
     it('select the corresponding slide when spacebar is pressed', async function() {
       this.container.innerHTML = `
-          <x-slider pagination>
+          <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way
@@ -222,14 +222,14 @@
 
     it('select the corresponding slide when enter key is pressed', async function() {
       this.container.innerHTML = `
-          <x-slider pagination>
+          <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
                 .map(i => `<article>Slide ${i}</article>`)
                 .join('\n')}
-          </x-slider>`;
-      await wcutils.waitForElement('x-slider');
+          </macro-carousel>`;
+      await wcutils.waitForElement('macro-carousel');
 
-      const slider = this.container.querySelector('x-slider');
+      const slider = this.container.querySelector('macro-carousel');
       let paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way

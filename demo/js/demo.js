@@ -43,7 +43,7 @@ var stampTemplate = function(template) {
   document.body.appendChild(template.content.cloneNode(true));
 
   // Append a second time to show the highlighted code snippet.
-  // For some reason, prismjs doesn't automatically get the `x-slider`
+  // For some reason, prismjs doesn't automatically get the `macro-carousel`
   // tagName, so to work around the problem I use its APIs imperatively
   // and I use innerHTML to get the right text to highlight.
   var pre = document.createElement('pre');
@@ -58,7 +58,7 @@ var stampTemplate = function(template) {
   document.body.appendChild(pre);
 };
 
-// Download x-slider once the WebCompomnents polyfills have downloaded.
+// Download macro-carousel once the WebCompomnents polyfills have downloaded.
 var onWCReady = function() {
   var demoTemplate = document.querySelector('#demoTemplate');
   stampTemplate(demoTemplate);
@@ -67,7 +67,7 @@ var onWCReady = function() {
   var useEs5 = /es5/.test(window.location.href);
   var useDev = /localhost/.test(window.location.href) ||
       getQueryParamValue('dev') === 'true';
-  var filename = 'x-slider';
+  var filename = 'macro-carousel';
   if (useEs5) {
     filename += '.es5';
   }

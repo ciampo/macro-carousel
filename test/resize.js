@@ -11,14 +11,14 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-      <x-slider>
+      <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
             .map(i => `<article>Slide ${i}</article>`)
             .join('\n')}
-      </x-slider>`;
-      return wcutils.waitForElement('x-slider')
+      </macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
         });
     });
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Complete - x-slider demo</title>
+  <title>Complete - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -15,17 +15,17 @@
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         /*
         * Leverage padding and margin to decide how much horizontal space
         * around the navigation arrows.
         */
-        padding: 0 calc(10px + var(--x-slider-navigation-button-size));
+        padding: 0 calc(10px + var(--macro-carousel-navigation-button-size));
         margin: 0 10px;
 
-        --x-slider-gap: 1rem;
-        --x-slider-slide-min-height: 300px;
-        --x-slider-pagination-size: 10px;
+        --macro-carousel-gap: 1rem;
+        --macro-carousel-slide-min-height: 300px;
+        --macro-carousel-pagination-size: 10px;
       }
 
       .slide {
@@ -73,7 +73,7 @@
       }
     </style>
 
-    <x-slider
+    <macro-carousel
         selected="1"
         navigation
         pagination
@@ -121,14 +121,14 @@
         <span>10</span>
         <button>Click me</button>
       </article>
-    </x-slider>
+    </macro-carousel>
 
     <p>Currently selected slide: <span id="selected"></span></p>
 
     <script>
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const selectedIndicator = document.querySelector('#selected');
-      slider.addEventListener('x-slider-selected-changed', e => {
+      slider.addEventListener('macro-carousel-selected-changed', e => {
         selectedIndicator.textContent = e.detail;
       });
     </script>

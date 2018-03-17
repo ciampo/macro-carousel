@@ -6,7 +6,7 @@ module.exports = function(config) {
     files: [
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
       'node_modules/simulant/dist/simulant.umd.js',
-      'dist/x-slider-test.js',
+      'dist/macro-carousel-test.js',
       'test/helpers/testing-helper.js',
       'test/*.js',
     ],
@@ -43,7 +43,7 @@ module.exports = function(config) {
 
     // Code coverage options
     preprocessors: {
-      'dist/x-slider-test.js': [
+      'dist/macro-carousel-test.js': [
         'coverage',
       ],
     },

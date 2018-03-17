@@ -13,14 +13,14 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-<x-slider>
+<macro-carousel>
   <article>Slide 1</article>
   <article>Slide 2</article>
   <article>Slide 3</article>
-</x-slider>`;
-      return wcutils.waitForElement('x-slider')
+</macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
           this.wrapper = this.slider._slidesWrapper;
           this.slides = this.container.querySelectorAll('article');
         });
@@ -63,7 +63,7 @@
 
       const firstSlide = document.querySelector('article');
       const slidesWidth = firstSlide.getBoundingClientRect().width;
-      const slidesGap = parseInt(window.wcutils.getCSSCustomProperty(this.slider, '--x-slider-gap'));
+      const slidesGap = parseInt(window.wcutils.getCSSCustomProperty(this.slider, '--macro-carousel-gap'));
 
       const expectedWrapperTranslate = `${- this.slider.selected * (slidesGap + slidesWidth)}px, 0px`;
       expect(wrapperTransformObj.translate).to.equal(expectedWrapperTranslate);
@@ -137,8 +137,8 @@
       this.slider.navigation = true;
       await window.wcutils.flush();
 
-      const prevBtn = this.slider.querySelector('.x-slider-previous');
-      const nextBtn = this.slider.querySelector('.x-slider-next');
+      const prevBtn = this.slider.querySelector('.macro-carousel-previous');
+      const nextBtn = this.slider.querySelector('.macro-carousel-next');
 
       expect(prevBtn.getAttribute('aria-label')).to.equal('Go to previous item');
       expect(nextBtn.getAttribute('aria-label')).to.equal('Go to next item');

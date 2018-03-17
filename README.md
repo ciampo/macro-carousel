@@ -1,13 +1,13 @@
-# `<x-slider>`
+# `<macro-carousel>`
 
-[![Build Status](https://travis-ci.org/ciampo/x-slider.svg?branch=master)](https://travis-ci.org/ciampo/x-slider)
-[![Coverage Status](https://coveralls.io/repos/github/ciampo/x-slider/badge.svg)](https://coveralls.io/github/ciampo/x-slider)
+[![Build Status](https://travis-ci.org/ciampo/macro-carousel.svg?branch=master)](https://travis-ci.org/ciampo/macro-carousel)
+[![Coverage Status](https://coveralls.io/repos/github/ciampo/macro-carousel/badge.svg)](https://coveralls.io/github/ciampo/macro-carousel)
 
-`<x-slider>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/x-slider/demo/))
+`<macro-carousel>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/macro-carousel/demo/))
 
 Latest version: `0.9.1`
 
-**Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/x-slider/milestone/1) !**
+**Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/macro-carousel/milestone/1) !**
 
 - Compatible with every framework
 - Public APIs exposed as methods, events and properties/attributes
@@ -34,27 +34,27 @@ Run `npm run start` to start a local dev server and open the `demo/` page in you
 
 ## Usage
 
-Please read the [full documentation](./docs/x-slider.md)
+Please read the [full documentation](./docs/macro-carousel.md)
 
 ```html
-<x-slider>
+<macro-carousel>
   <div>First slide</div>
   <div>Second slide</div>
   <div>Third slide</div>
-</x-slider>
+</macro-carousel>
 
-<script src="x-slider.min.js" defer></script>
+<script src="macro-carousel.min.js" defer></script>
 ```
 
-For more examples, look at the demos ([Live demo](https://ciampo.github.io/x-slider/demo/), [Demo code](./demo/))
+For more examples, look at the demos ([Live demo](https://ciampo.github.io/macro-carousel/demo/), [Demo code](./demo/))
 
 ## Browser support
 
 ### WebComponent Polyfills suite
 
-In order for this Web Component to work on all evergreen browsers, you may need to add the [WebComponent polyfills suite](https://github.com/webcomponents/webcomponentsjs) to your page. (*Please note that this repository focuses on the `x-slider` Web Component, and not on the polyfills*)
+In order for this Web Component to work on all evergreen browsers, you may need to add the [WebComponent polyfills suite](https://github.com/webcomponents/webcomponentsjs) to your page. (*Please note that this repository focuses on the `macro-carousel` Web Component, and not on the polyfills*)
 
-All the demos in this repository already make use of the polyfills (by using [`webcomponents-loader.js`](https://github.com/webcomponents/webcomponentsjs#webcomponents-loaderjs)). The source code of the `x-slider` Web Component also makes optional calls to the `ShadyCSS` polyfill.
+All the demos in this repository already make use of the polyfills (by using [`webcomponents-loader.js`](https://github.com/webcomponents/webcomponentsjs#webcomponents-loaderjs)). The source code of the `macro-carousel` Web Component also makes optional calls to the `ShadyCSS` polyfill.
 
 Because of the [`ShadyCSS` polyfill limitations](https://github.com/webcomponents/shadycss#limitations), certain style rules are not applied in polyfilled browsers:
 
@@ -62,13 +62,13 @@ Because of the [`ShadyCSS` polyfill limitations](https://github.com/webcomponent
 - some of the more complex selectors using `:host()` are also not supported. This mainly impact the hover/focus states on navigation buttons.
 - normally, external styles have the priority over the internal Web Component styles. But sometimes, after the polyfill's transformation, some internal selectors end up having a higher specificity then the external ones. This is quite an edge case, but keep an eye for it (e.g.: the [custom navigation demo](./demo/custom-navigation.html) uses the `!important` keyword to force some styles).
 
-For browsers not supporting ES6 classes, the tranpiled ES5 version can be used instead (`x-slider.es5.min.js`), together with the  [`custom-elements-es5-adapter.js`](https://github.com/webcomponents/webcomponentsjs#custom-elements-es5-adapterjs) polyfill. The [es5 demo](./demo/es5.html) shows how to do that.
+For browsers not supporting ES6 classes, the tranpiled ES5 version can be used instead (`macro-carousel.es5.min.js`), together with the  [`custom-elements-es5-adapter.js`](https://github.com/webcomponents/webcomponentsjs#custom-elements-es5-adapterjs) polyfill. The [es5 demo](./demo/es5.html) shows how to do that.
 
 As browser support grows and the polyfills improve, these limitations should become less and less frequent and problematic.
 
 ### Other known cross-browser limitations
 
-In order to change the color of the navigation button arrow, this project makes use of the `mask-image` CSS property. Unofruntaly, when this CSS feature is not supported, the color defined through `--x-slider-navigation-color-focus` is not going to be applied correctly to the arrow.
+In order to change the color of the navigation button arrow, this project makes use of the `mask-image` CSS property. Unofruntaly, when this CSS feature is not supported, the color defined through `--macro-carousel-navigation-color-focus` is not going to be applied correctly to the arrow.
 
 ## Test
 
@@ -76,6 +76,6 @@ Run `npm run test` to run all tests.
 
 ## Whishlist
 
-Please have a look at [the backlog](https://github.com/ciampo/x-slider/milestone/2) to see the plan for the next releases.
+Please have a look at [the backlog](https://github.com/ciampo/macro-carousel/milestone/2) to see the plan for the next releases.
 
 If you have a feature request, feel free to open an issue!

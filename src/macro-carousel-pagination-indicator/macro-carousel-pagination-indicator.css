@@ -26,13 +26,13 @@
 
   display: block;
 
-  width: var(--x-slider-pagination-size-dot);
-  height: var(--x-slider-pagination-size-dot);
+  width: var(--macro-carousel-pagination-size-dot);
+  height: var(--macro-carousel-pagination-size-dot);
 
   border-radius: 50%;
   box-sizing: border-box;
 
-  background-color: var(--x-slider-pagination-color);
+  background-color: var(--macro-carousel-pagination-color);
 
   content: '';
 }
@@ -46,7 +46,7 @@
 }
 
 .content::after {
-  border: var(--x-slider-pagination-border);
+  border: var(--macro-carousel-pagination-border);
 }
 
 :host(:hover) .content::before,
@@ -55,7 +55,7 @@
 }
 
 :host(.selected) .content::after {
-  background-color: var(--x-slider-pagination-color-selected);
-  border: var(--x-slider-pagination-border-selected);
+  background-color: var(--macro-carousel-pagination-color-selected);
+  border: var(--macro-carousel-pagination-border-selected);
 }
 

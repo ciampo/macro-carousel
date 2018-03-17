@@ -1,205 +1,37 @@
-(function () {
-'use strict';
-
-var sliderHtml = "<div id=\"externalWrapper\">\n  <div id=\"slidesWrapper\">\n    <slot id=\"slidesSlot\">\n      <p class=\"slidesFallback\">No content available</p>\n    </slot>\n  </div>\n</div>\n\n<div id=\"navigation\">\n  <slot id=\"navigationSlot\" name=\"navigationSlot\"></slot>\n</div>\n\n<div id=\"pagination\">\n  <slot id=\"paginationSlot\" name=\"paginationSlot\"></slot>\n</div>\n\n<div id=\"aria-live\">\n  <slot id=\"ariaSlot\" name=\"ariaSlot\"></slot>\n</div>\n";
-
-var css = "/*******************************************************************************\n  Host and CSS properties\n*******************************************************************************/\n\n:host {\n  position: relative;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  contain: content;\n\n  --x-slider-gap: 16px;\n\n  --x-slider-background-color: transparent;\n\n  --x-slider-slide-min-height: 0px;\n  --x-slider-slide-max-height: none;\n\n  --x-slider-transition-duration: 0.6s;\n  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);\n\n  --x-slider-navigation-color: #000;\n  --x-slider-navigation-color-focus: var(--x-slider-navigation-color);\n  --x-slider-navigation-color-background: transparent;\n  --x-slider-navigation-color-background-focus: #f0f0f0;\n  --x-slider-navigation-button-size: 48px;\n  --x-slider-navigation-icon-size: 24px;\n  --x-slider-navigation-icon-mask: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E %3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E %3C/svg%3E\");\n\n  --x-slider-pagination-color: #999;\n  --x-slider-pagination-color-selected: #000;\n  --x-slider-pagination-size-clickable: 24px;\n  --x-slider-pagination-size-dot: 8px;\n  --x-slider-pagination-border: 1px solid var(--x-slider-pagination-color);\n  --x-slider-pagination-border-selected: 1px solid var(--x-slider-pagination-color-selected);\n  --x-slider-pagination-gap: 2px;\n  --x-slider-pagination-height: 44px;\n\n  --x-slider-fallback-message-color-background: #fff;\n\n  --x-slider__internal__slides-per-view: 1;\n}\n\n:host([hidden]) {\n  display: none\n}\n\n/* focus-visible polyfill: no outline on :focus when it's not .focus-visible */\n:host-context(.js-focus-visible) :focus:not(.focus-visible),\n:host-context(.js-focus-visible) ::slotted(*:focus:not(.focus-visible)) {\n  outline: 0;\n}\n\n/*******************************************************************************\n  External wrapper: fixed size, containment, bg color, touch-action, pointer.\n*******************************************************************************/\n#externalWrapper {\n  height: 100%;\n\n  overflow: hidden;\n  contain: paint;\n\n  background-color: var(--x-slider-background-color);\n\n  /*\n    https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n  */\n  -ms-touch-action: pan-y pinch-zoom;\n      touch-action: pan-y pinch-zoom;\n\n  cursor: -webkit-grab;\n\n  cursor: grab;\n}\n\n:host([pointer-down]) #externalWrapper {\n  cursor: -webkit-grabbing;\n  cursor: grabbing;\n}\n\n:host([disable-drag]) #externalWrapper,\n:host([disable-drag][pointer-down]) #externalWrapper {\n  cursor: default;\n}\n\n/*******************************************************************************\n  Slides wrapper: flexbox container, is the transitioning element when moving\n  the slides.\n*******************************************************************************/\n#slidesWrapper {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: stretch;\n      -ms-flex-align: stretch;\n          align-items: stretch;\n\n  height: 100%;\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n\n  will-change: transform;\n}\n\n:host([transitioning]) #slidesWrapper {\n  -webkit-transition-property: -webkit-transform;\n  transition-property: -webkit-transform;\n  transition-property: transform;\n  transition-property: transform, -webkit-transform;\n  -webkit-transition-duration: var(--x-slider-transition-duration);\n          transition-duration: var(--x-slider-transition-duration);\n  -webkit-transition-timing-function: var(--x-slider-transition-timing-function);\n          transition-timing-function: var(--x-slider-transition-timing-function);\n}\n\n/*******************************************************************************\n  Slides: width is calculated with a css formula\n*******************************************************************************/\n#slidesWrapper ::slotted(*) {\n  -webkit-box-flex: 0;\n      -ms-flex-positive: 0;\n          flex-grow: 0;\n  -ms-flex-negative: 0;\n      flex-shrink: 0;\n  /* (100% - gap * (slidesPerView - 1)) / slidesPerView */\n  -ms-flex-preferred-size: calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n      flex-basis: calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *\n      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));\n\n  min-height: var(--x-slider-slide-min-height);\n  max-height: var(--x-slider-slide-max-height);\n\n  margin-right: var(--x-slider-gap);\n\n  /*\n   * Enforces the slides to keep their size even if the content requires\n   * a bigger slide size.\n   */\n  overflow: hidden;\n\n  outline: 0;\n\n  -webkit-user-select: none;\n\n     -moz-user-select: none;\n\n      -ms-user-select: none;\n\n          user-select: none;\n}\n\n.slidesFallback {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  margin: 0;\n  padding: .5em 1em;\n\n  width: 100%;\n\n  background-color: var(--x-slider-fallback-message-color-background);\n}\n\n:host([disable-drag]) #slidesWrapper ::slotted(*) {\n  -webkit-user-select: auto;\n     -moz-user-select: auto;\n      -ms-user-select: auto;\n          user-select: auto;\n}\n\n/*******************************************************************************\n  Pagination styles\n*******************************************************************************/\n#pagination {\n  display: none;\n}\n\n:host([pagination]) #pagination {\n  -ms-flex-item-align: center;\n      align-self: center;\n\n  display: -webkit-box;\n\n  display: -ms-flexbox;\n\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  width: 100%;\n  height: var(--x-slider-pagination-height);\n  min-height: var(--x-slider-pagination-size-clickable);\n\n  contain: strict;\n\n  font-size: 0;\n}\n\n#pagination ::slotted(x-slider-pagination-indicator) {\n  width: var(--x-slider-pagination-size-clickable);\n  height: var(--x-slider-pagination-size-clickable);\n\n  margin: 0 calc(var(--x-slider-pagination-gap) / 2);\n  padding: 0;\n\n  font-size: inherit;\n\n  opacity: .8;\n}\n\n\n#pagination ::slotted(x-slider-pagination-indicator:hover),\n#pagination ::slotted(x-slider-pagination-indicator.selected) {\n  opacity: 1;\n}\n\n/*******************************************************************************\n  Navigation styles (rest of styles is in x-slider-nav-button.css)\n*******************************************************************************/\n#navigation {\n  display: none;\n}\n\n:host([navigation]) #navigation {\n  display: block;\n}\n\n#navigation ::slotted(x-slider-nav-button) {\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n          transform: translateY(-50%);\n}\n\n:host([pagination]) #navigation ::slotted(x-slider-nav-button) {\n  top: calc(50% - var(--x-slider-pagination-height) / 2);\n}\n\n#navigation ::slotted(.x-slider-previous) {\n  left: 0;\n}\n\n#navigation ::slotted(.x-slider-next) {\n  right: 0;\n}\n\n/*******************************************************************************\n  aria-live styles\n*******************************************************************************/\n#aria-live ::slotted(*) {\n  position: absolute;\n\n  height: 1px;\n  width: 1px;\n\n  margin: -1px;\n  padding: 0;\n\n  clip: rect(0 0 0 0);\n\n  overflow: hidden;\n\n  border: 0;\n}\n\n/*******************************************************************************\n * Print styles:\n * - Show all slides and stack them vertically\n * - Eliminate the slide gap, show an outline\n * - make sure the page doesn't break a slide in half\n * - hide pagination and navigation buttons\n*******************************************************************************/\n\n@media print {\n  #slidesWrapper ::slotted(*) {\n    margin-right: 0;\n    margin-bottom: .2em;\n\n    outline: 1px solid #000;\n\n    color: #000;\n\n    page-break-inside: avoid;\n  }\n\n  /* Remove the navigational buttons, they provide no context in print */\n   :host([navigation]) #navigation,\n   :host([pagination]) #pagination {\n    display: none;\n  }\n\n  /* Stack the slides */\n  #slidesWrapper {\n    display: block;\n\n    -webkit-transform: none !important;\n\n            transform: none !important;\n    -webkit-transition: 0s;\n    transition: 0s;\n  }\n}\n";
-
-let passiveEvtSupport;
-
-/**
- * Detects browser support for passive event listeners. See
- * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
- * @returns {boolean} True if the browser support passive event listeners.
- * @private
- */
-function _passiveEvtListenersSupported() {
-  if (typeof passiveEvtSupport === 'undefined') {
-    passiveEvtSupport = false;
-    try {
-      const opts = Object.defineProperty({}, 'passive', {
-        get: () => {
-          passiveEvtSupport = true;
-        },
-      });
-      window.addEventListener('test', null, opts);
-    } catch (e) {}
-  }
-
-  return passiveEvtSupport;
-}
-
-/**
- * Returns the event options (including passive if the browser supports it)
- * @param {boolean} isPassive Whether the event is passive or not.
- * @returns {Object|boolean} Based on browser support, returns either an
- * object representing the options (including passive), or a boolean.
- */
-function getEvtListenerOptions(isPassive) {
-  return _passiveEvtListenersSupported() ? {passive: isPassive} : false;
-}
-
-/**
- * Clamps a number between a min and a max.
- * @param {number} x The number to be clamped.
- * @param {number} [min] The min value.
- * @param {number} [max] The max value.
- * @return {number} The clamped number.
- * @throws {RangeError} min must be strictly less than max.
- */
-function clamp(x, min = x, max = x) {
-  let clamped = x;
-
-  if (min > max) {
-    throw new RangeError(`'min' ${min} should be lower than 'max' ${max}`);
-  }
-
-  if (x < min) {
-    clamped = min;
-  }
-
-  if (x > max) {
-    clamped = max;
-  }
-
-  return clamped;
-}
-
-/**
- * Clamps a number according to its absolute value, but still retainig its sign.
- * @param {number} x The number to be clamped.
- * @param {number} [min] The min value.
- * @param {number} [max] The max value.
- * @return {number} The clamped number.
- */
-function clampAbs(x, min, max) {
-  if (x === 0) {
-    throw new RangeError('x must be different from `0`');
-  }
-
-  return x / Math.abs(x) * clamp(Math.abs(x), min, max);
-}
-
-/**
- * Standard setter for a Custom Element boolean property reflected to attribute.
- * @param {HTMLElement} element
- * @param {string} attributeName
- * @param {boolean} flag
- */
-function booleanSetter(element, attributeName, flag) {
-  if (flag) {
-    element.setAttribute(attributeName, '');
-  } else {
-    element.removeAttribute(attributeName);
-  }
-}
-
-/**
- * Standard getter for a Custom Element boolean property reflected to attribute.
- * @param {HTMLElement} element
- * @param {string} attributeName
- * @return {boolean} Whether the element has that specific attribute
- */
-function booleanGetter(element, attributeName) {
-  return element.hasAttribute(attributeName);
-}
-
-/**
- * Standard setter for a Custom Element int property reflected to attribute.
- * @param {HTMLElement} element
- * @param {string} attributeName
- * @param {number} value
- */
-function intSetter(element, attributeName, value) {
-  element.setAttribute(attributeName, value);
-}
-
-/**
- * Standard getter for a Custom Element int property reflected to attribute.
- * @param {HTMLElement} element
- * @param {string} attributeName
- * @param {string} [defaultValue=0]
- * @return {number} Whether the element has that specific attribute
- */
-function intGetter(element, attributeName, defaultValue = 0) {
-  const value = element.getAttribute(attributeName);
-  return value === null ? defaultValue : parseInt(value, 10);
-}
-
-/**
- * An object representing either a touch event or a mouse event.
- * @typedef {object} NormalisedPointerEvent
- * @property {number} x The x coordinate.
- * @property {number} y The y coordinate.
- * @property {?number} id The pointer identifier.
- * @property {MouseEvent|TouchEvent} event The original event object.
- */
-
-/**
- * Normalises touch and mouse events into an object with the same properties.
- * @param {MouseEvent|TouchEvent} ev The mouse or touch event.
- * @returns {NormalisedPointerEvent}
- * @private
- */
-function normalizeEvent(ev) {
-  // touch
-  if (ev.type === 'touchstart' ||
-      ev.type === 'touchmove' ||
-      ev.type === 'touchend') {
-    const touch = ev.targetTouches[0] || ev.changedTouches[0];
-    return {
-      x: touch.clientX,
-      y: touch.clientY,
-      id: touch.identifier,
-      event: ev,
-    };
-
-  // mouse
-  } else {
-      return {
-        x: ev.clientX,
-        y: ev.clientY,
-        id: null,
-        event: ev,
-      };
-  }
-}
-
-/**
- * Gets the value of a CSS Custom property on a HTML Element.
- * @param {HTMLElement} element The element to get the property from.
- * @param {string} propertyName The property name.
- * @return {string} The property value.
- */
-function getCSSCustomProperty(element, propertyName) {
-  const cssStyles = getComputedStyle(element);
-  return String(cssStyles.getPropertyValue(propertyName)).trim();
-}
-
-/**
- * Sets the value of a CSS Custom property on a HTML Element.
- * @param {HTMLElement} element The element to get the property onto.
- * @param {string} propertyName The property name.
- * @param {string|number} propertyValue The property value.
- */
-function setCSSCustomProperty(element, propertyName, propertyValue) {
-  element.style.setProperty(propertyName, propertyValue);
-  if (window.ShadyCSS) {
-    window.ShadyCSS.styleSubtree(element, {[propertyName]: propertyValue});
-  }
-}
+import sliderHtml from './macro-carousel.html';
+import sliderStyles from './macro-carousel.css';
+import {getEvtListenerOptions} from '../passiveEventListeners';
+import {
+  clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
+  normalizeEvent, getCSSCustomProperty, setCSSCustomProperty,
+} from '../utils';
 
 /**
  * Markup and styles.
  */
 const template = document.createElement('template');
-template.innerHTML = `<style>${css}</style> ${sliderHtml}`;
+template.innerHTML = `<style>${sliderStyles}</style> ${sliderHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template, 'x-slider');
+  window.ShadyCSS.prepareTemplate(template, 'macro-carousel');
 }
 
+// #if IS_REMOVE
+window.xSlider = window.xSlider || {};
+window.xSlider.__testonly__ = window.xSlider.__testonly__ || {};
+window.xSlider.__testonly__.clamp = clamp;
+window.xSlider.__testonly__.clampAbs = clampAbs;
+window.xSlider.__testonly__.normalizeEvent = normalizeEvent;
+// #endif
 
+
+// A fraction of the slider width, a size used to compute
+// by how many slides whould the slider move after a swipe.
+const _velocityThresholdFactor = 0.5;
+
+// How many slides more than slidesPerView can be swiped
+// at the highest swiped velocity.
+const _velocityMaxAdditionalSlides = 2;
 
 /**
  * An object representing either a touch event or a mouse event.
@@ -481,14 +313,6 @@ class XSlider extends HTMLElement {
     this._minDecelVelocity = 20;
 
     /**
-     * If the velocity is higher than a threshold, the number of slides that
-     * / the carousel is moving by increases by 1.
-     * @type {number}
-     * @private
-     */
-    this._slidesToMoveVelocityThresholds = [500, 800];
-
-    /**
      * The value for the friction strength used when decelerating.
      * 0 < friction < 1.
      * @type {number}
@@ -580,13 +404,13 @@ class XSlider extends HTMLElement {
     }
 
     if (this.navigation) {
-      this._prevButton.removeEventListener('x-slider-nav-button-clicked', this);
-      this._nextButton.removeEventListener('x-slider-nav-button-clicked', this);
+      this._prevButton.removeEventListener('macro-carousel-nav-button-clicked', this);
+      this._nextButton.removeEventListener('macro-carousel-nav-button-clicked', this);
     }
 
     if (this.pagination) {
       this._paginationIndicators.forEach(p => {
-        p.removeEventListener('x-slider-pagination-indicator-clicked', this);
+        p.removeEventListener('macro-carousel-pagination-indicator-clicked', this);
       });
     }
   }
@@ -611,12 +435,12 @@ class XSlider extends HTMLElement {
       this._onSlidesSlotChange();
 
     // Pagination indicators
-    } else if (e.type === 'x-slider-pagination-indicator-clicked' &&
+    } else if (e.type === 'macro-carousel-pagination-indicator-clicked' &&
         this.pagination) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (e.type === 'x-slider-nav-button-clicked' && this.navigation) {
+    } else if (e.type === 'macro-carousel-nav-button-clicked' && this.navigation) {
       if (e.target === this._prevButton) {
         this.previous();
       } else if (e.target === this._nextButton) {
@@ -801,7 +625,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Fired when the selected slide changes.
-   * @event XSlider#x-slider-selected-changed
+   * @event XSlider#macro-carousel-selected-changed
    * @type {Object}
    * @param {number} detail The index of the new selected slide.
    */
@@ -811,7 +635,7 @@ class XSlider extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#x-slider-selected-changed
+   * @fires XSlider#macro-carousel-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -870,7 +694,7 @@ class XSlider extends HTMLElement {
         this._updatePagination();
         this._updateNavigation();
 
-        this.dispatchEvent(new CustomEvent('x-slider-selected-changed', {
+        this.dispatchEvent(new CustomEvent('macro-carousel-selected-changed', {
           detail: this.selected,
           bubbles: true,
         }));
@@ -1122,8 +946,8 @@ class XSlider extends HTMLElement {
    */
   _getSlidesGap() {
     // Check if gap has unitless values (i.e. values ending with a digit).
-    if (/\d$/.test(getCSSCustomProperty(this, '--x-slider-gap'))) {
-      console.warn(`Warning: it looks like --x-slider-gap has a unitless value.
+    if (/\d$/.test(getCSSCustomProperty(this, '--macro-carousel-gap'))) {
+      console.warn(`Warning: it looks like --macro-carousel-gap has a unitless value.
 Add CSS units to its value to avoid breaking the slides layout.`);
     }
     // Getting the computed style because we need a value in px, while
@@ -1140,7 +964,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   _computeSlidesPerViewLayout() {
     // Used to compute the slides's width.
     setCSSCustomProperty(this,
-        '--x-slider__internal__slides-per-view', `${this.slidesPerView}`);
+        '--macro-carousel__internal__slides-per-view', `${this.slidesPerView}`);
 
     // Recompute the index of the last view (aka max value for `selected`).
     this._lastViewIndex = this._infiniteLoop ? this._slides.length - 1 :
@@ -1289,7 +1113,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       // Remove all the assignedNodes of pagination slot and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
         indicatorEl
-            .removeEventListener('x-slider-pagination-indicator-clicked', this);
+            .removeEventListener('macro-carousel-pagination-indicator-clicked', this);
         this.removeChild(indicatorEl);
       });
       this._paginationIndicators.length = 0;
@@ -1301,11 +1125,11 @@ Add CSS units to its value to avoid breaking the slides layout.`);
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
         for (let i = 0; i <= this._lastViewIndex; i++) {
-          const btn = document.createElement('x-slider-pagination-indicator');
+          const btn = document.createElement('macro-carousel-pagination-indicator');
           btn.textContent = i;
           btn.setAttribute('slot', 'paginationSlot');
           btn.setAttribute('aria-label', `Go to item ${i + 1}`);
-          btn.addEventListener('x-slider-pagination-indicator-clicked', this);
+          btn.addEventListener('macro-carousel-pagination-indicator-clicked', this);
 
           frag.appendChild(btn);
           this._paginationIndicators.push(btn);
@@ -1340,10 +1164,10 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _createNavigationButton(className) {
-    const btn = document.createElement('x-slider-nav-button');
+    const btn = document.createElement('macro-carousel-nav-button');
     btn.classList.add(className);
     btn.setAttribute('slot', 'navigationSlot');
-    btn.addEventListener('x-slider-nav-button-clicked', this);
+    btn.addEventListener('macro-carousel-nav-button-clicked', this);
     if (/next/.test(className)) {
       btn.setAttribute('flipped', '');
     }
@@ -1360,7 +1184,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         this._navigationSlot.assignedNodes().length !== 2)) {
       // remove all navigation slot assigned nodes and their ev listeners
       this._navigationSlot.assignedNodes().forEach(button => {
-        button.removeEventListener('x-slider-nav-button-clicked', this);
+        button.removeEventListener('macro-carousel-nav-button-clicked', this);
         this.removeChild(button);
       });
 
@@ -1371,10 +1195,10 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     if (this.navigation) {
       if (this._navigationSlot.assignedNodes().length !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = this._createNavigationButton('x-slider-previous');
+        this._prevButton = this._createNavigationButton('macro-carousel-previous');
         this.appendChild(this._prevButton);
 
-        this._nextButton = this._createNavigationButton('x-slider-next');
+        this._nextButton = this._createNavigationButton('macro-carousel-next');
         this.appendChild(this._nextButton);
       }
 
@@ -1742,11 +1566,14 @@ Add CSS units to its value to avoid breaking the slides layout.`);
           this._minDecelVelocity, this._maxDecelVelocity);
 
       let slidesToMove = 1;
-      this._slidesToMoveVelocityThresholds.forEach(threshold => {
-        if (Math.abs(diffX) > threshold) {
-          slidesToMove += 1;
-        }
-      });
+
+      // In case the velocity is quite high, move by an additional
+      // number of slides.
+      const thresholdStep = this._wrapperWidth * _velocityThresholdFactor;
+      while (Math.abs(diffX) > thresholdStep * slidesToMove &&
+          slidesToMove < this.slidesPerView + _velocityMaxAdditionalSlides) {
+        slidesToMove += 1;
+      }
 
       // If dragging left, we subtract 1 to slidesToMove, as the current slide
       // would already be a previous slide with respect to where we started
@@ -1812,230 +1639,4 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
-window.customElements.define('x-slider', XSlider);
-
-/**
- * A generic button.
- */
-class XSliderButton extends HTMLElement {
-  /**
-   * Creates a new instance of XSlider.
-   * @constructor
-   */
-  constructor() {
-    /*
-     * Runs anytime a new instance is created (in HTML or JS).
-     * The construtor is a good place to create shadow DOM, though you should
-     * avoid touching any attributes or light DOM children as they may not
-     * be available yet.
-     */
-    super();
-
-    // Get the template property on the actual instance
-    // (and not on the XSliderButton class).
-    const template = Object.getPrototypeOf(this).constructor.template;
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-  }
-
-  /**
-   * `connectedCallback()` fires when the element is inserted into the DOM.
-   * It's a good place to set the initial `role`, `tabindex`, internal state,
-   * and install event listeners.
-   */
-  connectedCallback() {
-    // Shim Shadow DOM styles. This needs to be run in `connectedCallback()`
-    // because if you shim Custom Properties (CSS variables) the element
-    // will need access to its parent node.
-    if (window.ShadyCSS) {
-      window.ShadyCSS.styleElement(this);
-    }
-
-    this._defaultTabIndex = 0;
-
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'button');
-    }
-
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', this._defaultTabIndex);
-    } else {
-      this._defaultTabIndex = this.getAttribute('tabindex');
-    }
-
-    this._upgradeProperty('disabled');
-
-    this.addEventListener('keydown', this);
-    this.addEventListener('click', this);
-  }
-
-  /**
-   * Used for upgrading properties in case this element is upgraded lazily.
-   * See web/fundamentals/architecture/building-components/best-practices#lazy-properties
-   * @param {*} prop
-   * @private
-   */
-  _upgradeProperty(prop) {
-    if (this.hasOwnProperty(prop)) {
-      const value = this[prop];
-      delete this[prop];
-      this[prop] = value;
-    }
-  }
-
-  /**
-   * An array of the observed attributes.
-   * @static
-   */
-  static get observedAttributes() {
-    return [
-      'disabled',
-    ];
-  }
-
-  /**
-   * Whether the button is disabled.
-   * @type {boolean}
-   * @default false
-   */
-  set disabled(flag) {
-    booleanSetter(this, 'disabled', flag);
-  }
-
-  get disabled() {
-    return booleanGetter(this, 'disabled');
-  }
-
-  /**
-   * Called whenever an observedAttribute's value changes.
-   * @param {string} name The attribute's local name.
-   * @param {*} oldValue The attribute's previous value.
-   * @param {*} newValue The attribute's new value.
-   * @private
-   */
-  attributeChangedCallback(name, oldValue, newValue) {
-    switch (name) {
-      case 'disabled':
-        if (oldValue === newValue) {
-          return;
-        }
-
-        if (this.disabled) {
-          this._defaultTabIndex = this.getAttribute('tabindex');
-          this.removeAttribute('tabindex');
-          this.setAttribute('aria-disabled', 'true');
-        } else {
-          this.setAttribute('tabindex', this._defaultTabIndex);
-          this.setAttribute('aria-disabled', 'false');
-        }
-        break;
-    }
-  }
-
-  /**
-   * Defining handleEvent allows to pass `this` as the callback to every
-   * `addEventListener` and `removeEventListener`. This avoids the need of
-   * binding every function. See
-   * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
-   *
-   * @param {Event} e Any event.
-   * @private
-   */
-  handleEvent(e) {
-    if (this.disabled) {
-      e.preventDefault();
-      return;
-    }
-
-    // Click
-    if (e.type === 'click') {
-      this._onClick && this._onClick();
-
-    // Space / Enter
-    } else if (e.type === 'keydown' &&
-        (e.keyCode === 32 || e.keyCode === 13)) {
-      // preventDefault called to avoid page scroll when hitting spacebar.
-      e.preventDefault();
-      this._onClick && this._onClick();
-    }
-  }
-}
-
-var buttonHtml = "<div class=\"content\">\n  <div class=\"icon\"></div>\n</div>\n";
-
-var css$1 = "/*******************************************************************************\n  Host and CSS properties\n*******************************************************************************/\n\n:host {\n  position: relative;\n\n  display: -webkit-inline-box;\n\n  display: -ms-inline-flexbox;\n\n  display: inline-flex;\n  min-width: var(--x-slider-navigation-button-size);\n  min-height: var(--x-slider-navigation-button-size);\n\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n\n  contain: paint;\n}\n\n:host([disabled]) {\n  opacity: .2;\n}\n\n.content,\n.content::before {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n}\n\n.content {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n\n  background-color: var(--x-slider-navigation-color-background);\n}\n\n/*\n * bg colored circle.\n */\n.content::before {\n  z-index: 0;\n\n  background-color: var(--x-slider-navigation-color-background-focus);\n\n  opacity: 0;\n\n  will-change: opacity;\n\n  content: '';\n}\n\n.icon {\n  position: relative;\n\n  z-index: 1;\n\n  width: var(--x-slider-navigation-icon-size);\n  height: var(--x-slider-navigation-icon-size);\n\n  /*\n   * Fallback for when mask-image is not supported:\n   * using the SVG as a background. Only issue, the icon color\n   * won't change.\n  */\n  color: var(--x-slider-navigation-color);\n\n  background: var(--x-slider-navigation-icon-mask);\n}\n\n@supports ((-webkit-mask-image: var(--x-slider-navigation-icon-mask)) or (mask-image: var(--x-slider-navigation-icon-mask))) {\n  .icon {\n    background: var(--x-slider-navigation-color);\n\n    /* References:\n    * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image\n    * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris\n    */\n    -webkit-mask-image: var(--x-slider-navigation-icon-mask);\n            mask-image: var(--x-slider-navigation-icon-mask);\n  }\n}\n\n:host([flipped]) .icon {\n  -webkit-transform: rotateZ(180deg);\n          transform: rotateZ(180deg);\n}\n\n/*\n * Show the bg circle when the button is not disabled and is hovered, active,\n * focused or keyboard-focused (thanks to the focus-visible polyfill).\n */\n:host(:hover:not([disabled])) .content::before,\n:host(:active:not([disabled])) .content::before,\n:host(:focus:not([disabled])) .content::before,\n:host(.focus-visible) .content::before {\n  opacity: 1;\n}\n\n/*\n * Do not show the bg circle if the button is focused (but not active or not hovered)\n * and doesn't have a focused-visible class. This means, do not leave the bg showing\n * after the user clicks on the button.\n */\n:host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .content::before {\n  opacity: 0;\n}\n\n@supports ((-webkit-mask-image: var(--x-slider-navigation-icon-mask)) or (mask-image: var(--x-slider-navigation-icon-mask))) {\n  /*\n   * Same as rules above, but for the icon's color.\n   */\n  :host(:hover:not([disabled])) .icon,\n  :host(:active:not([disabled])) .icon,\n  :host(:focus:not([disabled])) .icon,\n  :host(.focus-visible) .icon {\n    background: var(--x-slider-navigation-color-focus);\n  }\n\n  :host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .icon {\n    background: var(--x-slider-navigation-color);\n  }\n}\n";
-
-const buttonTmpl = document.createElement('template');
-buttonTmpl.innerHTML = `<style>${css$1}</style> ${buttonHtml}`;
-
-if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(buttonTmpl, 'x-slider-nav-button');
-}
-
-/**
- * A navigation button.
- */
-class XSliderNavButton extends XSliderButton {
-  static get template() {
-    return buttonTmpl;
-  }
-
-  /**
-   * Fired when the button is clicked / pressed.
-   * @event XSlider#x-slider-nav-button-clicked
-   * @type {Object}
-   */
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-nav-button-clicked
-   * @private
-   */
-  _onClick() {
-    this.dispatchEvent(new CustomEvent('x-slider-nav-button-clicked'));
-  }
-}
-
-window.customElements.define('x-slider-nav-button', XSliderNavButton);
-
-var indicatorHtml = "<div class=\"content\"></div>\n";
-
-var css$2 = "/*******************************************************************************\n  Host and CSS properties\n*******************************************************************************/\n\n:host {\n  position: relative;\n\n  display: -webkit-inline-box;\n\n  display: -ms-inline-flexbox;\n\n  display: inline-flex;\n\n  border-radius: 50%;\n\n  overflow: hidden;\n\n  cursor: pointer;\n\n  contain: paint;\n}\n\n.content::before,\n.content::after {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n\n  -webkit-transform: translate(-50%, -50%);\n\n          transform: translate(-50%, -50%);\n\n  display: block;\n\n  width: var(--x-slider-pagination-size-dot);\n  height: var(--x-slider-pagination-size-dot);\n\n  border-radius: 50%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n\n  background-color: var(--x-slider-pagination-color);\n\n  content: '';\n}\n\n.content::before {\n  -webkit-transform: translate(-50%, -50%) scale(2);\n          transform: translate(-50%, -50%) scale(2);\n\n  opacity: 0;\n\n  will-change: opacity;\n}\n\n.content::after {\n  border: var(--x-slider-pagination-border);\n}\n\n:host(:hover) .content::before,\n:host(.focus-visible) .content::before {\n  opacity: .2;\n}\n\n:host(.selected) .content::after {\n  background-color: var(--x-slider-pagination-color-selected);\n  border: var(--x-slider-pagination-border-selected);\n}\n\n";
-
-const paginationTmpl = document.createElement('template');
-paginationTmpl.innerHTML = `<style>${css$2}</style> ${indicatorHtml}`;
-
-if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(paginationTmpl,
-      'x-slider-pagination-indicator');
-}
-
-/**
- * A pagination indicator button.
- */
-class XSliderPaginationIndicator extends XSliderButton {
-  static get template() {
-    return paginationTmpl;
-  }
-
-  /**
-   * Fired when the button is clicked / pressed.
-   * @event XSlider#x-slider-pagination-indicator-clicked
-   * @type {Object}
-   */
-
-  /**
-   * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-pagination-indicator-clicked
-   * @private
-   */
-  _onClick() {
-    this.dispatchEvent(
-        new CustomEvent('x-slider-pagination-indicator-clicked'));
-  }
-}
-
-window.customElements.define('x-slider-pagination-indicator',
-    XSliderPaginationIndicator);
-
-}());
+window.customElements.define('macro-carousel', XSlider);

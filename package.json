@@ -1,8 +1,8 @@
 {
-  "name": "x-slider",
+  "name": "macro-carousel",
   "version": "0.9.1",
   "description": "Slider as a vanilla Web Component",
-  "main": "src/x-slider.js",
+  "main": "src/macro-carousel.js",
   "scripts": {
     "bundle-dev": "node_modules/.bin/rollup -c rollup-config/rollup-dev.config.js",
     "bundle-test": "node_modules/.bin/rollup -c rollup-config/rollup-test.config.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ciampo/x-slider.git"
+    "url": "git+https://github.com/ciampo/macro-carousel.git"
   },
   "keywords": [
     "Slider",
@@ -26,9 +26,9 @@
   "author": "Marco Ciampini <marco.ciampo@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ciampo/x-slider/issues"
+    "url": "https://github.com/ciampo/macro-carousel/issues"
   },
-  "homepage": "https://github.com/ciampo/x-slider#readme",
+  "homepage": "https://github.com/ciampo/macro-carousel#readme",
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^1.0.14",
     "autoprefixer": "^7.1.6",

@@ -4,7 +4,7 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
 export default createRollupConfig(
-  'x-slider.js',
+  'macro-carousel.js',
   undefined,
   undefined,
   [

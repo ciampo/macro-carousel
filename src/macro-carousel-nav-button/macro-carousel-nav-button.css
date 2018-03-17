@@ -6,8 +6,8 @@
   position: relative;
 
   display: inline-flex;
-  min-width: var(--x-slider-navigation-button-size);
-  min-height: var(--x-slider-navigation-button-size);
+  min-width: var(--macro-carousel-navigation-button-size);
+  min-height: var(--macro-carousel-navigation-button-size);
 
   border-radius: 50%;
 
@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: center;
 
-  background-color: var(--x-slider-navigation-color-background);
+  background-color: var(--macro-carousel-navigation-color-background);
 }
 
 /*
@@ -45,7 +45,7 @@
 .content::before {
   z-index: 0;
 
-  background-color: var(--x-slider-navigation-color-background-focus);
+  background-color: var(--macro-carousel-navigation-color-background-focus);
 
   opacity: 0;
 
@@ -59,28 +59,28 @@
 
   z-index: 1;
 
-  width: var(--x-slider-navigation-icon-size);
-  height: var(--x-slider-navigation-icon-size);
+  width: var(--macro-carousel-navigation-icon-size);
+  height: var(--macro-carousel-navigation-icon-size);
 
   /*
    * Fallback for when mask-image is not supported:
    * using the SVG as a background. Only issue, the icon color
    * won't change.
   */
-  color: var(--x-slider-navigation-color);
+  color: var(--macro-carousel-navigation-color);
 
-  background: var(--x-slider-navigation-icon-mask);
+  background: var(--macro-carousel-navigation-icon-mask);
 }
 
-@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
+@supports (mask-image: var(--macro-carousel-navigation-icon-mask)) {
   .icon {
-    background: var(--x-slider-navigation-color);
+    background: var(--macro-carousel-navigation-color);
 
     /* References:
     * - https://developer.mozilla.org/en-US/docs/Web/CSS/mask-image
     * - https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
     */
-    mask-image: var(--x-slider-navigation-icon-mask);
+    mask-image: var(--macro-carousel-navigation-icon-mask);
   }
 }
 
@@ -108,7 +108,7 @@
   opacity: 0;
 }
 
-@supports (mask-image: var(--x-slider-navigation-icon-mask)) {
+@supports (mask-image: var(--macro-carousel-navigation-icon-mask)) {
   /*
    * Same as rules above, but for the icon's color.
    */
@@ -116,10 +116,10 @@
   :host(:active:not([disabled])) .icon,
   :host(:focus:not([disabled])) .icon,
   :host(.focus-visible) .icon {
-    background: var(--x-slider-navigation-color-focus);
+    background: var(--macro-carousel-navigation-color-focus);
   }
 
   :host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .icon {
-    background: var(--x-slider-navigation-color);
+    background: var(--macro-carousel-navigation-color);
   }
 }

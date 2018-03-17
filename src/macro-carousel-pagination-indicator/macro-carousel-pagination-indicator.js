@@ -1,13 +1,13 @@
-import XSliderButton from '../x-slider-button/x-slider-button';
-import indicatorHtml from './x-slider-pagination-indicator.html';
-import indicatorStyles from './x-slider-pagination-indicator.css';
+import XSliderButton from '../macro-carousel-button/macro-carousel-button';
+import indicatorHtml from './macro-carousel-pagination-indicator.html';
+import indicatorStyles from './macro-carousel-pagination-indicator.css';
 
 const paginationTmpl = document.createElement('template');
 paginationTmpl.innerHTML = `<style>${indicatorStyles}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
   window.ShadyCSS.prepareTemplate(paginationTmpl,
-      'x-slider-pagination-indicator');
+      'macro-carousel-pagination-indicator');
 }
 
 /**
@@ -20,20 +20,20 @@ class XSliderPaginationIndicator extends XSliderButton {
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event XSlider#x-slider-pagination-indicator-clicked
+   * @event XSlider#macro-carousel-pagination-indicator-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires XSlider#x-slider-pagination-indicator-clicked
+   * @fires XSlider#macro-carousel-pagination-indicator-clicked
    * @private
    */
   _onClick() {
     this.dispatchEvent(
-        new CustomEvent('x-slider-pagination-indicator-clicked'));
+        new CustomEvent('macro-carousel-pagination-indicator-clicked'));
   }
 }
 
-window.customElements.define('x-slider-pagination-indicator',
+window.customElements.define('macro-carousel-pagination-indicator',
     XSliderPaginationIndicator);

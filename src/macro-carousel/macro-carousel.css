@@ -11,36 +11,36 @@
 
   contain: content;
 
-  --x-slider-gap: 16px;
+  --macro-carousel-gap: 16px;
 
-  --x-slider-background-color: transparent;
+  --macro-carousel-background-color: transparent;
 
-  --x-slider-slide-min-height: 0px;
-  --x-slider-slide-max-height: none;
+  --macro-carousel-slide-min-height: 0px;
+  --macro-carousel-slide-max-height: none;
 
-  --x-slider-transition-duration: 0.6s;
-  --x-slider-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --macro-carousel-transition-duration: 0.6s;
+  --macro-carousel-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-  --x-slider-navigation-color: #000;
-  --x-slider-navigation-color-focus: var(--x-slider-navigation-color);
-  --x-slider-navigation-color-background: transparent;
-  --x-slider-navigation-color-background-focus: #f0f0f0;
-  --x-slider-navigation-button-size: 48px;
-  --x-slider-navigation-icon-size: 24px;
-  --x-slider-navigation-icon-mask: svg-load('../arrow-left.svg', fill: #000);
+  --macro-carousel-navigation-color: #000;
+  --macro-carousel-navigation-color-focus: var(--macro-carousel-navigation-color);
+  --macro-carousel-navigation-color-background: transparent;
+  --macro-carousel-navigation-color-background-focus: #f0f0f0;
+  --macro-carousel-navigation-button-size: 48px;
+  --macro-carousel-navigation-icon-size: 24px;
+  --macro-carousel-navigation-icon-mask: svg-load('../arrow-left.svg', fill: #000);
 
-  --x-slider-pagination-color: #999;
-  --x-slider-pagination-color-selected: #000;
-  --x-slider-pagination-size-clickable: 24px;
-  --x-slider-pagination-size-dot: 8px;
-  --x-slider-pagination-border: 1px solid var(--x-slider-pagination-color);
-  --x-slider-pagination-border-selected: 1px solid var(--x-slider-pagination-color-selected);
-  --x-slider-pagination-gap: 2px;
-  --x-slider-pagination-height: 44px;
+  --macro-carousel-pagination-color: #999;
+  --macro-carousel-pagination-color-selected: #000;
+  --macro-carousel-pagination-size-clickable: 24px;
+  --macro-carousel-pagination-size-dot: 8px;
+  --macro-carousel-pagination-border: 1px solid var(--macro-carousel-pagination-color);
+  --macro-carousel-pagination-border-selected: 1px solid var(--macro-carousel-pagination-color-selected);
+  --macro-carousel-pagination-gap: 2px;
+  --macro-carousel-pagination-height: 44px;
 
-  --x-slider-fallback-message-color-background: #fff;
+  --macro-carousel-fallback-message-color-background: #fff;
 
-  --x-slider__internal__slides-per-view: 1;
+  --macro-carousel__internal__slides-per-view: 1;
 }
 
 :host([hidden]) {
@@ -62,7 +62,7 @@
   overflow: hidden;
   contain: paint;
 
-  background-color: var(--x-slider-background-color);
+  background-color: var(--macro-carousel-background-color);
 
   /*
     https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
@@ -90,16 +90,16 @@
   align-items: stretch;
 
   height: 100%;
-  min-height: var(--x-slider-slide-min-height);
-  max-height: var(--x-slider-slide-max-height);
+  min-height: var(--macro-carousel-slide-min-height);
+  max-height: var(--macro-carousel-slide-max-height);
 
   will-change: transform;
 }
 
 :host([transitioning]) #slidesWrapper {
   transition-property: transform;
-  transition-duration: var(--x-slider-transition-duration);
-  transition-timing-function: var(--x-slider-transition-timing-function);
+  transition-duration: var(--macro-carousel-transition-duration);
+  transition-timing-function: var(--macro-carousel-transition-timing-function);
 }
 
 /*******************************************************************************
@@ -109,13 +109,13 @@
   flex-grow: 0;
   flex-shrink: 0;
   /* (100% - gap * (slidesPerView - 1)) / slidesPerView */
-  flex-basis: calc((100% - (var(--x-slider__internal__slides-per-view) - 1) *
-      var(--x-slider-gap)) / var(--x-slider__internal__slides-per-view));
+  flex-basis: calc((100% - (var(--macro-carousel__internal__slides-per-view) - 1) *
+      var(--macro-carousel-gap)) / var(--macro-carousel__internal__slides-per-view));
 
-  min-height: var(--x-slider-slide-min-height);
-  max-height: var(--x-slider-slide-max-height);
+  min-height: var(--macro-carousel-slide-min-height);
+  max-height: var(--macro-carousel-slide-max-height);
 
-  margin-right: var(--x-slider-gap);
+  margin-right: var(--macro-carousel-gap);
 
   /*
    * Enforces the slides to keep their size even if the content requires
@@ -138,7 +138,7 @@
 
   width: 100%;
 
-  background-color: var(--x-slider-fallback-message-color-background);
+  background-color: var(--macro-carousel-fallback-message-color-background);
 }
 
 :host([disable-drag]) #slidesWrapper ::slotted(*) {
@@ -160,19 +160,19 @@
   justify-content: center;
 
   width: 100%;
-  height: var(--x-slider-pagination-height);
-  min-height: var(--x-slider-pagination-size-clickable);
+  height: var(--macro-carousel-pagination-height);
+  min-height: var(--macro-carousel-pagination-size-clickable);
 
   contain: strict;
 
   font-size: 0;
 }
 
-#pagination ::slotted(x-slider-pagination-indicator) {
-  width: var(--x-slider-pagination-size-clickable);
-  height: var(--x-slider-pagination-size-clickable);
+#pagination ::slotted(macro-carousel-pagination-indicator) {
+  width: var(--macro-carousel-pagination-size-clickable);
+  height: var(--macro-carousel-pagination-size-clickable);
 
-  margin: 0 calc(var(--x-slider-pagination-gap) / 2);
+  margin: 0 calc(var(--macro-carousel-pagination-gap) / 2);
   padding: 0;
 
   font-size: inherit;
@@ -181,13 +181,13 @@
 }
 
 
-#pagination ::slotted(x-slider-pagination-indicator:hover),
-#pagination ::slotted(x-slider-pagination-indicator.selected) {
+#pagination ::slotted(macro-carousel-pagination-indicator:hover),
+#pagination ::slotted(macro-carousel-pagination-indicator.selected) {
   opacity: 1;
 }
 
 /*******************************************************************************
-  Navigation styles (rest of styles is in x-slider-nav-button.css)
+  Navigation styles (rest of styles is in macro-carousel-nav-button.css)
 *******************************************************************************/
 #navigation {
   display: none;
@@ -197,21 +197,21 @@
   display: block;
 }
 
-#navigation ::slotted(x-slider-nav-button) {
+#navigation ::slotted(macro-carousel-nav-button) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 
-:host([pagination]) #navigation ::slotted(x-slider-nav-button) {
-  top: calc(50% - var(--x-slider-pagination-height) / 2);
+:host([pagination]) #navigation ::slotted(macro-carousel-nav-button) {
+  top: calc(50% - var(--macro-carousel-pagination-height) / 2);
 }
 
-#navigation ::slotted(.x-slider-previous) {
+#navigation ::slotted(.macro-carousel-previous) {
   left: 0;
 }
 
-#navigation ::slotted(.x-slider-next) {
+#navigation ::slotted(.macro-carousel-next) {
   right: 0;
 }
 

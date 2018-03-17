@@ -1,3 +1,3 @@
 import createRollupConfig from './rollup-base.config';
 
-export default createRollupConfig('x-slider.js');
+export default createRollupConfig('macro-carousel.js');

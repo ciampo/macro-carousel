@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Custom pagination - x-slider demo</title>
+  <title>Custom pagination - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -15,21 +15,21 @@
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         height: 300px;
 
         /* Change the dots color */
-        --x-slider-pagination-color: #ced20c;
+        --macro-carousel-pagination-color: #ced20c;
         /* CHange the aspect of the selected dot */
-        --x-slider-pagination-color-selected: #fff;
-        --x-slider-pagination-border-selected: 2px solid #a39800;
+        --macro-carousel-pagination-color-selected: #fff;
+        --macro-carousel-pagination-border-selected: 2px solid #a39800;
         /* Change the dots size */
-        --x-slider-pagination-size-clickable: 32px;
-        --x-slider-pagination-size-dot: 16px;
+        --macro-carousel-pagination-size-clickable: 32px;
+        --macro-carousel-pagination-size-dot: 16px;
         /* Change the gap between dots */
-        --x-slider-pagination-gap: 6px;
+        --macro-carousel-pagination-gap: 6px;
         /* Change the height of the pagination container */
-        --x-slider-pagination-height: 72px;
+        --macro-carousel-pagination-height: 72px;
       }
 
       .slide {
@@ -47,21 +47,21 @@
     </style>
 
     <!-- `pagination` adds the pagination indicators (dots) -->
-    <x-slider pagination>
+    <macro-carousel pagination>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
-    </x-slider>
-    <p>If the CSS properties to customize the <code>x-slider</code> pagination dots are not enough for your needs, you can always use any custom UI and set the `selected` property.</p>
+    </macro-carousel>
+    <p>If the CSS properties to customize the <code>macro-carousel</code> pagination dots are not enough for your needs, you can always use any custom UI and set the `selected` property.</p>
     <button id="go-to-first">Go to first slide</button>
 
     <script>
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const goToFirstSlideBtn = document.querySelector('#go-to-first');
 
       function onWCReady() {
-        customElements.whenDefined('x-slider').then(() => {
+        customElements.whenDefined('macro-carousel').then(() => {
           goToFirstSlideBtn.addEventListener('click', () => {
             slider.selected = 0;
           });

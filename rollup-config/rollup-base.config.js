@@ -5,7 +5,7 @@ import autoprefixer from 'autoprefixer';
 import replace from 'rollup-plugin-re';
 
 const createRollupConf = (
-    outputFile = 'x-slider.js',
+    outputFile = 'macro-carousel.js',
     postcssPlugins = [],
     htmlOptions = {},
     extraPlugins = [],

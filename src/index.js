@@ -1,3 +1,3 @@
-import './x-slider/x-slider';
-import './x-slider-nav-button/x-slider-nav-button';
-import './x-slider-pagination-indicator/x-slider-pagination-indicator';
+import './macro-carousel/macro-carousel';
+import './macro-carousel-nav-button/macro-carousel-nav-button';
+import './macro-carousel-pagination-indicator/macro-carousel-pagination-indicator';

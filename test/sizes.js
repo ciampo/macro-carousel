@@ -20,14 +20,14 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-      <x-slider>
+      <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
             .map(i => `<article>Slide ${i}</article>`)
             .join('\n')}
-      </x-slider>`;
-      return wcutils.waitForElement('x-slider')
+      </macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
           this.wrapper = this.slider._slidesWrapper;
         });
     });
@@ -37,7 +37,7 @@
         combinationToTest.gap.forEach(gapValue => {
           it(`are correct when the gap is ${gapValue}, selected is ${selectedValue} and slidesPerView is ${slidesPerViewValue}`, async function() {
             // Update gap, force update
-            this.slider.style.setProperty('--x-slider-gap', `${gapValue}px`);
+            this.slider.style.setProperty('--macro-carousel-gap', `${gapValue}px`);
             this.slider.update();
             await wcutils.flush();
 
@@ -70,7 +70,7 @@
             // Get slides width and gap, to then compute expected value
             const firstSlide = document.querySelector('article');
             const slidesWidth = firstSlide.getBoundingClientRect().width;
-            const slidesGap = parseInt(window.wcutils.getCSSCustomProperty(this.slider, '--x-slider-gap'));
+            const slidesGap = parseInt(window.wcutils.getCSSCustomProperty(this.slider, '--macro-carousel-gap'));
 
             // Check slides' gap.
             const expectedSlidesGap = parseInt(window.getComputedStyle(firstSlide)['margin-right']);
@@ -98,16 +98,16 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `
-<x-slider class="slider">
+<macro-carousel class="slider">
   <article class="slide one">Slide 1</article>
   <article class="slide two">Slide 2</article>
   <article class="slide three">Slide 3</article>
   <article class="slide four">Slide 4</article>
   <article class="slide five">Slide 5</article>
-</x-slider>`;
-      return wcutils.waitForElement('x-slider')
+</macro-carousel>`;
+      return wcutils.waitForElement('macro-carousel')
         .then(() => {
-          this.slider = this.container.querySelector('x-slider');
+          this.slider = this.container.querySelector('macro-carousel');
           this.slides = this.slider.querySelectorAll('.slide');
           this.one = this.slides[0];
           this.two = this.slides[1];
@@ -139,7 +139,7 @@
       wcutils.appendStyles(`
       .slider {
         height: ${setHeight}px;
-        --x-slider-slide-min-height: ${minHeight}px;
+        --macro-carousel-slide-min-height: ${minHeight}px;
       }
 
       .four {

@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Events- x-slider demo</title>
+  <title>Events- macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-  <h1 id="title">The <code>x-slider-selected-changed</code> event</h1>
+  <h1 id="title">The <code>macro-carousel-selected-changed</code> event</h1>
   <a id="backToIndex" href="index.html">See all demos</a>
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         height: 300px;
       }
 
@@ -41,21 +41,21 @@
       }
     </style>
 
-    <x-slider selected="2">
+    <macro-carousel selected="2">
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
-    </x-slider>
+    </macro-carousel>
     <p>The (0-based) selected slide index is <span id="selectedIndicator"></span></p>
 
     <script>
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
       const selectedIndicator = document.querySelector('#selectedIndicator');
 
-      // The `x-slider-selected-changed` is fired every time that a new slide
+      // The `macro-carousel-selected-changed` is fired every time that a new slide
       // is selected.
-      slider.addEventListener('x-slider-selected-changed', e => {
+      slider.addEventListener('macro-carousel-selected-changed', e => {
         selectedIndicator.textContent = e.detail;
       });
     </script>

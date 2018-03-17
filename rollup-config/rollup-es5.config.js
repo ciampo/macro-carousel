@@ -6,7 +6,7 @@ import babel from 'rollup-plugin-babel';
 const config = require('../package.json');
 
 export default createRollupConfig(
-  'x-slider.es5.min.js',
+  'macro-carousel.es5.min.js',
   [
     cssnano(),
   ],
@@ -42,7 +42,7 @@ export default createRollupConfig(
       output: {
         beautify: false,
         preamble: `/*!
-  @license https://github.com/ciampo/x-slider/blob/master/LICENSE
+  @license https://github.com/ciampo/macro-carousel/blob/master/LICENSE
   ${config.name} ${config.version}
 */`,
       },

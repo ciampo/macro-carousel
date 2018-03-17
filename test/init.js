@@ -8,18 +8,18 @@
     after(wcutils.after());
 
     it('declarative', function() {
-      this.container.innerHTML = `<x-slider></x-slider>`;
+      this.container.innerHTML = `<macro-carousel></macro-carousel>`;
 
-      return wcutils.waitForElement('x-slider').then(() => {
-        expect(document.querySelector('x-slider').constructor.name)
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        expect(document.querySelector('macro-carousel').constructor.name)
             .to.equal('XSlider');
       });
     });
 
     it('programmatic', function() {
-      const slider = document.createElement('x-slider');
+      const slider = document.createElement('macro-carousel');
 
-      return wcutils.waitForElement('x-slider').then(() => {
+      return wcutils.waitForElement('macro-carousel').then(() => {
         expect(slider.constructor.name).to.equal('XSlider');
       });
     });

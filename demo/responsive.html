@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Responsive - x-slider demo</title>
+  <title>Responsive - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -15,11 +15,11 @@
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         /* Removing the gap bewteen slides */
-        --x-slider-gap: 0px;
+        --macro-carousel-gap: 0px;
         /* Setting a minimum and a maximum height for the slides */
-        --x-slider-slide-min-height: 200px;
+        --macro-carousel-slide-min-height: 200px;
 
         width: 80%;
         margin: 0 auto;
@@ -44,18 +44,18 @@
        * in a similar responsive fashion.
        */
       @media screen and (min-width: 480px) {
-        x-slider {
+        macro-carousel {
           /* Increasing the size of the slides. */
-          --x-slider-slide-min-height: 320px;
+          --macro-carousel-slide-min-height: 320px;
         }
       }
 
       @media screen and (min-width: 768px) {
-        x-slider {
+        macro-carousel {
           width: 100%;
 
           /* Adding a bigger gap as from this resolution slidesPerView is > 1 */
-          --x-slider-gap: 8px;
+          --macro-carousel-gap: 8px;
         }
 
         .slide {
@@ -64,26 +64,26 @@
       }
 
       @media screen and (min-width: 1280px) {
-        x-slider {
+        macro-carousel {
           /* Adding padding in order to make room for the navigation buttons */
           padding: 0 60px;
         }
       }
     </style>
 
-    <x-slider>
+    <macro-carousel>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
       <article class="slide">Slide 5</article>
       <article class="slide">Slide 6</article>
-    </x-slider>
+    </macro-carousel>
 
-    <p>Note that if the width or the height of <code>&lt;x-slider&gt;</code> is changed programmatically (e.g. not caused by a page resize), a call to the <code>update()</code> function is needed in order to have the component functioning correctly.</p>
+    <p>Note that if the width or the height of <code>&lt;macro-carousel&gt;</code> is changed programmatically (e.g. not caused by a page resize), a call to the <code>update()</code> function is needed in order to have the component functioning correctly.</p>
 
     <script>
-      const slider = document.querySelector('x-slider');
+      const slider = document.querySelector('macro-carousel');
 
       // Example of how to define different configations for the value of some
       // of the slider's properties. The matching configuration is applied
@@ -134,7 +134,7 @@
       };
 
       function onWCReady() {
-        customElements.whenDefined('x-slider').then(() => {
+        customElements.whenDefined('macro-carousel').then(() => {
           // Add resize handler.
           window.addEventListener('resize', resizeHandler);
           // Initial setup.

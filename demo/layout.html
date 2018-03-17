@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Layout options - x-slider demo</title>
+  <title>Layout options - macro-carousel demo</title>
 
   <link rel="stylesheet" href="css/third-party/prism.css">
   <link rel="stylesheet" href="css/demo.css">
@@ -15,12 +15,12 @@
 
   <template id="demoTemplate">
     <style>
-      x-slider {
+      macro-carousel {
         /* Removing the gap bewteen slides */
-        --x-slider-gap: 0px;
+        --macro-carousel-gap: 0px;
         /* Setting a minimum and a maximum height for the slides */
-        --x-slider-slide-min-height: 200px;
-        --x-slider-slide-max-height: 400px;
+        --macro-carousel-slide-min-height: 200px;
+        --macro-carousel-slide-max-height: 400px;
 
         /*
          * Horizontal padding ensures that the navigation buttons don't
@@ -55,7 +55,7 @@
        * alignment. CHaning this property also means that the slides won't
        * stretch to fill all the available space in its container — it will
        * therefore assume its minimum height, set via the
-       * --x-slider-slide-min-height property.
+       * --macro-carousel-slide-min-height property.
        */
       .slide:nth-child(1) {
         align-self: flex-start;
@@ -63,7 +63,7 @@
 
       /*
        * This slide will be 400px height (because of the
-       * --x-slider-slide-max-height property).
+       * --macro-carousel-slide-max-height property).
        *
        */
       .slide:nth-child(2) {
@@ -81,14 +81,14 @@
       }
     </style>
 
-    <x-slider slides-per-view="3" navigation>
+    <macro-carousel slides-per-view="3" navigation>
       <article class="slide">Slide 1</article>
       <article class="slide">Slide 2</article>
       <article class="slide">Slide 3</article>
       <article class="slide">Slide 4</article>
       <article class="slide">Slide 5</article>
       <article class="slide">Slide 6</article>
-    </x-slider>
+    </macro-carousel>
   </template>
 
   <script defer src="js/third-party/inert.min.js"></script>

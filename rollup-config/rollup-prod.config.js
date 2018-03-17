@@ -5,7 +5,7 @@ import uglify from 'rollup-plugin-uglify';
 const config = require('../package.json');
 
 export default createRollupConfig(
-  'x-slider.min.js',
+  'macro-carousel.min.js',
   [
     cssnano(),
   ],
@@ -20,7 +20,7 @@ export default createRollupConfig(
       output: {
         beautify: false,
         preamble: `/*!
-  @license https://github.com/ciampo/x-slider/blob/master/LICENSE
+  @license https://github.com/ciampo/macro-carousel/blob/master/LICENSE
   ${config.name} ${config.version}
 */`,
       },
