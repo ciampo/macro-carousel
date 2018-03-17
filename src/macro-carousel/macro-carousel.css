@@ -72,12 +72,11 @@
   cursor: grab;
 }
 
-:host([pointer-down]) #externalWrapper {
+#externalWrapper:active {
   cursor: grabbing;
 }
 
-:host([disable-drag]) #externalWrapper,
-:host([disable-drag][pointer-down]) #externalWrapper {
+:host([disable-drag]) #externalWrapper {
   cursor: default;
 }
 

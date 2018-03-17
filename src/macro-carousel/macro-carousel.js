@@ -1370,8 +1370,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       window.addEventListener('mouseup', this);
       window.addEventListener('touchend', this);
       window.addEventListener('touchcancel', this);
-
-      this.setAttribute('pointer-down', '');
     }
   }
 
@@ -1424,8 +1422,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
-
-    this.removeAttribute('pointer-down');
 
     window.removeEventListener('touchmove', this);
     window.removeEventListener('mousemove', this);

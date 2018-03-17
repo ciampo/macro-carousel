@@ -42,12 +42,6 @@
       });
       await wcutils.delay(0);
 
-      if (slider.disableDrag) {
-        expect(slider.getAttribute('pointer-down')).to.be.null;
-      } else {
-        expect(slider.getAttribute('pointer-down')).to.not.be.null;
-      }
-
       mouseX = mouseX + (mult * distanceTravelled);
 
       simulant.fire(window, 'mousemove', {
@@ -72,8 +66,6 @@
       });
 
       await wcutils.flush();
-
-      expect(slider.getAttribute('pointer-down')).to.be.null;
     };
 
     it('swipe gestures change selected slide', async function() {
