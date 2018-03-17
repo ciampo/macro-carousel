@@ -5,7 +5,7 @@
 
 `<macro-carousel>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/macro-carousel/demo/))
 
-Latest version: `0.9.1`
+Latest version: `0.9.2`
 
 **Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/macro-carousel/milestone/1) !**
 
