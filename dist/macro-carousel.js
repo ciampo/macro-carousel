@@ -1,4 +1,3 @@
-(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
 (function () {
 'use strict';
 
@@ -1979,13 +1978,13 @@ class MacroCarouselNavButton extends MacroCarouselButton {
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event MacroCarousel#macro-carousel-nav-button-clicked
+   * @event MacroCarouselNavButton#macro-carousel-nav-button-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires MacroCarousel#macro-carousel-nav-button-clicked
+   * @fires MacroCarouselNavButton#macro-carousel-nav-button-clicked
    * @private
    */
   _onClick() {
@@ -2017,13 +2016,13 @@ class MacroCarouselPaginationIndicator extends MacroCarouselButton {
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event MacroCarousel#macro-carousel-pagination-indicator-clicked
+   * @event MacroCarouselPaginationIndicator#macro-carousel-pagination-indicator-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires MacroCarousel#macro-carousel-pagination-indicator-clicked
+   * @fires MacroCarouselPaginationIndicator#macro-carousel-pagination-indicator-clicked
    * @private
    */
   _onClick() {
