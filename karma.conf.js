@@ -8,7 +8,7 @@ module.exports = function(config) {
       'node_modules/simulant/dist/simulant.umd.js',
       'dist/macro-carousel-test.js',
       'test/helpers/testing-helper.js',
-      'test/a11y.js',
+      'test/*.js',
     ],
     preprocessors: {},
     reporters: ['progress', 'coverage', 'coveralls'],
