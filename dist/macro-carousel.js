@@ -1,3 +1,4 @@
+(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
 (function () {
 'use strict';
 
@@ -230,9 +231,9 @@ const _velocityMaxAdditionalSlides = 2;
 /**
  * A slider/carousel Web Component.
  */
-class XSlider extends HTMLElement {
+class MacroCarousel extends HTMLElement {
   /**
-   * Creates a new instance of XSlider.
+   * Creates a new instance of MacroCarousel.
    * @constructor
    */
   constructor() {
@@ -563,6 +564,11 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
+
+    // Sometimes the 'slot-changed' event doesn't fire consistently across
+    // browsers, depending on how the Custom Element was parsed and initialised
+    // (see https://github.com/whatwg/dom/issues/447)
+    this._onSlidesSlotChange();
   }
 
   /**
@@ -690,15 +696,6 @@ class XSlider extends HTMLElement {
    * @private
    */
   _internalUpdate() {
-    // Sometimes the 'slot-changed' event doesn't fire consistently across
-    // browsers, depending on how the Custom Element was parsed and initialised
-    // (see https://github.com/whatwg/dom/issues/447)
-    // Here, we're making sure that the `slot-changed callback runs at least
-    // once before the update() function.
-    // if (this._slides.length === 0) {
-    //   this._onSlidesSlotChange();
-    // }
-
     this._computeSizes();
     this._updateInfiniteLoop();
     this._computeSlidesPerViewLayout();
@@ -802,7 +799,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Fired when the selected slide changes.
-   * @event XSlider#macro-carousel-selected-changed
+   * @event MacroCarousel#macro-carousel-selected-changed
    * @type {Object}
    * @param {number} detail The index of the new selected slide.
    */
@@ -812,7 +809,7 @@ class XSlider extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#macro-carousel-selected-changed
+   * @fires MacroCarousel#macro-carousel-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -1812,14 +1809,14 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
-window.customElements.define('macro-carousel', XSlider);
+window.customElements.define('macro-carousel', MacroCarousel);
 
 /**
  * A generic button.
  */
-class XSliderButton extends HTMLElement {
+class MacroCarouselButton extends HTMLElement {
   /**
-   * Creates a new instance of XSlider.
+   * Creates a new instance of MacroCarousel.
    * @constructor
    */
   constructor() {
@@ -1832,7 +1829,7 @@ class XSliderButton extends HTMLElement {
     super();
 
     // Get the template property on the actual instance
-    // (and not on the XSliderButton class).
+    // (and not on the MacroCarouselButton class).
     const template = Object.getPrototypeOf(this).constructor.template;
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -1975,20 +1972,20 @@ if (window.ShadyCSS) {
 /**
  * A navigation button.
  */
-class XSliderNavButton extends XSliderButton {
+class MacroCarouselNavButton extends MacroCarouselButton {
   static get template() {
     return buttonTmpl;
   }
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event XSlider#macro-carousel-nav-button-clicked
+   * @event MacroCarousel#macro-carousel-nav-button-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires XSlider#macro-carousel-nav-button-clicked
+   * @fires MacroCarousel#macro-carousel-nav-button-clicked
    * @private
    */
   _onClick() {
@@ -1996,7 +1993,7 @@ class XSliderNavButton extends XSliderButton {
   }
 }
 
-window.customElements.define('macro-carousel-nav-button', XSliderNavButton);
+window.customElements.define('macro-carousel-nav-button', MacroCarouselNavButton);
 
 var indicatorHtml = "<div class=\"content\"></div>\n";
 
@@ -2013,20 +2010,20 @@ if (window.ShadyCSS) {
 /**
  * A pagination indicator button.
  */
-class XSliderPaginationIndicator extends XSliderButton {
+class MacroCarouselPaginationIndicator extends MacroCarouselButton {
   static get template() {
     return paginationTmpl;
   }
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event XSlider#macro-carousel-pagination-indicator-clicked
+   * @event MacroCarousel#macro-carousel-pagination-indicator-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires XSlider#macro-carousel-pagination-indicator-clicked
+   * @fires MacroCarousel#macro-carousel-pagination-indicator-clicked
    * @private
    */
   _onClick() {
@@ -2036,6 +2033,6 @@ class XSliderPaginationIndicator extends XSliderButton {
 }
 
 window.customElements.define('macro-carousel-pagination-indicator',
-    XSliderPaginationIndicator);
+    MacroCarouselPaginationIndicator);
 
 }());

@@ -17,11 +17,11 @@ if (window.ShadyCSS) {
 }
 
 // #if IS_REMOVE
-window.xSlider = window.xSlider || {};
-window.xSlider.__testonly__ = window.xSlider.__testonly__ || {};
-window.xSlider.__testonly__.clamp = clamp;
-window.xSlider.__testonly__.clampAbs = clampAbs;
-window.xSlider.__testonly__.normalizeEvent = normalizeEvent;
+window.MacroCarousel = window.MacroCarousel || {};
+window.MacroCarousel.__testonly__ = window.MacroCarousel.__testonly__ || {};
+window.MacroCarousel.__testonly__.clamp = clamp;
+window.MacroCarousel.__testonly__.clampAbs = clampAbs;
+window.MacroCarousel.__testonly__.normalizeEvent = normalizeEvent;
 // #endif
 
 
@@ -53,9 +53,9 @@ const _velocityMaxAdditionalSlides = 2;
 /**
  * A slider/carousel Web Component.
  */
-class XSlider extends HTMLElement {
+class MacroCarousel extends HTMLElement {
   /**
-   * Creates a new instance of XSlider.
+   * Creates a new instance of MacroCarousel.
    * @constructor
    */
   constructor() {
@@ -621,7 +621,7 @@ class XSlider extends HTMLElement {
 
   /**
    * Fired when the selected slide changes.
-   * @event XSlider#macro-carousel-selected-changed
+   * @event MacroCarousel#macro-carousel-selected-changed
    * @type {Object}
    * @param {number} detail The index of the new selected slide.
    */
@@ -631,7 +631,7 @@ class XSlider extends HTMLElement {
    * @param {string} name The attribute's local name.
    * @param {*} oldValue The attribute's previous value.
    * @param {*} newValue The attribute's new value.
-   * @fires XSlider#macro-carousel-selected-changed
+   * @fires MacroCarousel#macro-carousel-selected-changed
    * @private
    */
   attributeChangedCallback(name, oldValue, newValue) {
@@ -1631,4 +1631,4 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
-window.customElements.define('macro-carousel', XSlider);
+window.customElements.define('macro-carousel', MacroCarousel);

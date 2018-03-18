@@ -1,13 +1,9 @@
-# `<macro-carousel>`
+# `<macro-carousel>` &middot; [![Build Status](https://travis-ci.org/ciampo/macro-carousel.svg?branch=master)](https://travis-ci.org/ciampo/macro-carousel) [![Coverage Status](https://coveralls.io/repos/github/ciampo/macro-carousel/badge.svg)](https://coveralls.io/github/ciampo/macro-carousel) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ciampo/macro-carousel/blob/master/LICENSE)
+<!-- [![npm version](https://img.shields.io/npm/v/macro-carousel.svg?style=flat)](https://www.npmjs.com/package/react) -->
 
-[![Build Status](https://travis-ci.org/ciampo/macro-carousel.svg?branch=master)](https://travis-ci.org/ciampo/macro-carousel)
-[![Coverage Status](https://coveralls.io/repos/github/ciampo/macro-carousel/badge.svg)](https://coveralls.io/github/ciampo/macro-carousel)
+`<macro-carousel>` is a carousel (*vanilla*) Web Component.
 
-`<macro-carousel>` is a carousel (*vanilla*) Web Component ([DEMOS](https://ciampo.github.io/macro-carousel/demo/))
-
-Latest version: `0.9.2`
-
-**Please note that this is still a WIP — [wait for version 1.0.0](https://github.com/ciampo/macro-carousel/milestone/1) !**
+**[DEMOS](https://ciampo.github.io/macro-carousel/demo/)** | **[DOCS](https://github.com/ciampo/macro-carousel/blob/master/docs/macro-carousel.md)**
 
 - Compatible with every framework
 - Public APIs exposed as methods, events and properties/attributes

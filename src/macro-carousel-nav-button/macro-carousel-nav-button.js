@@ -1,4 +1,4 @@
-import XSliderButton from '../macro-carousel-button/macro-carousel-button';
+import MacroCarouselButton from '../macro-carousel-button/macro-carousel-button';
 import buttonHtml from './macro-carousel-nav-button.html';
 import buttonStyles from './macro-carousel-nav-button.css';
 
@@ -12,20 +12,20 @@ if (window.ShadyCSS) {
 /**
  * A navigation button.
  */
-class XSliderNavButton extends XSliderButton {
+class MacroCarouselNavButton extends MacroCarouselButton {
   static get template() {
     return buttonTmpl;
   }
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event XSlider#macro-carousel-nav-button-clicked
+   * @event MacroCarouselNavButton#macro-carousel-nav-button-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires XSlider#macro-carousel-nav-button-clicked
+   * @fires MacroCarouselNavButton#macro-carousel-nav-button-clicked
    * @private
    */
   _onClick() {
@@ -33,4 +33,4 @@ class XSliderNavButton extends XSliderButton {
   }
 }
 
-window.customElements.define('macro-carousel-nav-button', XSliderNavButton);
+window.customElements.define('macro-carousel-nav-button', MacroCarouselNavButton);

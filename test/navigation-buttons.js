@@ -74,8 +74,8 @@
       let previousBtn = this.container.querySelector('.macro-carousel-previous');
       let nextBtn = this.container.querySelector('.macro-carousel-next');
 
-      expect(previousBtn.constructor.name).to.equal('XSliderNavButton');
-      expect(nextBtn.constructor.name).to.equal('XSliderNavButton');
+      expect(previousBtn.constructor.name).to.equal('MacroCarouselNavButton');
+      expect(nextBtn.constructor.name).to.equal('MacroCarouselNavButton');
 
       slider.navigation = false;
       await window.wcutils.flush();
@@ -109,8 +109,8 @@
       previousBtn = this.container.querySelector('.macro-carousel-previous');
       nextBtn = this.container.querySelector('.macro-carousel-next');
 
-      expect(previousBtn.constructor.name).to.equal('XSliderNavButton');
-      expect(nextBtn.constructor.name).to.equal('XSliderNavButton');
+      expect(previousBtn.constructor.name).to.equal('MacroCarouselNavButton');
+      expect(nextBtn.constructor.name).to.equal('MacroCarouselNavButton');
     });
 
     it('selects the previous and next slide when clicked', async function() {

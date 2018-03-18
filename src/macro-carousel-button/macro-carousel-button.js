@@ -3,9 +3,9 @@ import {booleanSetter, booleanGetter} from '../utils';
 /**
  * A generic button.
  */
-export default class XSliderButton extends HTMLElement {
+export default class MacroCarouselButton extends HTMLElement {
   /**
-   * Creates a new instance of XSlider.
+   * Creates a new instance of MacroCarousel.
    * @constructor
    */
   constructor() {
@@ -18,7 +18,7 @@ export default class XSliderButton extends HTMLElement {
     super();
 
     // Get the template property on the actual instance
-    // (and not on the XSliderButton class).
+    // (and not on the MacroCarouselButton class).
     const template = Object.getPrototypeOf(this).constructor.template;
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(template.content.cloneNode(true));

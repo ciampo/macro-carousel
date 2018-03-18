@@ -116,7 +116,7 @@
       let paginationIndicators = getPaginationIndicators(this.container);
 
       expect(paginationIndicators.length).to.equal(numberOfSlides);
-      expect(paginationIndicators[0].constructor.name).to.equal('XSliderPaginationIndicator');
+      expect(paginationIndicators[0].constructor.name).to.equal('MacroCarouselPaginationIndicator');
 
       slider.pagination = false;
       await window.wcutils.flush();
@@ -146,7 +146,7 @@
       paginationIndicators = getPaginationIndicators(this.container);
 
       expect(paginationIndicators.length).to.equal(numberOfSlides);
-      expect(paginationIndicators[0].constructor.name).to.equal('XSliderPaginationIndicator');
+      expect(paginationIndicators[0].constructor.name).to.equal('MacroCarouselPaginationIndicator');
     });
 
     it('are always in sync with the number of slides', async function() {

@@ -1,4 +1,4 @@
-# `class XSlider extends HTMLElement`
+# `class MacroCarousel extends HTMLElement`
 
 `<macro-carousel>` is a carousel vanilla Web Component.
 

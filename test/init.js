@@ -12,7 +12,7 @@
 
       return wcutils.waitForElement('macro-carousel').then(() => {
         expect(document.querySelector('macro-carousel').constructor.name)
-            .to.equal('XSlider');
+            .to.equal('MacroCarousel');
       });
     });
 
@@ -20,7 +20,7 @@
       const slider = document.createElement('macro-carousel');
 
       return wcutils.waitForElement('macro-carousel').then(() => {
-        expect(slider.constructor.name).to.equal('XSlider');
+        expect(slider.constructor.name).to.equal('MacroCarousel');
       });
     });
   });

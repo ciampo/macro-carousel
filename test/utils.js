@@ -2,7 +2,7 @@
 
 (function() {
   const expect = chai.expect;
-  const testFns = window.xSlider.__testonly__;
+  const testFns = window.MacroCarousel.__testonly__;
 
   const clampTests = [
     {val: 0, min: 0, max: 0, expected: 0},

@@ -1,4 +1,4 @@
-import XSliderButton from '../macro-carousel-button/macro-carousel-button';
+import MacroCarouselButton from '../macro-carousel-button/macro-carousel-button';
 import indicatorHtml from './macro-carousel-pagination-indicator.html';
 import indicatorStyles from './macro-carousel-pagination-indicator.css';
 
@@ -13,20 +13,20 @@ if (window.ShadyCSS) {
 /**
  * A pagination indicator button.
  */
-class XSliderPaginationIndicator extends XSliderButton {
+class MacroCarouselPaginationIndicator extends MacroCarouselButton {
   static get template() {
     return paginationTmpl;
   }
 
   /**
    * Fired when the button is clicked / pressed.
-   * @event XSlider#macro-carousel-pagination-indicator-clicked
+   * @event MacroCarouselPaginationIndicator#macro-carousel-pagination-indicator-clicked
    * @type {Object}
    */
 
   /**
    * Called when the button is clicked / pressed.
-   * @fires XSlider#macro-carousel-pagination-indicator-clicked
+   * @fires MacroCarouselPaginationIndicator#macro-carousel-pagination-indicator-clicked
    * @private
    */
   _onClick() {
@@ -36,4 +36,4 @@ class XSliderPaginationIndicator extends XSliderButton {
 }
 
 window.customElements.define('macro-carousel-pagination-indicator',
-    XSliderPaginationIndicator);
+    MacroCarouselPaginationIndicator);
