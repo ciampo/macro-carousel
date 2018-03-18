@@ -386,6 +386,11 @@ class XSlider extends HTMLElement {
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
     window.addEventListener('touchmove', function() {});
+
+    // Sometimes the 'slot-changed' event doesn't fire consistently across
+    // browsers, depending on how the Custom Element was parsed and initialised
+    // (see https://github.com/whatwg/dom/issues/447)
+    this._onSlidesSlotChange();
   }
 
   /**
@@ -513,15 +518,6 @@ class XSlider extends HTMLElement {
    * @private
    */
   _internalUpdate() {
-    // Sometimes the 'slot-changed' event doesn't fire consistently across
-    // browsers, depending on how the Custom Element was parsed and initialised
-    // (see https://github.com/whatwg/dom/issues/447)
-    // Here, we're making sure that the `slot-changed callback runs at least
-    // once before the update() function.
-    // if (this._slides.length === 0) {
-    //   this._onSlidesSlotChange();
-    // }
-
     this._computeSizes();
     this._updateInfiniteLoop();
     this._computeSlidesPerViewLayout();
