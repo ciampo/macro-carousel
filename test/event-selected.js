@@ -13,10 +13,14 @@
     after(wcutils.after());
 
     it('when the element is initialised', async function() {
+      // Need to listen for the event on the window element,
+      // as the event is fired too early to catch it on the slider
+      // otherwise
+      const evListenerPromise = getSelectedEvent(window);
+
       this.container.innerHTML = `<macro-carousel><div>Slide 1</div></macro-carousel>`;
 
-      const slider = document.querySelector('macro-carousel');
-      const event = await getSelectedEvent(slider);
+      const event = await evListenerPromise;
       expect(event.detail).to.equal(0);
     });
 
@@ -38,9 +42,12 @@
       const slide = document.createElement('article');
       const slider = document.createElement('macro-carousel');
       slider.appendChild(slide);
+
+      const evListenerPromise = getSelectedEvent(slider);
+
       this.container.appendChild(slider);
 
-      const event = await getSelectedEvent(slider);
+      const event = await evListenerPromise;
 
       expect(event.detail).to.equal(0);
     });
