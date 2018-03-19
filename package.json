@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/ciampo/macro-carousel#readme",
   "devDependencies": {
+    "@webcomponents/shadycss": "^1.1.1",
     "@webcomponents/webcomponentsjs": "^1.0.14",
     "autoprefixer": "^7.1.6",
     "babel-core": "^6.26.0",
