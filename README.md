@@ -1,5 +1,4 @@
-# `<macro-carousel>` &middot; [![Build Status](https://travis-ci.org/ciampo/macro-carousel.svg?branch=master)](https://travis-ci.org/ciampo/macro-carousel) [![Coverage Status](https://coveralls.io/repos/github/ciampo/macro-carousel/badge.svg)](https://coveralls.io/github/ciampo/macro-carousel) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ciampo/macro-carousel/blob/master/LICENSE)
-<!-- [![npm version](https://img.shields.io/npm/v/macro-carousel.svg?style=flat)](https://www.npmjs.com/package/react) -->
+# `<macro-carousel>` &middot; [![npm version](https://img.shields.io/npm/v/macro-carousel.svg?style=flat)](https://www.npmjs.com/package/macro-carousel) [![Build Status](https://travis-ci.org/ciampo/macro-carousel.svg?branch=master)](https://travis-ci.org/ciampo/macro-carousel) [![Coverage Status](https://coveralls.io/repos/github/ciampo/macro-carousel/badge.svg)](https://coveralls.io/github/ciampo/macro-carousel) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ciampo/macro-carousel/blob/master/LICENSE)
 
 `<macro-carousel>` is a carousel (*vanilla*) Web Component.
 
