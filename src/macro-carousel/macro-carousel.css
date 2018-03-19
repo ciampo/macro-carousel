@@ -11,6 +11,8 @@
 
   contain: content;
 
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+
   --macro-carousel-gap: 16px;
 
   --macro-carousel-background-color: transparent;
