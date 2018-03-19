@@ -7,25 +7,25 @@
 - Compatible with every framework
 - Public APIs exposed as methods, events and properties/attributes
 - Mouse and touch events
-- Previous/Next buttons
+- Previous and next buttons
 - Pagination indicators
 - Multiple slides per view
 - Customisable styles though CSS custom properties
 - Focused on a11y
+- no external dependencies
 
-## Setup
+## Installation
 
-### Installing dependencies
+**`npm install --save macro-carousel`**
 
-`npm` is needed as a global dependency.
+It is reccommended to install the [`inert`](https://github.com/WICG/inert) and [`focus-visible`](https://github.com/WICG/focus-visible) polyfills (listed as `peerDependencies`).
 
-Run `npm install` to install all local dependencies.
-
-For enhancing the a11y of the carousel, it's best to also install the `inert` and `focus-visible` polyfills, listed as `peerDependencies`. Have a look at the demos to see them in use.
 
 ### Running the project locally
 
-Run `npm run start` to start a local dev server and open the `demo/` page in your browser.
+Run `npm install` to install all local dependencies.
+
+Run `npm start` and open the [`http://localhost:8080/demo/`](http://localhost:8080/demo/) page in your browser.
 
 ## Usage
 
@@ -67,7 +67,7 @@ In order to change the color of the navigation button arrow, this project makes 
 
 ## Test
 
-Run `npm run test` to run all tests.
+Run `npm test` to run all tests.
 
 ## Whishlist
 
