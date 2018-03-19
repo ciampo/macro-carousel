@@ -3,7 +3,7 @@ import sliderStyles from './macro-carousel.css';
 import {getEvtListenerOptions} from '../passiveEventListeners';
 import {
   clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
-  normalizeEvent, getCSSCustomProperty, setCSSCustomProperty,
+  normalizeEvent, getCSSCustomProperty, setCSSCustomProperty, roundedTan
 } from '../utils';
 
 /**
@@ -32,6 +32,12 @@ const _velocityThresholdFactor = 0.5;
 // How many slides more than slidesPerView can be swiped
 // at the highest swiped velocity.
 const _velocityMaxAdditionalSlides = 2;
+
+// How strictly the carousel detects a horizontal drag.
+// The angle (in degrees) should be in range (0, 90)
+// 45 degress is the neutral angle.
+// The higher the value, the stricter the detection.
+const _dragAngleAllowance = Math.abs(roundedTan(35));
 
 /**
  * An object representing either a touch event or a mouse event.
@@ -1383,17 +1389,23 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       this._pointerCurrentX = e.x;
       this._pointerCurrentY = e.y;
 
-      // Prevent default only if dragging horizontally.
-      if (Math.abs(this._pointerCurrentX - this._pointerFirstX) >
-          Math.abs(this._pointerCurrentY - this._pointerFirstY)) {
+      const dX = Math.abs(this._pointerCurrentX - this._pointerFirstX);
+      const dY = Math.abs(this._pointerCurrentY - this._pointerFirstY);
+
+      // If dragging horizontally
+      if (dX / dY > _dragAngleAllowance) {
         e.event.preventDefault();
+
+        this._addTrackingPoint(this._pointerLastX);
+
+        this._disableWrapperTransitions();
+
+        this._requestDragTick();
+
+      } else {
+        // If dragging vertically
+        this._stopPointerTracking();
       }
-
-      this._addTrackingPoint(this._pointerLastX);
-
-      this._disableWrapperTransitions();
-
-      this._requestDragTick();
     }
   }
 

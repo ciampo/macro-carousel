@@ -40,6 +40,15 @@ export function clampAbs(x, min, max) {
 }
 
 /**
+ * Computes the tan of an angle in degress, and rounds it to 2 decimals.
+ * @param {number} deg The angle in degrees.
+ * @return {number} The rounded tan.
+ */
+export function roundedTan(deg) {
+  return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100
+}
+
+/**
  * Standard setter for a Custom Element boolean property reflected to attribute.
  * @param {HTMLElement} element
  * @param {string} attributeName
