@@ -1345,8 +1345,10 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       this._externalWrapper.removeEventListener('touchstart', this);
       this._externalWrapper.removeEventListener('mousedown', this);
     } else {
-      this._externalWrapper.addEventListener('touchstart', this);
-      this._externalWrapper.addEventListener('mousedown', this);
+      this._externalWrapper.addEventListener('touchstart', this,
+          getEvtListenerOptions(true));
+      this._externalWrapper.addEventListener('mousedown', this,
+          getEvtListenerOptions(true));
     }
   }
 
