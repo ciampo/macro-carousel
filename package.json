@@ -2,7 +2,7 @@
   "name": "macro-carousel",
   "version": "1.0.0-alpha.1",
   "description": "Carousel as a vanilla Web Component",
-  "main": "src/macro-carousel.js",
+  "main": "dist/macro-carousel.min.js",
   "scripts": {
     "bundle-dev": "node_modules/.bin/rollup -c rollup-config/rollup-dev.config.js",
     "bundle-test": "node_modules/.bin/rollup -c rollup-config/rollup-test.config.js",
