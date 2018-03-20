@@ -17,15 +17,8 @@
     <style>
       macro-carousel {
         height: 300px;
-        padding: 0 calc(10px + var(--macro-carousel-navigation-button-size));
+        padding: 80px 0 0;
         margin: 0 10px;
-
-        --macro-carousel-navigation-color: #ff0844;
-        --macro-carousel-navigation-color-focus: #fff;
-        --macro-carousel-navigation-color-background: #ffe5dd;
-        --macro-carousel-navigation-color-background-focus: #ff0844;
-        --macro-carousel-navigation-button-size: 72px;
-        --macro-carousel-navigation-icon-size: 40px;
 
         /*
          * It is possible to override the shape of the previous and next
@@ -41,8 +34,15 @@
       }
 
       /* Previous and next buttons */
-      .macro-carousel-previous,
-      .macro-carousel-next {
+      macro-carousel-nav-button.macro-carousel-previous,
+      macro-carousel-nav-button.macro-carousel-next {
+        --macro-carousel-navigation-color: #ff0844;
+        --macro-carousel-navigation-color-focus: #fff;
+        --macro-carousel-navigation-color-background: #ffe5dd;
+        --macro-carousel-navigation-color-background-focus: #ff0844;
+        --macro-carousel-navigation-button-size: 72px;
+        --macro-carousel-navigation-icon-size: 40px;
+
         border-radius: 0;
         border: 1px solid var(--macro-carousel-navigation-color);
 
@@ -53,6 +53,11 @@
          */
         transform: none !important;
         top: 0 !important;
+      }
+
+      macro-carousel-nav-button.macro-carousel-previous {
+        left: auto;
+        right: var(--macro-carousel-navigation-button-size);
       }
 
       .slide {
