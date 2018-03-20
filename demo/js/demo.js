@@ -42,6 +42,11 @@ var stampTemplate = function(template) {
   // Append the first time to initialise the carousel.
   document.body.appendChild(template.content.cloneNode(true));
 
+  if (window.ShadyCSS && window.ShadyCSS.CustomStyleInterface) {
+    var styleElement = document.body.querySelector('style');
+    window.ShadyCSS.CustomStyleInterface.addCustomStyle(styleElement);
+  }
+
   // Append a second time to show the highlighted code snippet.
   // For some reason, prismjs doesn't automatically get the `macro-carousel`
   // tagName, so to work around the problem I use its APIs imperatively
