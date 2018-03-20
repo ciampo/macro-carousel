@@ -3,9 +3,19 @@
 *******************************************************************************/
 
 :host {
+  --macro-carousel-pagination-color: #999;
+  --macro-carousel-pagination-color-selected: #000;
+  --macro-carousel-pagination-size-clickable: 24px;
+  --macro-carousel-pagination-size-dot: 8px;
+  --macro-carousel-pagination-border: 1px solid var(--macro-carousel-pagination-color);
+  --macro-carousel-pagination-border-selected: 1px solid var(--macro-carousel-pagination-color-selected);
+
   position: relative;
 
   display: inline-flex;
+
+  width: var(--macro-carousel-pagination-size-clickable);
+  height: var(--macro-carousel-pagination-size-clickable);
 
   border-radius: 50%;
 

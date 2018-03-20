@@ -3,6 +3,14 @@
 *******************************************************************************/
 
 :host {
+  --macro-carousel-navigation-color: #000;
+  --macro-carousel-navigation-color-focus: var(--macro-carousel-navigation-color);
+  --macro-carousel-navigation-color-background: transparent;
+  --macro-carousel-navigation-color-background-focus: #f0f0f0;
+  --macro-carousel-navigation-button-size: 48px;
+  --macro-carousel-navigation-icon-size: 24px;
+  --macro-carousel-navigation-icon-mask: svg-load('../arrow-left.svg', fill: #000);
+
   position: relative;
 
   display: inline-flex;
