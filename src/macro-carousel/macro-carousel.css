@@ -162,17 +162,13 @@
 
   width: 100%;
   height: var(--macro-carousel-pagination-height);
-  min-height: var(--macro-carousel-pagination-size-clickable);
 
   contain: strict;
 
   font-size: 0;
 }
 
-#pagination ::slotted(macro-carousel-pagination-indicator) {
-  width: var(--macro-carousel-pagination-size-clickable);
-  height: var(--macro-carousel-pagination-size-clickable);
-
+div ::slotted(macro-carousel-pagination-indicator) {
   margin: 0 calc(var(--macro-carousel-pagination-gap) / 2);
   padding: 0;
 
@@ -182,8 +178,8 @@
 }
 
 
-#pagination ::slotted(macro-carousel-pagination-indicator:hover),
-#pagination ::slotted(macro-carousel-pagination-indicator.selected) {
+div ::slotted(macro-carousel-pagination-indicator:hover),
+div ::slotted(macro-carousel-pagination-indicator.selected) {
   opacity: 1;
 }
 
@@ -198,21 +194,21 @@
   display: block;
 }
 
-#navigation ::slotted(macro-carousel-nav-button) {
+div ::slotted(macro-carousel-nav-button) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 
-:host([pagination]) #navigation ::slotted(macro-carousel-nav-button) {
+:host([pagination]) div ::slotted(macro-carousel-nav-button) {
   top: calc(50% - var(--macro-carousel-pagination-height) / 2);
 }
 
-#navigation ::slotted(.macro-carousel-previous) {
+div ::slotted(.macro-carousel-previous) {
   left: 0;
 }
 
-#navigation ::slotted(.macro-carousel-next) {
+div ::slotted(.macro-carousel-next) {
   right: 0;
 }
 
