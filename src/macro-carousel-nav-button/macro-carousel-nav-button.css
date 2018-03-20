@@ -23,7 +23,7 @@
 }
 
 .content,
-.content::before {
+.bg {
   position: absolute;
   top: 0;
   right: 0;
@@ -42,7 +42,7 @@
 /*
  * bg colored circle.
  */
-.content::before {
+.bg {
   z-index: 0;
 
   background-color: var(--macro-carousel-navigation-color-background-focus);
@@ -50,8 +50,6 @@
   opacity: 0;
 
   will-change: opacity;
-
-  content: '';
 }
 
 .icon {
@@ -92,10 +90,10 @@
  * Show the bg circle when the button is not disabled and is hovered, active,
  * focused or keyboard-focused (thanks to the focus-visible polyfill).
  */
-:host(:hover:not([disabled])) .content::before,
-:host(:active:not([disabled])) .content::before,
-:host(:focus:not([disabled])) .content::before,
-:host(.focus-visible) .content::before {
+:host(:hover:not([disabled])) .bg,
+:host(:active:not([disabled])) .bg,
+:host(:focus:not([disabled])) .bg,
+:host(.focus-visible) .bg {
   opacity: 1;
 }
 
@@ -104,7 +102,7 @@
  * and doesn't have a focused-visible class. This means, do not leave the bg showing
  * after the user clicks on the button.
  */
-:host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .content::before {
+:host-context(.js-focus-visible):host(:focus:not(:active):not(:hover):not(.focus-visible)) .bg {
   opacity: 0;
 }
 

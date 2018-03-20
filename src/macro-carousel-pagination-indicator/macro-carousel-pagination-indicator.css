@@ -16,8 +16,8 @@
   contain: paint;
 }
 
-.content::before,
-.content::after {
+.bg,
+.fg {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -37,7 +37,7 @@
   content: '';
 }
 
-.content::before {
+.bg {
   transform: translate(-50%, -50%) scale(2);
 
   opacity: 0;
@@ -45,16 +45,16 @@
   will-change: opacity;
 }
 
-.content::after {
+.fg {
   border: var(--macro-carousel-pagination-border);
 }
 
-:host(:hover) .content::before,
-:host(.focus-visible) .content::before {
+:host(:hover) .bg,
+:host(.focus-visible) .bg {
   opacity: .2;
 }
 
-:host(.selected) .content::after {
+:host(.selected) .fg {
   background-color: var(--macro-carousel-pagination-color-selected);
   border: var(--macro-carousel-pagination-border-selected);
 }
