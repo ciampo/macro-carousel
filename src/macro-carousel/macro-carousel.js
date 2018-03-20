@@ -39,6 +39,10 @@ const _velocityMaxAdditionalSlides = 2;
 // The higher the value, the stricter the detection.
 const _dragAngleAllowance = Math.abs(roundedTan(35));
 
+// Distance (in px) that has to be covered before the carousel starts
+// detecting a horizontal vs vertical movement.
+const _dragDistanceAllowance = 5;
+
 /**
  * An object representing either a touch event or a mouse event.
  * @typedef {object} NormalisedPointerEvent
@@ -1394,18 +1398,18 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       const dX = Math.abs(this._pointerCurrentX - this._pointerFirstX);
       const dY = Math.abs(this._pointerCurrentY - this._pointerFirstY);
 
-      // If dragging horizontally
-      if (dX / dY > _dragAngleAllowance) {
+      // If dragging horizontally.
+      if (dX / dY > _dragAngleAllowance ||
+          dY === 0 ||
+          (dY > dX && dY - dX < _dragDistanceAllowance)) {
         e.event.preventDefault();
 
         this._addTrackingPoint(this._pointerLastX);
-
         this._disableWrapperTransitions();
-
         this._requestDragTick();
 
       } else {
-        // If dragging vertically
+        // If dragging vertically.
         this._stopPointerTracking();
       }
     }
