@@ -68,7 +68,7 @@ window.wcutils.delay = function(ms) {
  * @return {Promise}
  */
 window.wcutils.flush = function() {
-  return wcutils.delay(50);
+  return wcutils.delay(80);
 };
 
 /**
