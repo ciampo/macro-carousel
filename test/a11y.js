@@ -4,9 +4,12 @@
 (function() {
   const expect = chai.expect;
 
-  const onTransitionEnd = el => new Promise(resolve => {
-    el.addEventListener('transitionend', resolve, {once: true});
-  });
+  const onTransitionEnd = el => Promise.race([
+    wcutils.delay(1000),
+    new Promise(resolve => {
+      el.addEventListener('transitionend', resolve, {once: true});
+    }),
+  ]);
 
   describe('a11y —', function() {
     before(wcutils.before());

@@ -1,13 +1,17 @@
 /* eslint max-len: ["off"] */
+/* eslint no-console: ["off"] */
 
 (function() {
   const expect = chai.expect;
 
   const numberOfSlides = 20;
 
-  const onTransitionEnd = el => new Promise(resolve => {
-    el.addEventListener('transitionend', resolve, {once: true});
-  });
+  const onTransitionEnd = el => Promise.race([
+    wcutils.delay(1000),
+    new Promise(resolve => {
+      el.addEventListener('transitionend', resolve, {once: true});
+    }),
+  ]);
 
   const combinationToTest = {
     selected: [0, 1, 5, -1],
