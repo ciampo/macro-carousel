@@ -1,6 +1,6 @@
 {
   "name": "macro-carousel",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "Carousel as a vanilla Web Component",
   "main": "dist/macro-carousel.min.js",
   "scripts": {
