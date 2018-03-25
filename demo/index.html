@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>macro-carousel demos</title>
+  <link rel="stylesheet" href="css/demo.css">
   <style>
-    /* System Fonts as used by Medium and WordPress */
-    body {
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .demo-list {
       font-family: monospace;
       line-height: 1.5;
       font-size: 1.25rem;
     }
 
-    a {
+    .demo-list a {
       color: inherit;
       font-weight: bold;
-    }
-
-    a[href="#"] {
-      text-decoration: line-through;
-      font-weight: normal;
-      opacity: .6;
     }
 
     li + li {
@@ -36,7 +35,7 @@
 </head>
 <body>
   <h1><code>macro-carousel</code> demos</h1>
-  <ul>
+  <ul class="demo-list">
     <li><a href="base.html">Basic usage</a></li>
     <li><a href="navigation.html">Default navigation (previous/next)</a></li>
     <li><a href="custom-navigation.html">Custom navigation (previous/next)</a></li>
@@ -55,5 +54,6 @@
     <li><a href="pre-defined-styles.html">Avoiding flashing content (loading strategies)</a></li>
     <li><a href="es5.html">ES5</a></li>
   </ul>
+  <a id="backToCode" href="index.html">Back to code</a>
 </body>
 </html>

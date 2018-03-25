@@ -29,7 +29,8 @@ h1 code {
   padding: .3em .6em;
 }
 
-#backToIndex {
+#backToIndex,
+#backToCode {
   position: absolute;
   top: 0;
   right: 0;
