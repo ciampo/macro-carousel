@@ -79,6 +79,8 @@
       const expectedWrapperTranslate = `${- this.slider.selected * (slidesGap + slidesWidth)}px, 0px`;
       expect(wrapperTransformObj.translate).to.equal(expectedWrapperTranslate);
 
+      await wcutils.flush();
+
       // Disabling reducedMotion
       this.slider.reducedMotion = false;
 
