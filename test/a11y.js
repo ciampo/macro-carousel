@@ -84,7 +84,7 @@
       // Disabling reducedMotion
       this.slider.reducedMotion = false;
 
-      await wcutils.flush();
+      await wcutils.delay(500);
 
       expect(this.slider._transitioning).to.be.true;
       expect(window.getComputedStyle(this.wrapper)['transition-duration'])
