@@ -1,4 +1,3 @@
-(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
 (function () {
 'use strict';
 
@@ -1088,8 +1087,8 @@ class MacroCarousel extends HTMLElement {
    * @private
    */
   _disableWrapperTransitions() {
-    this.removeAttribute('transitioning');
     this._transitioning = false;
+    this.removeAttribute('transitioning');
     this._slidesWrapper.removeEventListener('transitionend', this, false);
   }
 
@@ -1098,6 +1097,7 @@ class MacroCarousel extends HTMLElement {
    * @private
    */
   _enableWrapperTransitions() {
+    // If reduced motion is true, transitions remain disabled.
     if (this.reducedMotion) {
       return;
     }
@@ -1105,8 +1105,8 @@ class MacroCarousel extends HTMLElement {
     // Double rAF is necessary to wait for 'selected' to take effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        this.setAttribute('transitioning', '');
         this._transitioning = true;
+        this.setAttribute('transitioning', '');
         this._slidesWrapper.addEventListener('transitionend', this, false);
       });
     });
