@@ -5,8 +5,6 @@ mkdir -p demo/css/third-party
 # Add WC polyfills
 cp node_modules/@webcomponents/webcomponentsjs/*.js demo/js/third-party
 cp node_modules/@webcomponents/webcomponentsjs/*.map demo/js/third-party
-cp node_modules/@webcomponents/shadycss/*.js demo/js/third-party
-cp node_modules/@webcomponents/shadycss/*.map demo/js/third-party
 rm -rf demo/js/third-party/gulpfile.js
 
 # Add inert polyfill

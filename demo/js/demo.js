@@ -37,7 +37,6 @@ var unindent = function(text) {
   }).join('\n');
 };
 
-
 var stampTemplate = function(template) {
   // Append the first time to initialise the carousel.
   document.body.appendChild(template.content.cloneNode(true));
