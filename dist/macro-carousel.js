@@ -1,5 +1,3 @@
-
-(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
 (function () {
   'use strict';
 
@@ -273,6 +271,11 @@
   const KEYCODES = {
     ENTER: 13,
     SPACE: 32,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    LEFT: 37,
+
   };
 
   const ATTRS = {
@@ -819,10 +822,10 @@
       // Keyboard.
       } else if (e.type === EVENTS.STANDARD.KEYDOWN) {
         // Left / Up.
-        if (e.keyCode === 37 || e.keyCode === 38) {
+        if (e.keyCode === KEYCODES.LEFT || e.keyCode === KEYCODES.UP) {
           this.previous();
         // Right / Down.
-        } else if (e.keyCode === 39 || e.keyCode === 40) {
+        } else if (e.keyCode === KEYCODES.RIGHT || e.keyCode === KEYCODES.DOWN) {
           this.next();
         }
 
