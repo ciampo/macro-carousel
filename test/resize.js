@@ -13,13 +13,13 @@
       this.container.innerHTML = `
       <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+          });
     });
 
     it('the update function is called', async function() {

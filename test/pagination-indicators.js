@@ -23,7 +23,7 @@
   ];
 
   const getPaginationIndicators = (container) =>
-      container.querySelectorAll('macro-carousel-pagination-indicator[slot="paginationSlot"]');
+    container.querySelectorAll('macro-carousel-pagination-indicator[slot="paginationSlot"]');
 
   describe('There should be', function() {
     before(wcutils.before());
@@ -32,13 +32,13 @@
       this.container.innerHTML = `
       <macro-carousel pagination>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+          });
     });
 
     testCombinations.forEach(test => {
@@ -65,13 +65,13 @@
       this.container.innerHTML = `
       <macro-carousel pagination>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+          });
     });
 
     testCombinations.forEach(test => {
@@ -84,9 +84,9 @@
 
         const validSelectedValues =
             Array(getExpectedNumberOfViews(numberOfSlides, test.slidesPerView, test.loop))
-            .fill(0)
-            .map((x, y) => y);
-        for (let s of validSelectedValues) {
+                .fill(0)
+                .map((x, y) => y);
+        for (const s of validSelectedValues) {
           this.slider.selected = s;
           await window.wcutils.flush();
 
@@ -107,8 +107,8 @@
       this.container.innerHTML = `
           <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -130,8 +130,8 @@
       this.container.innerHTML = `
           <macro-carousel>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -153,8 +153,8 @@
       this.container.innerHTML = `
           <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -186,13 +186,13 @@
       this.container.innerHTML = `
           <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
       const slider = this.container.querySelector('macro-carousel');
-      let paginationIndicators = getPaginationIndicators(this.container);
+      const paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way
       Array.prototype.slice.call(paginationIndicators, 0).forEach((btn, i) => {
@@ -205,13 +205,13 @@
       this.container.innerHTML = `
           <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
       const slider = this.container.querySelector('macro-carousel');
-      let paginationIndicators = getPaginationIndicators(this.container);
+      const paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way
       Array.prototype.slice.call(paginationIndicators, 0).forEach((btn, i) => {
@@ -224,13 +224,13 @@
       this.container.innerHTML = `
           <macro-carousel pagination>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
       const slider = this.container.querySelector('macro-carousel');
-      let paginationIndicators = getPaginationIndicators(this.container);
+      const paginationIndicators = getPaginationIndicators(this.container);
 
       // Next all the way
       Array.prototype.slice.call(paginationIndicators, 0).forEach((btn, i) => {

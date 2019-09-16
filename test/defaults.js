@@ -51,10 +51,10 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `<macro-carousel></macro-carousel>`;
-      return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        this.slider = this.container.querySelector('macro-carousel');
+      });
     });
 
     /**
@@ -62,7 +62,7 @@
      */
     describe('property', () => {
       for ([propName, propDefaultValue] of Object.entries(jsProps)) {
-        let [name, value] = [propName, propDefaultValue];
+        const [name, value] = [propName, propDefaultValue];
         it(`${name} should be ${value}`, function() {
           expect(this.slider[name]).to.equal(value);
         });
@@ -74,7 +74,7 @@
      */
     describe('CSS custom property', () => {
       for ([propName, propDefaultValue] of Object.entries(cssCustomProps.carousel)) {
-        let [name, value] = [propName, propDefaultValue];
+        const [name, value] = [propName, propDefaultValue];
         it(`${name} should be ${value}`, function() {
           expect(wcutils.getCSSCustomProperty(this.slider, name))
               .to.equal(value);
@@ -88,10 +88,10 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `<macro-carousel-nav-button></macro-carousel-nav-button>`;
-      return wcutils.waitForElement('macro-carousel-nav-button')
-        .then(() => {
-          this.btn = this.container.querySelector('macro-carousel-nav-button');
-        });
+
+      return wcutils.waitForElement('macro-carousel-nav-button').then(() => {
+        this.btn = this.container.querySelector('macro-carousel-nav-button');
+      });
     });
 
     /**
@@ -99,7 +99,7 @@
      */
     describe('CSS custom property', () => {
       for ([propName, propDefaultValue] of Object.entries(cssCustomProps.navButton)) {
-        let [name, value] = [propName, propDefaultValue];
+        const [name, value] = [propName, propDefaultValue];
         it(`${name} should be ${value}`, function() {
           expect(wcutils.getCSSCustomProperty(this.btn, name))
               .to.equal(value);
@@ -113,10 +113,10 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `<macro-carousel-pagination-indicator></macro-carousel-pagination-indicator>`;
-      return wcutils.waitForElement('macro-carousel-pagination-indicator')
-        .then(() => {
-          this.btn = this.container.querySelector('macro-carousel-pagination-indicator');
-        });
+
+      return wcutils.waitForElement('macro-carousel-pagination-indicator').then(() => {
+        this.btn =this.container.querySelector('macro-carousel-pagination-indicator');
+      });
     });
 
     /**
@@ -124,7 +124,7 @@
      */
     describe('CSS custom property', () => {
       for ([propName, propDefaultValue] of Object.entries(cssCustomProps.pagIndicator)) {
-        let [name, value] = [propName, propDefaultValue];
+        const [name, value] = [propName, propDefaultValue];
         it(`${name} should be ${value}`, function() {
           expect(wcutils.getCSSCustomProperty(this.btn, name))
               .to.equal(value);
@@ -141,17 +141,17 @@
     after(wcutils.after());
     beforeEach(async function() {
       this.container.innerHTML = `<macro-carousel></macro-carousel>`;
-      return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        this.slider = this.container.querySelector('macro-carousel');
+      });
     });
 
 
     for (functionName of jsFunc) {
-      let name = functionName;
+      const name = functionName;
       it(`${name} should exist`, function() {
-          expect(this.slider[name]).to.be.a('function');
+        expect(this.slider[name]).to.be.a('function');
       });
     }
   });

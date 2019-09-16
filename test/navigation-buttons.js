@@ -31,15 +31,15 @@
       this.container.innerHTML = `
       <macro-carousel navigation>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-          this.previousBtn = this.slider.querySelector('.macro-carousel-previous');
-          this.nextBtn = this.slider.querySelector('.macro-carousel-next');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+            this.previousBtn = this.slider.querySelector('.macro-carousel-previous');
+            this.nextBtn = this.slider.querySelector('.macro-carousel-next');
+          });
     });
 
     Object.keys(disabledTestCombinations).forEach(testBtn => {
@@ -65,8 +65,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -91,8 +91,8 @@
       this.container.innerHTML = `
           <macro-carousel>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -117,8 +117,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -145,8 +145,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -173,8 +173,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation>
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -206,8 +206,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation selected="${numberOfSlides - 1}">
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 
@@ -227,8 +227,8 @@
       this.container.innerHTML = `
           <macro-carousel navigation selected="${numberOfSlides - 2}">
             ${[...Array(numberOfSlides).keys()]
-                .map(i => `<article>Slide ${i}</article>`)
-                .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
           </macro-carousel>`;
       await wcutils.waitForElement('macro-carousel');
 

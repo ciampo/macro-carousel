@@ -21,12 +21,11 @@
   <article>Slide 2</article>
   <article>Slide 3</article>
 </macro-carousel>`;
-      return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-          this.wrapper = this.slider._slidesWrapper;
-          this.slides = this.container.querySelectorAll('article');
-        });
+      return wcutils.waitForElement('macro-carousel').then(() => {
+        this.slider = this.container.querySelector('macro-carousel');
+        this.wrapper = this.slider._slidesWrapper;
+        this.slides = this.container.querySelectorAll('article');
+      });
     });
 
     it('setting autoFocus makes the selected slide the focused element', async function() {

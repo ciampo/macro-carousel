@@ -51,7 +51,7 @@ const _dragDistanceAllowance = 5;
 
 // Label builders.
 const previousButtonLabel = (loop, isFirst) =>
-    `Go to ${loop && isFirst ? 'last' : 'previous'} item`;
+  `Go to ${loop && isFirst ? 'last' : 'previous'} item`;
 
 const nextButtonLabel = (loop, isLast) =>
   `Go to ${loop && isLast ? 'first' : 'next'} item`;

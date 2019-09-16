@@ -84,21 +84,21 @@
       this.container.innerHTML = `
       <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+          });
     });
 
     // Since all tests are async function, the loop variable is saved to a local
     // variable. An alternative approach would be to wrap the test in a closure.
-    for (let p of allAttributeToPropertyTests) {
-      let propertyName = wcutils.dashToCamelCase(p.attributeName);
+    for (const p of allAttributeToPropertyTests) {
+      const propertyName = wcutils.dashToCamelCase(p.attributeName);
       describe(`the ${propertyName} property`, () => {
-        for (let t of p.tests) {
+        for (const t of p.tests) {
           it(`should be ${t.expected} when the ${p.attributeName} attribute is set to ${t.value}`, async function() {
             await wcutils.flush();
             if (t.value === '_remove_attr_') {

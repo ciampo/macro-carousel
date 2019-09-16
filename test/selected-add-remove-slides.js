@@ -12,14 +12,14 @@
       this.container.innerHTML = `
       <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-          this.slides = document.querySelectorAll('article');
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+            this.slides = document.querySelectorAll('article');
+          });
     });
 
     it('changes when adding / removing slides', async function() {

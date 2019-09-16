@@ -26,14 +26,14 @@
       this.container.innerHTML = `
       <macro-carousel>
         ${[...Array(numberOfSlides).keys()]
-            .map(i => `<article>Slide ${i}</article>`)
-            .join('\n')}
+      .map(i => `<article>Slide ${i}</article>`)
+      .join('\n')}
       </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-          this.wrapper = this.slider._slidesWrapper;
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+            this.wrapper = this.slider._slidesWrapper;
+          });
     });
 
     combinationToTest.selected.forEach(selectedValue => {
@@ -110,15 +110,15 @@
   <article class="slide five">Slide 5</article>
 </macro-carousel>`;
       return wcutils.waitForElement('macro-carousel')
-        .then(() => {
-          this.slider = this.container.querySelector('macro-carousel');
-          this.slides = this.slider.querySelectorAll('.slide');
-          this.one = this.slides[0];
-          this.two = this.slides[1];
-          this.three = this.slides[2];
-          this.four = this.slides[3];
-          this.five = this.slides[4];
-        });
+          .then(() => {
+            this.slider = this.container.querySelector('macro-carousel');
+            this.slides = this.slider.querySelectorAll('.slide');
+            this.one = this.slides[0];
+            this.two = this.slides[1];
+            this.three = this.slides[2];
+            this.four = this.slides[3];
+            this.five = this.slides[4];
+          });
     });
     afterEach(wcutils.removeStyles);
 

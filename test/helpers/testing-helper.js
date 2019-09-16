@@ -121,9 +121,9 @@ window.wcutils.matrixToTransformObj = function(matrix) {
   const values = matrix.match(/([-+]?[\d\.]+)/g);
 
   obj.rotate = (Math.round(
-    Math.atan2(
-      parseFloat(values[1]),
-      parseFloat(values[0])) * (180 / Math.PI)) || 0
+      Math.atan2(
+          parseFloat(values[1]),
+          parseFloat(values[0])) * (180 / Math.PI)) || 0
   ).toString() + 'deg';
 
   obj.translate = values[5] ?
