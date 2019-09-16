@@ -2,10 +2,11 @@
   "env": {
     "browser": true,
     "es6": true,
-    "mocha": true
+    "mocha": true,
+    "node": true
   },
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 8,
     "sourceType": "module"
   },
   "extends": ["google"],
@@ -18,6 +19,7 @@
     "no-console": ["error", {"allow": ["warn", "error"]}],
     "no-extra-semi": ["error"],
     "nonblock-statement-body-position": ["error", "below"],
-    "no-invalid-this": "off"
+    "no-invalid-this": "off",
+    "func-style": "off"
   }
 }
