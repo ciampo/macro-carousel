@@ -45,7 +45,7 @@ export function clampAbs(x, min, max) {
  * @return {number} The rounded tan.
  */
 export function roundedTan(deg) {
-  return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100
+  return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100;
 }
 
 /**
@@ -124,12 +124,12 @@ export function normalizeEvent(ev) {
 
   // mouse
   } else {
-      return {
-        x: ev.clientX,
-        y: ev.clientY,
-        id: null,
-        event: ev,
-      };
+    return {
+      x: ev.clientX,
+      y: ev.clientY,
+      id: null,
+      event: ev,
+    };
   }
 }
 
