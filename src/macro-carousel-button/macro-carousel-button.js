@@ -1,4 +1,5 @@
 import {booleanSetter, booleanGetter} from '../utils';
+import {ATTRS, ATTR_VALUES, EVENTS, KEYCODES} from '../enums';
 
 /**
  * A generic button.
@@ -39,20 +40,20 @@ export default class MacroCarouselButton extends HTMLElement {
 
     this._defaultTabIndex = 0;
 
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'button');
+    if (!this.hasAttribute(ATTRS.STANDARD.ROLE)) {
+      this.setAttribute(ATTRS.STANDARD.ROLE, ATTR_VALUES.ROLES.BUTTON);
     }
 
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', this._defaultTabIndex);
+    if (!this.hasAttribute(ATTRS.STANDARD.TABINDEX)) {
+      this.setAttribute(ATTRS.STANDARD.TABINDEX, this._defaultTabIndex);
     } else {
-      this._defaultTabIndex = this.getAttribute('tabindex');
+      this._defaultTabIndex = this.getAttribute(ATTRS.STANDARD.TABINDEX);
     }
 
-    this._upgradeProperty('disabled');
+    this._upgradeProperty(ATTRS.STANDARD.DISABLED);
 
-    this.addEventListener('keydown', this);
-    this.addEventListener('click', this);
+    this.addEventListener(EVENTS.STANDARD.KEYDOWN, this);
+    this.addEventListener(EVENTS.STANDARD.CLICK, this);
   }
 
   /**
@@ -75,7 +76,7 @@ export default class MacroCarouselButton extends HTMLElement {
    */
   static get observedAttributes() {
     return [
-      'disabled',
+      ATTRS.STANDARD.DISABLED,
     ];
   }
 
@@ -85,11 +86,11 @@ export default class MacroCarouselButton extends HTMLElement {
    * @default false
    */
   set disabled(flag) {
-    booleanSetter(this, 'disabled', flag);
+    booleanSetter(this, ATTRS.STANDARD.DISABLED, flag);
   }
 
   get disabled() {
-    return booleanGetter(this, 'disabled');
+    return booleanGetter(this, ATTRS.STANDARD.DISABLED);
   }
 
   /**
@@ -101,18 +102,18 @@ export default class MacroCarouselButton extends HTMLElement {
    */
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'disabled':
+      case ATTRS.STANDARD.DISABLED:
         if (oldValue === newValue) {
           return;
         }
 
         if (this.disabled) {
-          this._defaultTabIndex = this.getAttribute('tabindex');
-          this.removeAttribute('tabindex');
-          this.setAttribute('aria-disabled', 'true');
+          this._defaultTabIndex = this.getAttribute(ATTRS.STANDARD.TABINDEX);
+          this.removeAttribute(ATTRS.STANDARD.TABINDEX);
+          this.setAttribute(ATTRS.STANDARD.ARIA.DISABLED, ATTR_VALUES.TRUE);
         } else {
-          this.setAttribute('tabindex', this._defaultTabIndex);
-          this.setAttribute('aria-disabled', 'false');
+          this.setAttribute(ATTRS.STANDARD.TABINDEX, this._defaultTabIndex);
+          this.setAttribute(ATTRS.STANDARD.ARIA.DISABLED, ATTR_VALUES.FALSE);
         }
         break;
     }
@@ -134,12 +135,12 @@ export default class MacroCarouselButton extends HTMLElement {
     }
 
     // Click
-    if (e.type === 'click') {
+    if (e.type === EVENTS.STANDARD.CLICK) {
       this._onClick && this._onClick();
 
     // Space / Enter
-    } else if (e.type === 'keydown' &&
-        (e.keyCode === 32 || e.keyCode === 13)) {
+    } else if (e.type === EVENTS.STANDARD.KEYDOWN &&
+        (e.keyCode === KEYCODES.SPACE || e.keyCode === KEYCODES.ENTER)) {
       // preventDefault called to avoid page scroll when hitting spacebar.
       e.preventDefault();
       this._onClick && this._onClick();

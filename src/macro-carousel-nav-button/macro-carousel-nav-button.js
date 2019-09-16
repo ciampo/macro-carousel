@@ -1,12 +1,14 @@
-import MacroCarouselButton from '../macro-carousel-button/macro-carousel-button';
+import MacroCarouselButton
+  from '../macro-carousel-button/macro-carousel-button';
 import buttonHtml from './macro-carousel-nav-button.html';
 import buttonStyles from './macro-carousel-nav-button.css';
+import {TAGNAMES, EVENTS} from '../enums';
 
 const buttonTmpl = document.createElement('template');
 buttonTmpl.innerHTML = `<style>${buttonStyles}</style> ${buttonHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(buttonTmpl, 'macro-carousel-nav-button');
+  window.ShadyCSS.prepareTemplate(buttonTmpl, TAGNAMES.NAV_BTN);
 }
 
 /**
@@ -29,8 +31,8 @@ class MacroCarouselNavButton extends MacroCarouselButton {
    * @private
    */
   _onClick() {
-    this.dispatchEvent(new CustomEvent('macro-carousel-nav-button-clicked'));
+    this.dispatchEvent(new CustomEvent(EVENTS.NAV_BTN.CLICKED));
   }
 }
 
-window.customElements.define('macro-carousel-nav-button', MacroCarouselNavButton);
+window.customElements.define(TAGNAMES.NAV_BTN, MacroCarouselNavButton);

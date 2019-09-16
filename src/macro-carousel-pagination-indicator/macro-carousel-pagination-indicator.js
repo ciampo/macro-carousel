@@ -1,13 +1,14 @@
-import MacroCarouselButton from '../macro-carousel-button/macro-carousel-button';
+import MacroCarouselButton from
+  '../macro-carousel-button/macro-carousel-button';
 import indicatorHtml from './macro-carousel-pagination-indicator.html';
 import indicatorStyles from './macro-carousel-pagination-indicator.css';
+import {TAGNAMES, EVENTS} from '../enums';
 
 const paginationTmpl = document.createElement('template');
 paginationTmpl.innerHTML = `<style>${indicatorStyles}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(paginationTmpl,
-      'macro-carousel-pagination-indicator');
+  window.ShadyCSS.prepareTemplate(paginationTmpl, TAGNAMES.PAG_BTN);
 }
 
 /**
@@ -30,10 +31,9 @@ class MacroCarouselPaginationIndicator extends MacroCarouselButton {
    * @private
    */
   _onClick() {
-    this.dispatchEvent(
-        new CustomEvent('macro-carousel-pagination-indicator-clicked'));
+    this.dispatchEvent(new CustomEvent(EVENTS.PAG_BTN.CLICKED));
   }
 }
 
-window.customElements.define('macro-carousel-pagination-indicator',
+window.customElements.define(TAGNAMES.PAG_BTN,
     MacroCarouselPaginationIndicator);

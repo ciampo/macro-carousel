@@ -157,3 +157,11 @@ export function setCSSCustomProperty(element, propertyName, propertyValue) {
   }
 }
 
+/**
+ * Check if a variable is undefined
+ * @param {*} a Anything
+ * @return {boolean}
+ */
+export function isUndefined(a) {
+  return typeof a === 'undefined';
+}
