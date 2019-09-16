@@ -4,7 +4,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['mocha', 'chai-spies', 'chai'],
     files: [
-      'node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js',
+      'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js',
       'node_modules/simulant/dist/simulant.umd.js',
       'dist/macro-carousel-test.js',
       'test/helpers/testing-helper.js',
@@ -28,7 +28,7 @@ module.exports = function(config) {
     processKillTimeout: 10 * 1000, // default 2000
     client: {
       mocha: {
-        timeout: 6000, // 6 seconds - upped from 2 seconds
+        timeout: 8000, // 6 seconds - upped from 2 seconds
       },
     },
 
