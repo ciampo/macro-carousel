@@ -8,6 +8,7 @@ import {
 } from '../utils';
 import {
   TAGNAMES, IDS, CLASSNAMES, EVENTS, ATTRS, ATTR_VALUES, SLOTNAMES, CSS_PROPS,
+  KEYCODES,
 } from '../enums';
 
 
@@ -508,10 +509,10 @@ class MacroCarousel extends HTMLElement {
     // Keyboard.
     } else if (e.type === EVENTS.STANDARD.KEYDOWN) {
       // Left / Up.
-      if (e.keyCode === 37 || e.keyCode === 38) {
+      if (e.keyCode === KEYCODES.LEFT || e.keyCode === KEYCODES.UP) {
         this.previous();
       // Right / Down.
-      } else if (e.keyCode === 39 || e.keyCode === 40) {
+      } else if (e.keyCode === KEYCODES.RIGHT || e.keyCode === KEYCODES.DOWN) {
         this.next();
       }
 
