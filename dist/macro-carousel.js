@@ -1,3 +1,4 @@
+(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
 (function () {
 'use strict';
 
@@ -86,7 +87,7 @@ function clampAbs(x, min, max) {
  * @return {number} The rounded tan.
  */
 function roundedTan(deg) {
-  return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100
+  return Math.round(Math.tan(deg * Math.PI / 180) * 100) / 100;
 }
 
 /**
@@ -165,12 +166,12 @@ function normalizeEvent(ev) {
 
   // mouse
   } else {
-      return {
-        x: ev.clientX,
-        y: ev.clientY,
-        id: null,
-        event: ev,
-      };
+    return {
+      x: ev.clientX,
+      y: ev.clientY,
+      id: null,
+      event: ev,
+    };
   }
 }
 
@@ -199,13 +200,141 @@ function setCSSCustomProperty(element, propertyName, propertyValue) {
 }
 
 /**
+ * Check if a variable is undefined
+ * @param {*} a Anything
+ * @return {boolean}
+ */
+function isUndefined(a) {
+  return typeof a === 'undefined';
+}
+
+const baseName = 'macro-carousel';
+
+const TAGNAMES = {
+  CAROUSEL: baseName,
+  NAV_BTN: `${baseName}-nav-button`,
+  PAG_BTN: `${baseName}-pagination-indicator`,
+};
+
+const IDS = {
+  CAROUSEL: {
+    WRAPPER_EXTERNAL: 'externalWrapper',
+    WRAPPER_SLIDES: 'slidesWrapper',
+    SLOT_SLIDES: 'slidesSlot',
+    SLOT_ARIA: 'ariaSlot',
+    SLOT_PAGINATION: 'paginationSlot',
+    SLOT_NAVIGATION: 'navigationSlot',
+  },
+};
+
+const CLASSNAMES = {
+  CAROUSEL: {},
+
+  NAV_BTN: {
+    PREVIOUS: `${baseName}-previous`,
+    NEXT: `${baseName}-next`,
+  },
+
+  PAG_BTN: {
+    SELECTED: 'selected',
+  },
+};
+
+const EVENTS = {
+  STANDARD: {
+    CLICK: 'click',
+    TOUCHSTART: 'touchstart',
+    TOUCHMOVE: 'touchmove',
+    TOUCHEND: 'touchend',
+    TOUCHCANCEL: 'touchcancel',
+    MOUSEDOWN: 'mousedown',
+    MOUSEMOVE: 'mousemove',
+    MOUSEUP: 'mouseup',
+    KEYDOWN: 'keydown',
+    RESIZE: 'resize',
+    SLOTCHANGE: 'slotchange',
+    TRANSITIONEND: 'transitionend',
+  },
+
+  CAROUSEL: {
+    SELECTED_CHANGED: `${TAGNAMES.CAROUSEL}-selected-changed`,
+  },
+
+  NAV_BTN: {
+    CLICKED: `${TAGNAMES.NAV_BTN}-clicked`,
+  },
+
+  PAG_BTN: {
+    CLICKED: `${TAGNAMES.PAG_BTN}-clicked`,
+  },
+};
+
+const KEYCODES = {
+  ENTER: 13,
+  SPACE: 32,
+};
+
+const ATTRS = {
+  STANDARD: {
+    ROLE: 'role',
+    TABINDEX: 'tabindex',
+    INERT: 'inert',
+    ARIA: {
+      HIDDEN: 'aria-hidden',
+      LABEL: 'aria-label',
+      LIVE: 'aria-live',
+      ATOMIC: 'aria-atomic',
+      DISABLED: 'aria-disabled',
+    },
+    SLOT: 'slot',
+    DISABLED: 'disabled',
+  },
+
+  NAV_BTN: {
+    FLIPPED: 'flipped',
+  },
+};
+
+const ATTR_VALUES = {
+  ARIA_LIVE: {
+    POLITE: 'polite',
+  },
+
+  ROLES: {
+    BUTTON: 'button',
+    LIST: 'list',
+    LISTITEM: 'listitem',
+  },
+
+  TRUE: 'true',
+  FALSE: 'false',
+};
+
+const SLOTNAMES = {
+  ARIA: 'ariaSlot',
+  PAGINATION: 'paginationSlot',
+  NAVIGATION: 'navigationSlot',
+};
+
+const CSS_PROPS = {
+  STANDARD: {
+    MARGIN_RIGHT: 'margin-right',
+  },
+
+  CAROUSEL: {
+    GAP: `--${baseName}-gap`,
+    SLIDES_PER_VIEW: `--${baseName}__internal__slides-per-view`,
+  },
+};
+
+/**
  * Markup and styles.
  */
 const template = document.createElement('template');
 template.innerHTML = `<style>${css}</style> ${sliderHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(template, 'macro-carousel');
+  window.ShadyCSS.prepareTemplate(template, TAGNAMES.CAROUSEL);
 }
 
 
@@ -228,6 +357,27 @@ const _dragAngleAllowance = Math.abs(roundedTan(35));
 // Distance (in px) that has to be covered before the carousel starts
 // detecting a horizontal vs vertical movement.
 const _dragDistanceAllowance = 5;
+
+
+// Label builders.
+const previousButtonLabel = (loop, isFirst) =>
+    `Go to ${loop && isFirst ? 'last' : 'previous'} item`;
+
+const nextButtonLabel = (loop, isLast) =>
+  `Go to ${loop && isLast ? 'first' : 'next'} item`;
+
+const goToSlideButtonLabel = (i) => `Go to item ${i + 1}`;
+
+const slidesStatusCaption = (firstSlideIndex, numSlides, slidesPerView) => {
+  const slidesInView = [];
+  for (let i = 0; i < slidesPerView; i++) {
+    slidesInView.push((firstSlideIndex + i) % numSlides + 1);
+  }
+
+  return `Item${slidesPerView > 1 ? 's' : ''} ${
+    slidesInView.join(', ').replace(/(,)(\s[^,]*)$/, ' and$2')
+  } of ${numSlides} visible`;
+};
 
 /**
  * An object representing either a touch event or a mouse event.
@@ -271,7 +421,8 @@ class MacroCarousel extends HTMLElement {
      * @type {HTMLElement}
      * @private
      */
-    this._externalWrapper = this.shadowRoot.querySelector('#externalWrapper');
+    this._externalWrapper =
+        this._getShadowElementById(IDS.CAROUSEL.WRAPPER_EXTERNAL);
 
     /**
      * The internal wrapper element (responsible for the slides layout
@@ -279,28 +430,30 @@ class MacroCarousel extends HTMLElement {
      * @type {HTMLElement}
      * @private
      */
-    this._slidesWrapper = this.shadowRoot.querySelector('#slidesWrapper');
+    this._slidesWrapper =
+        this._getShadowElementById(IDS.CAROUSEL.WRAPPER_SLIDES);
 
     /**
      * The slot where the slides are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
-    this._slidesSlot = this.shadowRoot.querySelector('#slidesSlot');
+    this._slidesSlot = this._getShadowElementById(IDS.CAROUSEL.SLOT_SLIDES);
 
     /**
      * The slot where the aria-live element is injected into.
      * @type {HTMLSlotElement}
      * @private
      */
-    this._ariaSlot = this.shadowRoot.querySelector('#ariaSlot');
+    this._ariaSlot = this._getShadowElementById(IDS.CAROUSEL.SLOT_ARIA);
 
     /**
      * The slot where the pagination indicators are injected into.
      * @type {HTMLSlotElement}
      * @private
      */
-    this._paginationSlot = this.shadowRoot.querySelector('#paginationSlot');
+    this._paginationSlot =
+        this._getShadowElementById(IDS.CAROUSEL.SLOT_PAGINATION);
 
     /**
      * Array of pagination indicators.
@@ -314,7 +467,8 @@ class MacroCarousel extends HTMLElement {
      * @type {HTMLSlotElement}
      * @private
      */
-    this._navigationSlot = this.shadowRoot.querySelector('#navigationSlot');
+    this._navigationSlot =
+        this._getShadowElementById(IDS.CAROUSEL.SLOT_NAVIGATION);
 
     /**
      * The navigation `previous` button.
@@ -541,6 +695,15 @@ class MacroCarousel extends HTMLElement {
   }
 
   /**
+   * Queries the Shadow DOM looking for an element matching the id
+   * @param {string} selector The id of the element
+   * @returns {HTMLElement}
+   */
+  _getShadowElementById(id) {
+    return this.shadowRoot.querySelector(`#${id}`);
+  }
+
+  /**
    * Fires when the element is inserted into the DOM.
    * It's a good place to set the initial `role`, `tabindex`, internal state,
    * and install event listeners.
@@ -555,19 +718,21 @@ class MacroCarousel extends HTMLElement {
     }
 
     // Setting role=list (we set role=listitem for the slides)
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'list');
+    if (!this.hasAttribute(ATTRS.STANDARD.ROLE)) {
+      this.setAttribute(ATTRS.STANDARD.ROLE, ATTR_VALUES.ROLES.LIST);
     }
 
     // Setup the component.
-    this._upgradeProperty('selected');
-    this._upgradeProperty('loop');
-    this._upgradeProperty('navigation');
-    this._upgradeProperty('pagination');
-    this._upgradeProperty('disableDrag');
-    this._upgradeProperty('slidesPerView');
-    this._upgradeProperty('reducedMotion');
-    this._upgradeProperty('autoFocus');
+    [
+      'selected',
+      'loop',
+      'navigation',
+      'pagination',
+      'disableDrag',
+      'slidesPerView',
+      'reducedMotion',
+      'autoFocus',
+    ].forEach((p) => this._upgradeProperty(p));
 
     this._previousEffectiveLayoutIndex = this.selected;
 
@@ -575,13 +740,14 @@ class MacroCarousel extends HTMLElement {
     this._enableWrapperTransitions();
 
     // Add event listeners.
-    this._slidesSlot.addEventListener('slotchange', this);
-    window.addEventListener('resize', this, getEvtListenerOptions(true));
-    this.addEventListener('keydown', this);
+    this._slidesSlot.addEventListener(EVENTS.STANDARD.SLOTCHANGE, this);
+    window.addEventListener(EVENTS.STANDARD.RESIZE, this,
+        getEvtListenerOptions(true));
+    this.addEventListener(EVENTS.STANDARD.KEYDOWN, this);
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
-    window.addEventListener('touchmove', function() {});
+    window.addEventListener(EVENTS.STANDARD.TOUCHMOVE, function() {});
 
     // Sometimes the 'slot-changed' event doesn't fire consistently across
     // browsers, depending on how the Custom Element was parsed and initialised
@@ -596,23 +762,24 @@ class MacroCarousel extends HTMLElement {
    * @private
    */
   disconnectedCallback() {
-    this._slidesSlot.removeEventListener('slotchange', this);
-    window.removeEventListener('resize', this);
+    this._slidesSlot.removeEventListener(EVENTS.STANDARD.SLOTCHANGE, this);
+    window.removeEventListener(EVENTS.STANDARD.RESIZE, this);
 
     if (!this.disableDrag) {
-      this._externalWrapper.removeEventListener('touchstart', this);
-      this._externalWrapper.removeEventListener('mousedown', this);
+      this._externalWrapper
+          .removeEventListener(EVENTS.STANDARD.TOUCHSTART, this);
+      this._externalWrapper
+          .removeEventListener(EVENTS.STANDARD.MOUSEDOWN, this);
     }
 
     if (this.navigation) {
-      this._prevButton.removeEventListener('macro-carousel-nav-button-clicked', this);
-      this._nextButton.removeEventListener('macro-carousel-nav-button-clicked', this);
+      this._prevButton.removeEventListener(EVENTS.NAV_BTN.CLICKED, this);
+      this._nextButton.removeEventListener(EVENTS.NAV_BTN.CLICKED, this);
     }
 
     if (this.pagination) {
-      this._paginationIndicators.forEach(p => {
-        p.removeEventListener('macro-carousel-pagination-indicator-clicked', this);
-      });
+      this._paginationIndicators.forEach((p) =>
+        p.removeEventListener(EVENTS.PAG_BTN.CLICKED, this));
     }
   }
 
@@ -627,21 +794,21 @@ class MacroCarousel extends HTMLElement {
    */
   handleEvent(e) {
     // Window resize
-    if (e.type === 'resize' && e.target === window) {
+    if (e.type === EVENTS.STANDARD.RESIZE && e.target === window) {
       this._disableWrapperTransitions();
       this.update();
 
     // Slot change
-    } else if (e.type === 'slotchange' && e.target === this._slidesSlot) {
+    } else if (e.type === EVENTS.STANDARD.SLOTCHANGE &&
+        e.target === this._slidesSlot) {
       this._onSlidesSlotChange();
 
     // Pagination indicators
-    } else if (e.type === 'macro-carousel-pagination-indicator-clicked' &&
-        this.pagination) {
+    } else if (e.type === EVENTS.PAG_BTN.CLICKED && this.pagination) {
       this._onPaginationClicked(e);
 
     // Navigation (prev / next button)
-    } else if (e.type === 'macro-carousel-nav-button-clicked' && this.navigation) {
+    } else if (e.type === EVENTS.NAV_BTN.CLICKED && this.navigation) {
       if (e.target === this._prevButton) {
         this.previous();
       } else if (e.target === this._nextButton) {
@@ -649,7 +816,7 @@ class MacroCarousel extends HTMLElement {
       }
 
     // Keyboard.
-    } else if (e.type === 'keydown') {
+    } else if (e.type === EVENTS.STANDARD.KEYDOWN) {
       // Left / Up.
       if (e.keyCode === 37 || e.keyCode === 38) {
         this.previous();
@@ -659,19 +826,23 @@ class MacroCarousel extends HTMLElement {
       }
 
     // transitionend (CSS)
-    } else if (e.type === 'transitionend' && e.target === this._slidesWrapper) {
+    } else if (e.type === EVENTS.STANDARD.TRANSITIONEND &&
+        e.target === this._slidesWrapper) {
       this._updateSlidesA11y();
       this._focusSelectedSlide();
       this._updateAriaLiveDom();
 
     // Touch / drag
-    } else if (e.type === 'touchstart' || e.type === 'mousedown') {
+    } else if (e.type === EVENTS.STANDARD.TOUCHSTART ||
+        e.type === EVENTS.STANDARD.MOUSEDOWN) {
       this._onPointerDown(normalizeEvent(e));
-    } else if (e.type === 'touchmove' || e.type === 'mousemove') {
+    } else if (e.type === EVENTS.STANDARD.TOUCHMOVE ||
+        e.type === EVENTS.STANDARD.MOUSEMOVE) {
       this._onPointerMove(normalizeEvent(e));
-    } else if (e.type === 'touchend' || e.type === 'mouseup') {
+    } else if (e.type === EVENTS.STANDARD.TOUCHEND ||
+        e.type === EVENTS.STANDARD.MOUSEUP) {
       this._onPointerEnd(normalizeEvent(e));
-    } else if (e.type === 'touchcancel') {
+    } else if (e.type === EVENTS.STANDARD.TOUCHCANCEL) {
       this._stopPointerTracking();
     }
   }
@@ -886,7 +1057,7 @@ class MacroCarousel extends HTMLElement {
         this._updatePagination();
         this._updateNavigation();
 
-        this.dispatchEvent(new CustomEvent('macro-carousel-selected-changed', {
+        this.dispatchEvent(new CustomEvent(EVENTS.CAROUSEL.SELECTED_CHANGED, {
           detail: this.selected,
           bubbles: true,
         }));
@@ -1089,7 +1260,8 @@ class MacroCarousel extends HTMLElement {
   _disableWrapperTransitions() {
     this._transitioning = false;
     this.removeAttribute('transitioning');
-    this._slidesWrapper.removeEventListener('transitionend', this, false);
+    this._slidesWrapper
+        .removeEventListener(EVENTS.STANDARD.TRANSITIONEND, this, false);
   }
 
   /**
@@ -1107,7 +1279,8 @@ class MacroCarousel extends HTMLElement {
       requestAnimationFrame(() => {
         this._transitioning = true;
         this.setAttribute('transitioning', '');
-        this._slidesWrapper.addEventListener('transitionend', this, false);
+        this._slidesWrapper
+            .addEventListener(EVENTS.STANDARD.TRANSITIONEND, this, false);
       });
     });
   }
@@ -1139,14 +1312,14 @@ class MacroCarousel extends HTMLElement {
    */
   _getSlidesGap() {
     // Check if gap has unitless values (i.e. values ending with a digit).
-    if (/\d$/.test(getCSSCustomProperty(this, '--macro-carousel-gap'))) {
-      console.warn(`Warning: it looks like --macro-carousel-gap has a unitless value.
-Add CSS units to its value to avoid breaking the slides layout.`);
+    if (/\d$/.test(getCSSCustomProperty(this, CSS_PROPS.CAROUSEL.GAP))) {
+      console.warn(`Warning: it seems ${CSS_PROPS.CAROUSEL.GAP} has a unitless
+value. Add CSS units to its value to avoid breaking the slides layout.`);
     }
     // Getting the computed style because we need a value in px, while
     // the actual CSS property can be declared with any unit.
-    const parsedGap = parseInt(
-        getComputedStyle(this._slides[0].element)['margin-right'], 10);
+    const parsedGap = parseInt(getComputedStyle(
+        this._slides[0].element)[CSS_PROPS.STANDARD.MARGIN_RIGHT], 10);
     return !Number.isFinite(parsedGap) ? 0 : parsedGap;
   }
 
@@ -1157,7 +1330,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   _computeSlidesPerViewLayout() {
     // Used to compute the slides's width.
     setCSSCustomProperty(this,
-        '--macro-carousel__internal__slides-per-view', `${this.slidesPerView}`);
+        CSS_PROPS.CAROUSEL.SLIDES_PER_VIEW, `${this.slidesPerView}`);
 
     // Recompute the index of the last view (aka max value for `selected`).
     this._lastViewIndex = this._infiniteLoop ? this._slides.length - 1 :
@@ -1216,7 +1389,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         // Using (dataIndex - inViewIndex) instead of (inViewIndex - dataIndex)
         // to compensate for the "-" in the this._computeSlidePosition function.
         this._slides[dataIndex].element.style.transform = `translateX(${
-            this._computeSlidePosition(dataIndex - inViewIndex)}px)`;
+          this._computeSlidePosition(dataIndex - inViewIndex)}px)`;
       }
     });
   }
@@ -1280,16 +1453,16 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     // in the slidesInView array.
     let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
-      isSlideInView = typeof slidesInView
-          .find(i => i === slideIndex) !== 'undefined';
+      isSlideInView = !isUndefined(slidesInView.find(i => i === slideIndex));
       // Slides in view have `aria-hidden` set to `false`.
-      slideEl.setAttribute('aria-hidden', isSlideInView ? 'false' : 'true');
+      slideEl.setAttribute(ATTRS.STANDARD.ARIA.HIDDEN,
+          isSlideInView ? ATTR_VALUES.FALSE : ATTR_VALUES.TRUE);
       // Slides in view don't have the `inert` attribute and can be focused.
       if (isSlideInView) {
-        slideEl.removeAttribute('inert');
-        slideEl.setAttribute('tabindex', -1);
+        slideEl.removeAttribute(ATTRS.STANDARD.INERT);
+        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, -1);
       } else {
-        slideEl.setAttribute('inert', '');
+        slideEl.setAttribute(ATTRS.STANDARD.INERT, '');
       }
     });
   }
@@ -1306,7 +1479,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       // Remove all the assignedNodes of pagination slot and their ev listeners
       this._paginationIndicators.forEach(indicatorEl => {
         indicatorEl
-            .removeEventListener('macro-carousel-pagination-indicator-clicked', this);
+            .removeEventListener(EVENTS.PAG_BTN.CLICKED, this);
         this.removeChild(indicatorEl);
       });
       this._paginationIndicators.length = 0;
@@ -1318,11 +1491,12 @@ Add CSS units to its value to avoid breaking the slides layout.`);
           this._lastViewIndex + 1) {
         const frag = document.createDocumentFragment();
         for (let i = 0; i <= this._lastViewIndex; i++) {
-          const btn = document.createElement('macro-carousel-pagination-indicator');
+          const btn = document.createElement(TAGNAMES.PAG_BTN);
           btn.textContent = i;
-          btn.setAttribute('slot', 'paginationSlot');
-          btn.setAttribute('aria-label', `Go to item ${i + 1}`);
-          btn.addEventListener('macro-carousel-pagination-indicator-clicked', this);
+          btn.setAttribute(ATTRS.STANDARD.SLOT, SLOTNAMES.PAGINATION);
+          btn.setAttribute(ATTRS.STANDARD.ARIA.LABEL,
+              goToSlideButtonLabel(i));
+          btn.addEventListener(EVENTS.PAG_BTN.CLICKED, this);
 
           frag.appendChild(btn);
           this._paginationIndicators.push(btn);
@@ -1333,9 +1507,9 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       // Update `disabled` to highlight the selected slide.
       this._paginationIndicators.forEach((btn, index) => {
         if (index === this.selected) {
-          btn.classList.add('selected');
+          btn.classList.add(CLASSNAMES.PAG_BTN.SELECTED);
         } else {
-          btn.classList.remove('selected');
+          btn.classList.remove(CLASSNAMES.PAG_BTN.SELECTED);
         }
       });
     }
@@ -1357,12 +1531,12 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _createNavigationButton(className) {
-    const btn = document.createElement('macro-carousel-nav-button');
+    const btn = document.createElement(TAGNAMES.NAV_BTN);
     btn.classList.add(className);
-    btn.setAttribute('slot', 'navigationSlot');
-    btn.addEventListener('macro-carousel-nav-button-clicked', this);
+    btn.setAttribute(ATTRS.STANDARD.SLOT, SLOTNAMES.NAVIGATION);
+    btn.addEventListener(EVENTS.NAV_BTN.CLICKED, this);
     if (/next/.test(className)) {
-      btn.setAttribute('flipped', '');
+      btn.setAttribute(ATTRS.NAV_BTN.FLIPPED, '');
     }
     return btn;
   }
@@ -1377,7 +1551,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         this._navigationSlot.assignedNodes().length !== 2)) {
       // remove all navigation slot assigned nodes and their ev listeners
       this._navigationSlot.assignedNodes().forEach(button => {
-        button.removeEventListener('macro-carousel-nav-button-clicked', this);
+        button.removeEventListener(EVENTS.NAV_BTN.CLICKED, this);
         this.removeChild(button);
       });
 
@@ -1388,10 +1562,12 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     if (this.navigation) {
       if (this._navigationSlot.assignedNodes().length !== 2) {
         // add buttons and add ev listeners
-        this._prevButton = this._createNavigationButton('macro-carousel-previous');
+        this._prevButton =
+            this._createNavigationButton(CLASSNAMES.NAV_BTN.PREVIOUS);
         this.appendChild(this._prevButton);
 
-        this._nextButton = this._createNavigationButton('macro-carousel-next');
+        this._nextButton =
+            this._createNavigationButton(CLASSNAMES.NAV_BTN.NEXT);
         this.appendChild(this._nextButton);
       }
 
@@ -1402,11 +1578,10 @@ Add CSS units to its value to avoid breaking the slides layout.`);
           !this.loop && this.selected === this._lastViewIndex;
 
       // update 'aria-label'
-      this._prevButton.setAttribute('aria-label', `Go to ${
-         this.loop && this.selected === 0 ? 'last' : 'previous'} item`);
-      this._nextButton.setAttribute('aria-label', `Go to ${
-          this.loop && this.selected === this._lastViewIndex ? 'first' : 'next'
-          } item`);
+      this._prevButton.setAttribute(ATTRS.STANDARD.ARIA.LABEL,
+          previousButtonLabel(this.loop, this.selected === 0));
+      this._nextButton.setAttribute(ATTRS.STANDARD.ARIA.LABEL,
+          nextButtonLabel(this.loop, this.selected === this._lastViewIndex));
     }
   }
 
@@ -1443,7 +1618,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     });
 
     // Get light DOM in #slidesSlot, keep only Element nodes.
-    let slideElements = this._slidesSlot.assignedNodes({flatten: true})
+    const slideElements = this._slidesSlot.assignedNodes({flatten: true})
         .filter(node => node.nodeType === Node.ELEMENT_NODE);
 
     // Return an array of SlideInfo object, one per slide found.
@@ -1461,12 +1636,13 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   _onSlidesSlotChange() {
     this._slides = this._getSlides();
     this._slides.forEach(slide => {
-      if (!slide.element.hasAttribute('tabindex')) {
-        slide.element.setAttribute('tabindex', -1);
+      if (!slide.element.hasAttribute(ATTRS.STANDARD.TABINDEX)) {
+        slide.element.setAttribute(ATTRS.STANDARD.TABINDEX, -1);
       }
 
-      if (this.getAttribute('role') === 'list') {
-        slide.element.setAttribute('role', 'listitem');
+      if (this.getAttribute(ATTRS.STANDARD.ROLE) === ATTR_VALUES.ROLES.LIST) {
+        slide.element.setAttribute(ATTRS.STANDARD.ROLE,
+            ATTR_VALUES.ROLES.LISTITEM);
       }
     });
 
@@ -1501,25 +1677,17 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   _updateAriaLiveDom() {
     if (this._ariaSlot.assignedNodes().length !== 1) {
       this._ariaLiveRegion = document.createElement('div');
-      this._ariaLiveRegion.setAttribute('slot', 'ariaSlot');
-      this._ariaLiveRegion.setAttribute('aria-live', 'polite');
-      this._ariaLiveRegion.setAttribute('aria-atomic', 'true');
+      this._ariaLiveRegion.setAttribute(ATTRS.STANDARD.SLOT, SLOTNAMES.ARIA);
+      this._ariaLiveRegion.setAttribute(ATTRS.STANDARD.ARIA.LIVE,
+          ATTR_VALUES.ARIA_LIVE.POLITE);
+      this._ariaLiveRegion.setAttribute(ATTRS.STANDARD.ARIA.ATOMIC,
+          ATTR_VALUES.TRUE);
       this.appendChild(this._ariaLiveRegion);
     }
 
     const firstSlideIndex = this._slides[this.selected].layoutIndex;
-    let slidesIndexesString = '';
-    for (let i = 0; i < this.slidesPerView; i++) {
-      slidesIndexesString += (firstSlideIndex + i) % this._slides.length + 1;
-      if (i < this.slidesPerView - 2) {
-        slidesIndexesString += ', ';
-      } else if (i < this.slidesPerView - 1) {
-        slidesIndexesString += ' and ';
-      }
-    }
-    /* eslint-disable max-len */
-    this._ariaLiveRegion.textContent = `Item${this.slidesPerView > 1 ? 's' : ''} ${slidesIndexesString} of ${this._slides.length} visible`;
-    /* eslint-enable max-len */
+    this._ariaLiveRegion.textContent = slidesStatusCaption(
+        firstSlideIndex, this._slides.length, this.slidesPerView);
   }
 
 
@@ -1533,12 +1701,14 @@ Add CSS units to its value to avoid breaking the slides layout.`);
    */
   _updateDragEventListeners() {
     if (this.disableDrag) {
-      this._externalWrapper.removeEventListener('touchstart', this);
-      this._externalWrapper.removeEventListener('mousedown', this);
+      this._externalWrapper
+          .removeEventListener(EVENTS.STANDARD.TOUCHSTART, this);
+      this._externalWrapper
+          .removeEventListener(EVENTS.STANDARD.MOUSEDOWN, this);
     } else {
-      this._externalWrapper.addEventListener('touchstart', this,
+      this._externalWrapper.addEventListener(EVENTS.STANDARD.TOUCHSTART, this,
           getEvtListenerOptions(true));
-      this._externalWrapper.addEventListener('mousedown', this,
+      this._externalWrapper.addEventListener(EVENTS.STANDARD.MOUSEDOWN, this,
           getEvtListenerOptions(true));
     }
   }
@@ -1560,11 +1730,13 @@ Add CSS units to its value to avoid breaking the slides layout.`);
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      window.addEventListener('touchmove', this, getEvtListenerOptions(false));
-      window.addEventListener('mousemove', this, getEvtListenerOptions(false));
-      window.addEventListener('mouseup', this);
-      window.addEventListener('touchend', this);
-      window.addEventListener('touchcancel', this);
+      window.addEventListener(EVENTS.STANDARD.TOUCHMOVE, this,
+          getEvtListenerOptions(false));
+      window.addEventListener(EVENTS.STANDARD.MOUSEMOVE, this,
+          getEvtListenerOptions(false));
+      window.addEventListener(EVENTS.STANDARD.MOUSEUP, this);
+      window.addEventListener(EVENTS.STANDARD.TOUCHEND, this);
+      window.addEventListener(EVENTS.STANDARD.TOUCHCANCEL, this);
     }
   }
 
@@ -1594,7 +1766,6 @@ Add CSS units to its value to avoid breaking the slides layout.`);
         this._addTrackingPoint(this._pointerLastX);
         this._disableWrapperTransitions();
         this._requestDragTick();
-
       } else {
         // If dragging vertically.
         this._stopPointerTracking();
@@ -1624,11 +1795,11 @@ Add CSS units to its value to avoid breaking the slides layout.`);
 
     this._addTrackingPoint(this._pointerLastX);
 
-    window.removeEventListener('touchmove', this);
-    window.removeEventListener('mousemove', this);
-    window.removeEventListener('touchend', this);
-    window.removeEventListener('mouseup', this);
-    window.removeEventListener('touchcancel', this);
+    window.removeEventListener(EVENTS.STANDARD.TOUCHMOVE, this);
+    window.removeEventListener(EVENTS.STANDARD.MOUSEMOVE, this);
+    window.removeEventListener(EVENTS.STANDARD.TOUCHEND, this);
+    window.removeEventListener(EVENTS.STANDARD.MOUSEUP, this);
+    window.removeEventListener(EVENTS.STANDARD.TOUCHCANCEL, this);
 
     this._startDecelerating();
   }
@@ -1676,8 +1847,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
     let slidePosition;
     this._slides.forEach((slideObj, index) => {
       if (slideObj.position >= newPosition &&
-          (typeof slidePosition === 'undefined' ||
-              slideObj.position < slidePosition)) {
+          (isUndefined(slidePosition) || slideObj.position < slidePosition)) {
         slidePosition = slideObj.position;
         slideIndex = index;
       }
@@ -1688,7 +1858,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
 
       // Sometimes there's no slide to the left of the current one - in that
       // case, slideIndex would be undefined.
-      if (typeof slideIndex === 'undefined') {
+      if (isUndefined(slideIndex)) {
         // Get the leftmost slide - the one we just left to the pointer's right.
         const leftMostSlide = this._slides.slice(0)
             .sort((a, b) => a.layoutIndex > b.layoutIndex)[0];
@@ -1836,7 +2006,7 @@ Add CSS units to its value to avoid breaking the slides layout.`);
   }
 }
 
-window.customElements.define('macro-carousel', MacroCarousel);
+window.customElements.define(TAGNAMES.CAROUSEL, MacroCarousel);
 
 /**
  * A generic button.
@@ -1877,20 +2047,20 @@ class MacroCarouselButton extends HTMLElement {
 
     this._defaultTabIndex = 0;
 
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'button');
+    if (!this.hasAttribute(ATTRS.STANDARD.ROLE)) {
+      this.setAttribute(ATTRS.STANDARD.ROLE, ATTR_VALUES.ROLES.BUTTON);
     }
 
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', this._defaultTabIndex);
+    if (!this.hasAttribute(ATTRS.STANDARD.TABINDEX)) {
+      this.setAttribute(ATTRS.STANDARD.TABINDEX, this._defaultTabIndex);
     } else {
-      this._defaultTabIndex = this.getAttribute('tabindex');
+      this._defaultTabIndex = this.getAttribute(ATTRS.STANDARD.TABINDEX);
     }
 
-    this._upgradeProperty('disabled');
+    this._upgradeProperty(ATTRS.STANDARD.DISABLED);
 
-    this.addEventListener('keydown', this);
-    this.addEventListener('click', this);
+    this.addEventListener(EVENTS.STANDARD.KEYDOWN, this);
+    this.addEventListener(EVENTS.STANDARD.CLICK, this);
   }
 
   /**
@@ -1913,7 +2083,7 @@ class MacroCarouselButton extends HTMLElement {
    */
   static get observedAttributes() {
     return [
-      'disabled',
+      ATTRS.STANDARD.DISABLED,
     ];
   }
 
@@ -1923,11 +2093,11 @@ class MacroCarouselButton extends HTMLElement {
    * @default false
    */
   set disabled(flag) {
-    booleanSetter(this, 'disabled', flag);
+    booleanSetter(this, ATTRS.STANDARD.DISABLED, flag);
   }
 
   get disabled() {
-    return booleanGetter(this, 'disabled');
+    return booleanGetter(this, ATTRS.STANDARD.DISABLED);
   }
 
   /**
@@ -1939,18 +2109,18 @@ class MacroCarouselButton extends HTMLElement {
    */
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'disabled':
+      case ATTRS.STANDARD.DISABLED:
         if (oldValue === newValue) {
           return;
         }
 
         if (this.disabled) {
-          this._defaultTabIndex = this.getAttribute('tabindex');
-          this.removeAttribute('tabindex');
-          this.setAttribute('aria-disabled', 'true');
+          this._defaultTabIndex = this.getAttribute(ATTRS.STANDARD.TABINDEX);
+          this.removeAttribute(ATTRS.STANDARD.TABINDEX);
+          this.setAttribute(ATTRS.STANDARD.ARIA.DISABLED, ATTR_VALUES.TRUE);
         } else {
-          this.setAttribute('tabindex', this._defaultTabIndex);
-          this.setAttribute('aria-disabled', 'false');
+          this.setAttribute(ATTRS.STANDARD.TABINDEX, this._defaultTabIndex);
+          this.setAttribute(ATTRS.STANDARD.ARIA.DISABLED, ATTR_VALUES.FALSE);
         }
         break;
     }
@@ -1972,12 +2142,12 @@ class MacroCarouselButton extends HTMLElement {
     }
 
     // Click
-    if (e.type === 'click') {
+    if (e.type === EVENTS.STANDARD.CLICK) {
       this._onClick && this._onClick();
 
     // Space / Enter
-    } else if (e.type === 'keydown' &&
-        (e.keyCode === 32 || e.keyCode === 13)) {
+    } else if (e.type === EVENTS.STANDARD.KEYDOWN &&
+        (e.keyCode === KEYCODES.SPACE || e.keyCode === KEYCODES.ENTER)) {
       // preventDefault called to avoid page scroll when hitting spacebar.
       e.preventDefault();
       this._onClick && this._onClick();
@@ -1993,7 +2163,7 @@ const buttonTmpl = document.createElement('template');
 buttonTmpl.innerHTML = `<style>${css$1}</style> ${buttonHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(buttonTmpl, 'macro-carousel-nav-button');
+  window.ShadyCSS.prepareTemplate(buttonTmpl, TAGNAMES.NAV_BTN);
 }
 
 /**
@@ -2016,11 +2186,11 @@ class MacroCarouselNavButton extends MacroCarouselButton {
    * @private
    */
   _onClick() {
-    this.dispatchEvent(new CustomEvent('macro-carousel-nav-button-clicked'));
+    this.dispatchEvent(new CustomEvent(EVENTS.NAV_BTN.CLICKED));
   }
 }
 
-window.customElements.define('macro-carousel-nav-button', MacroCarouselNavButton);
+window.customElements.define(TAGNAMES.NAV_BTN, MacroCarouselNavButton);
 
 var indicatorHtml = "<div class=\"bg\"></div>\n<div class=\"fg\"></div>\n";
 
@@ -2030,8 +2200,7 @@ const paginationTmpl = document.createElement('template');
 paginationTmpl.innerHTML = `<style>${css$2}</style> ${indicatorHtml}`;
 
 if (window.ShadyCSS) {
-  window.ShadyCSS.prepareTemplate(paginationTmpl,
-      'macro-carousel-pagination-indicator');
+  window.ShadyCSS.prepareTemplate(paginationTmpl, TAGNAMES.PAG_BTN);
 }
 
 /**
@@ -2054,12 +2223,11 @@ class MacroCarouselPaginationIndicator extends MacroCarouselButton {
    * @private
    */
   _onClick() {
-    this.dispatchEvent(
-        new CustomEvent('macro-carousel-pagination-indicator-clicked'));
+    this.dispatchEvent(new CustomEvent(EVENTS.PAG_BTN.CLICKED));
   }
 }
 
-window.customElements.define('macro-carousel-pagination-indicator',
+window.customElements.define(TAGNAMES.PAG_BTN,
     MacroCarouselPaginationIndicator);
 
 }());
