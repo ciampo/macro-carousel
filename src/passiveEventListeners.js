@@ -1,4 +1,4 @@
-let passiveEvtSupport;
+let _passiveEvtSupport;
 
 /**
  * Detects browser support for passive event listeners. See
@@ -7,19 +7,19 @@ let passiveEvtSupport;
  * @private
  */
 function _passiveEvtListenersSupported() {
-  if (typeof passiveEvtSupport === 'undefined') {
-    passiveEvtSupport = false;
+  if (typeof _passiveEvtSupport === 'undefined') {
+    _passiveEvtSupport = false;
     try {
       const opts = Object.defineProperty({}, 'passive', {
         get: () => {
-          passiveEvtSupport = true;
+          _passiveEvtSupport = true;
         },
       });
       window.addEventListener('test', null, opts);
     } catch (e) {}
   }
 
-  return passiveEvtSupport;
+  return _passiveEvtSupport;
 }
 
 /**

@@ -1,6 +1,6 @@
 import createRollupConfig from './rollup-base.config';
+import {terser} from 'rollup-plugin-terser';
 import cssnano from 'cssnano';
-import uglify from 'rollup-plugin-uglify';
 
 const config = require('../package.json');
 
@@ -16,7 +16,7 @@ export default createRollupConfig(
     removeComments: true,
   },
   [
-    uglify({
+    terser({
       output: {
         beautify: false,
         preamble: `/*!
@@ -25,13 +25,12 @@ export default createRollupConfig(
 */`,
       },
       mangle: {
-        keep_classnames: true,
-        keep_fnames: true,
         properties: {
           regex: /^_/,
         },
       },
       keep_classnames: true,
+      keep_fnames: true,
     }),
   ]
 );

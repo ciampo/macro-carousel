@@ -1,6 +1,6 @@
 import createRollupConfig from './rollup-base.config';
 import cssnano from 'cssnano';
-import uglify from 'rollup-plugin-uglify';
+import {terser} from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
 
 const config = require('../package.json');
@@ -19,26 +19,17 @@ export default createRollupConfig(
   [
     babel({
       babelrc: false,
+      externalHelpers: true,
       presets: [
         [
-          'env',
+          '@babel/preset-env',
           {
             modules: false,
-            targets: {
-              browsers: [
-                '> 1%',
-                'last 2 versions',
-                'ie >= 11',
-              ],
-            },
           },
         ],
       ],
-      plugins: [
-        'external-helpers',
-      ],
     }),
-    uglify({
+    terser({
       output: {
         beautify: false,
         preamble: `/*!

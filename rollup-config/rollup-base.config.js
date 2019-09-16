@@ -25,7 +25,7 @@ const createRollupConf = (
       inject: false,
       plugins: [
         inlineSvg,
-        autoprefixer({browsers: 'last 2 versions'}),
+        autoprefixer(),
         ...postcssPlugins,
       ],
     }),
