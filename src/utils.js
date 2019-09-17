@@ -79,14 +79,14 @@ export function booleanGetter(element, attributeName) {
  * @param {number} value
  */
 export function intSetter(element, attributeName, value) {
-  element.setAttribute(attributeName, value);
+  element.setAttribute(attributeName, `${value}`);
 }
 
 /**
  * Standard getter for a Custom Element int property reflected to attribute.
  * @param {HTMLElement} element
  * @param {string} attributeName
- * @param {string} [defaultValue=0]
+ * @param {number|string} [defaultValue=0]
  * @return {number} Whether the element has that specific attribute
  */
 export function intGetter(element, attributeName, defaultValue = 0) {
@@ -151,7 +151,7 @@ export function getCSSCustomProperty(element, propertyName) {
  * @param {string|number} propertyValue The property value.
  */
 export function setCSSCustomProperty(element, propertyName, propertyValue) {
-  element.style.setProperty(propertyName, propertyValue);
+  element.style.setProperty(propertyName, `${propertyValue}`);
   if (window.ShadyCSS) {
     window.ShadyCSS.styleSubtree(element, {[propertyName]: propertyValue});
   }

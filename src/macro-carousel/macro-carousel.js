@@ -88,6 +88,12 @@ const slidesStatusCaption = (firstSlideIndex, numSlides, slidesPerView) => {
  */
 
 /**
+ * @typedef {object} TrackingPoint
+ * @property {Date} time Current time.
+ * @property {number} x Last position of the pointer on the x axis.
+ */
+
+/**
  * A slider/carousel Web Component.
  */
 class MacroCarousel extends HTMLElement {
@@ -326,7 +332,7 @@ class MacroCarousel extends HTMLElement {
     /**
      * Array containining the translation value assumed by the slidesWrapper in
      * the last 100ms. Used to compute the starting velocity when decelerating.
-     * @type {Array<number>}
+     * @type {Array<TrackingPoint>}
      * @private
      */
     this._trackingPoints = [];
@@ -480,7 +486,7 @@ class MacroCarousel extends HTMLElement {
    * binding every function. See
    * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
    *
-   * @param {Event} e Any event.
+   * @param {Event|KeyboardEvent} e Any event.
    * @private
    */
   handleEvent(e) {
@@ -1151,7 +1157,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
       // Slides in view don't have the `inert` attribute and can be focused.
       if (isSlideInView) {
         slideEl.removeAttribute(ATTRS.STANDARD.INERT);
-        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, -1);
+        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, '-1');
       } else {
         slideEl.setAttribute(ATTRS.STANDARD.INERT, '');
       }
@@ -1328,7 +1334,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
     this._slides = this._getSlides();
     this._slides.forEach(slide => {
       if (!slide.element.hasAttribute(ATTRS.STANDARD.TABINDEX)) {
-        slide.element.setAttribute(ATTRS.STANDARD.TABINDEX, -1);
+        slide.element.setAttribute(ATTRS.STANDARD.TABINDEX, '-1');
       }
 
       if (this.getAttribute(ATTRS.STANDARD.ROLE) === ATTR_VALUES.ROLES.LIST) {
