@@ -25,7 +25,8 @@ export function clamp(x, min = x, max = x) {
 }
 
 /**
- * Clamps a number according to its absolute value, but still retainig its sign.
+ * Clamps a number according to its absolute value, but still retaining its
+ *  sign.
  * @param {number} x The number to be clamped.
  * @param {number} [min] The min value.
  * @param {number} [max] The max value.
