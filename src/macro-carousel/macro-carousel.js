@@ -1145,15 +1145,15 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
     let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
       isSlideInView = !isUndefined(slidesInView.find(i => i === slideIndex));
-      // Slides in view have `aria-hidden` set to `false`.
+
+      // Ensure DOM is not accessible unless it is in the view.
+      slideEl.inert = !isSlideInView;
       slideEl.setAttribute(ATTRS.STANDARD.ARIA.HIDDEN,
           isSlideInView ? ATTR_VALUES.FALSE : ATTR_VALUES.TRUE);
+
       // Slides in view don't have the `inert` attribute and can be focused.
       if (isSlideInView) {
-        slideEl.removeAttribute(ATTRS.STANDARD.INERT);
-        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, -1);
-      } else {
-        slideEl.setAttribute(ATTRS.STANDARD.INERT, '');
+        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, '-1');
       }
     });
   }
