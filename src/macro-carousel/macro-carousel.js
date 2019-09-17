@@ -32,7 +32,7 @@ window.MacroCarousel.__testonly__.normalizeEvent = normalizeEvent;
 
 
 // A fraction of the slider width, a size used to compute
-// by how many slides whould the slider move after a swipe.
+// by how many slides the slider would move after a swipe.
 const _velocityThresholdFactor = 0.5;
 
 // How many slides more than slidesPerView can be swiped
@@ -41,7 +41,7 @@ const _velocityMaxAdditionalSlides = 2;
 
 // How strictly the carousel detects a horizontal drag.
 // The angle (in degrees) should be in range (0, 90)
-// 45 degress is the neutral angle.
+// 45 degrees is the neutral angle.
 // The higher the value, the stricter the detection.
 const _dragAngleAllowance = Math.abs(roundedTan(35));
 
@@ -84,7 +84,7 @@ const slidesStatusCaption = (firstSlideIndex, numSlides, slidesPerView) => {
  * @typedef {object} SlideInfo
  * @property {HTMLElement} element The DOM element.
  * @property {number} layoutIndex The real index in the layout.
- * @property {number} position The current position within the slder (in px).
+ * @property {number} position The current position within the slider (in px).
  */
 
 /**
@@ -98,7 +98,7 @@ class MacroCarousel extends HTMLElement {
   constructor() {
     /*
      * Runs anytime a new instance is created (in HTML or JS).
-     * The construtor is a good place to create shadow DOM, though you should
+     * The constructor is a good place to create shadow DOM, though you should
      * avoid touching any attributes or light DOM children as they may not
      * be available yet.
      */
@@ -324,7 +324,7 @@ class MacroCarousel extends HTMLElement {
     this._lastDraggedLayoutIndex = undefined;
 
     /**
-     * Array containining the translation value assumed by the slidesWrapper in
+     * Array containing the translation value assumed by the slidesWrapper in
      * the last 100ms. Used to compute the starting velocity when decelerating.
      * @type {Array<number>}
      * @private
@@ -332,7 +332,7 @@ class MacroCarousel extends HTMLElement {
     this._trackingPoints = [];
 
     /**
-     * Flag used to limit the number of udpates to the slidesWrapper to once
+     * Flag used to limit the number of updates to the slidesWrapper to once
      * per frame (the pointer events may fire more frequently than that).
      * @type {boolean}
      * @private
@@ -387,7 +387,7 @@ class MacroCarousel extends HTMLElement {
 
   /**
    * Queries the Shadow DOM looking for an element matching the id
-   * @param {string} selector The id of the element
+   * @param {string} id The id of the element
    * @returns {HTMLElement}
    */
   _getShadowElementById(id) {
@@ -601,7 +601,7 @@ class MacroCarousel extends HTMLElement {
 
   /**
    * Computes the previous index.
-   * @param {number} i The index of reference used to compure the previous.
+   * @param {number} i The index of reference used to compute the previous.
    * @return {number} The previous index with respect to the input.
    * @private
    */
@@ -633,7 +633,7 @@ class MacroCarousel extends HTMLElement {
 
   /**
    * Computes the next index.
-   * @param {number} i The index of reference used to compure the next.
+   * @param {number} i The index of reference used to compute the next.
    * @return {number} The next index with respect to the input.
    * @private
    */
@@ -1045,7 +1045,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
 
 
   /**
-   * Extracts the slide's data index (i.e. between 0 and this._slides.lenght -1)
+   * Extracts the slide's data index (i.e. between 0 and this._slides.length -1)
    * from its layoutIndex.
    * @param {number} layoutIndex The slide's layoutIndex
    * @return {number} The slide's data index.
@@ -1346,7 +1346,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
     const shouldForceSelectedUpdate = this._slides.length > 0 &&
         this._lastViewIndex === -1;
 
-    // Calling internalUpdate instead of update, to avoid race coniditions
+    // Calling internalUpdate instead of update, to avoid race conditions
     // (update is debounced). This is because the number of slides is
     // essential for computing the remaining internal values.
     this._internalUpdate();
@@ -1497,7 +1497,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
 
   /**
    * Stores the last 100ms worth of tracking data from pointer events.
-   * @param {number} x The x coordinate value to strore
+   * @param {number} x The x coordinate value to store.
    * @private
    */
   _addTrackingPoint(x) {
@@ -1676,7 +1676,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
     const newPosition = this._wrapperTranslateX + this._decelVelocity;
 
     // Keep animating until the carousel is close to the snapping point
-    // with a very small veloity. This results in a springy effect.
+    // with a very small velocity. This results in a springy effect.
     // Do not animate if the reduced-motion mode is enabled.
     const tooFarOrTooFast = Math.abs(snapX - newPosition) >= 1 ||
         Math.abs(this._decelVelocity) >= 1;
