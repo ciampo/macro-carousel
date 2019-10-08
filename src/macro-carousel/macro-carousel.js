@@ -912,6 +912,19 @@ class MacroCarousel extends HTMLElement {
   }
 
   /**
+   * Get the indexes of slides currently in view.
+   * @return {Array<number>}
+   */
+  get slidesInView() {
+    const slidesInViewIndexes = [];
+    for (let i = 0; i < this.slidesPerView; i++) {
+      slidesInViewIndexes.push((this.selected + i) % this._slides.length);
+    }
+
+    return slidesInViewIndexes;
+  }
+
+  /**
    * If true, disables CSS transitions and drag deceleration.
    * @type {boolean}
    * @default false
@@ -1135,16 +1148,11 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
    * @private
    */
   _updateSlidesA11y() {
-    const slidesInView = [];
-    for (let i = 0; i < this.slidesPerView; i++) {
-      slidesInView.push((this.selected + i) % this._slides.length);
-    }
-
     // Set aria-hidden to false only for the slides whose indexes are included
     // in the slidesInView array.
     let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
-      isSlideInView = !isUndefined(slidesInView.find(i => i === slideIndex));
+      isSlideInView = !isUndefined(this.slidesInView.find(i => i === slideIndex));
       // Slides in view have `aria-hidden` set to `false`.
       slideEl.setAttribute(ATTRS.STANDARD.ARIA.HIDDEN,
           isSlideInView ? ATTR_VALUES.FALSE : ATTR_VALUES.TRUE);
