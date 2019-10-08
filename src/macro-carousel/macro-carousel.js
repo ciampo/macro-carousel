@@ -1131,7 +1131,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
   }
 
   /**
-   * Updates the `aria-hidden` and `inert` attributes on the slides.
+   * Update accessibility attributes on slides.
    * @private
    */
   _updateSlidesA11y() {
@@ -1140,21 +1140,12 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
       slidesInView.push((this.selected + i) % this._slides.length);
     }
 
-    // Set aria-hidden to false only for the slides whose indexes are included
-    // in the slidesInView array.
     let isSlideInView;
     this._slides.map(slide => slide.element).forEach((slideEl, slideIndex) => {
       isSlideInView = !isUndefined(slidesInView.find(i => i === slideIndex));
 
       // Ensure DOM is not accessible unless it is in the view.
       slideEl.inert = !isSlideInView;
-      slideEl.setAttribute(ATTRS.STANDARD.ARIA.HIDDEN,
-          isSlideInView ? ATTR_VALUES.FALSE : ATTR_VALUES.TRUE);
-
-      // Slides in view don't have the `inert` attribute and can be focused.
-      if (isSlideInView) {
-        slideEl.setAttribute(ATTRS.STANDARD.TABINDEX, '-1');
-      }
     });
   }
 
