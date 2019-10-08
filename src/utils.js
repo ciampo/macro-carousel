@@ -95,45 +95,6 @@ export function intGetter(element, attributeName, defaultValue = 0) {
 }
 
 /**
- * An object representing either a touch event or a mouse event.
- * @typedef {object} NormalisedPointerEvent
- * @property {number} x The x coordinate.
- * @property {number} y The y coordinate.
- * @property {?number} id The pointer identifier.
- * @property {MouseEvent|TouchEvent} event The original event object.
- */
-
-/**
- * Normalises touch and mouse events into an object with the same properties.
- * @param {MouseEvent|TouchEvent} ev The mouse or touch event.
- * @returns {NormalisedPointerEvent}
- * @private
- */
-export function normalizeEvent(ev) {
-  // touch
-  if (ev.type === 'touchstart' ||
-      ev.type === 'touchmove' ||
-      ev.type === 'touchend') {
-    const touch = ev.targetTouches[0] || ev.changedTouches[0];
-    return {
-      x: touch.clientX,
-      y: touch.clientY,
-      id: touch.identifier,
-      event: ev,
-    };
-
-  // mouse
-  } else {
-    return {
-      x: ev.clientX,
-      y: ev.clientY,
-      id: null,
-      event: ev,
-    };
-  }
-}
-
-/**
  * Gets the value of a CSS Custom property on a HTML Element.
  * @param {HTMLElement} element The element to get the property from.
  * @param {string} propertyName The property name.

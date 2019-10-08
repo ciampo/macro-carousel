@@ -33,13 +33,10 @@ const CLASSNAMES = {
 const EVENTS = {
   STANDARD: {
     CLICK: 'click',
-    TOUCHSTART: 'touchstart',
-    TOUCHMOVE: 'touchmove',
-    TOUCHEND: 'touchend',
-    TOUCHCANCEL: 'touchcancel',
-    MOUSEDOWN: 'mousedown',
-    MOUSEMOVE: 'mousemove',
-    MOUSEUP: 'mouseup',
+    POINTERDOWN: 'pointerdown',
+    POINTERMOVE: 'pointermove',
+    POINTERUP: 'pointerup',
+    POINTERCANCEL: 'pointercancel',
     KEYDOWN: 'keydown',
     RESIZE: 'resize',
     SLOTCHANGE: 'slotchange',
