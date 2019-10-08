@@ -486,7 +486,7 @@ class MacroCarousel extends HTMLElement {
    * binding every function. See
    * https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
    *
-   * @param {Event|KeyboardEvent} e Any event.
+   * @param {Event} e Any event.
    * @private
    */
   handleEvent(e) {
