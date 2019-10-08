@@ -86,7 +86,7 @@ export function intSetter(element, attributeName, value) {
  * Standard getter for a Custom Element int property reflected to attribute.
  * @param {HTMLElement} element
  * @param {string} attributeName
- * @param {number|string} [defaultValue=0]
+ * @param {number} [defaultValue=0]
  * @return {number} Whether the element has that specific attribute
  */
 export function intGetter(element, attributeName, defaultValue = 0) {
