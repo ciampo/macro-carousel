@@ -3,7 +3,7 @@ import sliderStyles from './macro-carousel.css';
 import {getEvtListenerOptions} from '../passiveEventListeners';
 import {
   clamp, clampAbs, booleanSetter, booleanGetter, intSetter, intGetter,
-  normalizeEvent, getCSSCustomProperty, setCSSCustomProperty, roundedTan,
+  getCSSCustomProperty, setCSSCustomProperty, roundedTan,
   isUndefined,
 } from '../utils';
 import {
@@ -27,7 +27,6 @@ window.MacroCarousel = window.MacroCarousel || {};
 window.MacroCarousel.__testonly__ = window.MacroCarousel.__testonly__ || {};
 window.MacroCarousel.__testonly__.clamp = clamp;
 window.MacroCarousel.__testonly__.clampAbs = clampAbs;
-window.MacroCarousel.__testonly__.normalizeEvent = normalizeEvent;
 // #endif
 
 
@@ -69,15 +68,6 @@ const slidesStatusCaption = (firstSlideIndex, numSlides, slidesPerView) => {
     slidesInView.join(', ').replace(/(,)(\s[^,]*)$/, ' and$2')
   } of ${numSlides} visible`;
 };
-
-/**
- * An object representing either a touch event or a mouse event.
- * @typedef {object} NormalisedPointerEvent
- * @property {number} x The x coordinate.
- * @property {number} y The y coordinate.
- * @property {?number} id The pointer identifier.
- * @property {MouseEvent|TouchEvent} event The original event object.
- */
 
 /**
  * An object containing information about a slide.
@@ -272,13 +262,6 @@ class MacroCarousel extends HTMLElement {
     this._isPointerActive = false;
 
     /**
-     * The ID of the active pointer that is dragging the slides.
-     * @type {number|undefined}
-     * @private
-     */
-    this._pointerId = undefined;
-
-    /**
      * The coordinate on the X axis at which the active pointer first "touched".
      * @type {number|undefined}
      * @private
@@ -444,7 +427,7 @@ class MacroCarousel extends HTMLElement {
 
     // fixes weird safari 10 bug where preventDefault is prevented
     // @see https://github.com/metafizzy/flickity/issues/457#issuecomment-254501356
-    window.addEventListener(EVENTS.STANDARD.TOUCHMOVE, function() {});
+    window.addEventListener(EVENTS.STANDARD.POINTERDOWN, function() {});
 
     // Sometimes the 'slot-changed' event doesn't fire consistently across
     // browsers, depending on how the Custom Element was parsed and initialised
@@ -464,9 +447,7 @@ class MacroCarousel extends HTMLElement {
 
     if (!this.disableDrag) {
       this._externalWrapper
-          .removeEventListener(EVENTS.STANDARD.TOUCHSTART, this);
-      this._externalWrapper
-          .removeEventListener(EVENTS.STANDARD.MOUSEDOWN, this);
+          .removeEventListener(EVENTS.STANDARD.POINTERDOWN, this);
     }
 
     if (this.navigation) {
@@ -529,17 +510,14 @@ class MacroCarousel extends HTMLElement {
       this._focusSelectedSlide();
       this._updateAriaLiveDom();
 
-    // Touch / drag
-    } else if (e.type === EVENTS.STANDARD.TOUCHSTART ||
-        e.type === EVENTS.STANDARD.MOUSEDOWN) {
-      this._onPointerDown(normalizeEvent(e));
-    } else if (e.type === EVENTS.STANDARD.TOUCHMOVE ||
-        e.type === EVENTS.STANDARD.MOUSEMOVE) {
-      this._onPointerMove(normalizeEvent(e));
-    } else if (e.type === EVENTS.STANDARD.TOUCHEND ||
-        e.type === EVENTS.STANDARD.MOUSEUP) {
-      this._onPointerEnd(normalizeEvent(e));
-    } else if (e.type === EVENTS.STANDARD.TOUCHCANCEL) {
+    // Pointer
+    } else if (e.type === EVENTS.STANDARD.POINTERDOWN) {
+      this._onPointerDown(e);
+    } else if (e.type === EVENTS.STANDARD.POINTERMOVE) {
+      this._onPointerMove(e);
+    } else if (e.type === EVENTS.STANDARD.POINTERUP) {
+      this._onPointerEnd(e);
+    } else if (e.type === EVENTS.STANDARD.POINTERCANCEL) {
       this._stopPointerTracking();
     }
   }
@@ -1399,27 +1377,22 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
   _updateDragEventListeners() {
     if (this.disableDrag) {
       this._externalWrapper
-          .removeEventListener(EVENTS.STANDARD.TOUCHSTART, this);
-      this._externalWrapper
-          .removeEventListener(EVENTS.STANDARD.MOUSEDOWN, this);
+          .removeEventListener(EVENTS.STANDARD.POINTERDOWN, this);
     } else {
-      this._externalWrapper.addEventListener(EVENTS.STANDARD.TOUCHSTART, this,
-          getEvtListenerOptions(true));
-      this._externalWrapper.addEventListener(EVENTS.STANDARD.MOUSEDOWN, this,
+      this._externalWrapper.addEventListener(EVENTS.STANDARD.POINTERDOWN, this,
           getEvtListenerOptions(true));
     }
   }
 
   /**
    * Begins to track pointer events in order to drag the wrapper.
-   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @param {PointerEvent} e
    * @private
    */
   _onPointerDown(e) {
     if (!this._isPointerActive) {
       this._decelerating = false;
       this._isPointerActive = true;
-      this._pointerId = e.id;
       this._pointerFirstX = this._pointerLastX = this._pointerCurrentX = e.x;
       this._pointerFirstY = this._pointerLastY = this._pointerCurrentY = e.y;
       this._lastDraggedLayoutIndex = this._slides[this.selected].layoutIndex;
@@ -1427,25 +1400,20 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
       this._trackingPoints = [];
       this._addTrackingPoint(this._pointerLastX);
 
-      window.addEventListener(EVENTS.STANDARD.TOUCHMOVE, this,
+      window.addEventListener(EVENTS.STANDARD.POINTERMOVE, this,
           getEvtListenerOptions(false));
-      window.addEventListener(EVENTS.STANDARD.MOUSEMOVE, this,
-          getEvtListenerOptions(false));
-      window.addEventListener(EVENTS.STANDARD.MOUSEUP, this);
-      window.addEventListener(EVENTS.STANDARD.TOUCHEND, this);
-      window.addEventListener(EVENTS.STANDARD.TOUCHCANCEL, this);
+      window.addEventListener(EVENTS.STANDARD.POINTERUP, this);
+      window.addEventListener(EVENTS.STANDARD.POINTERCANCEL, this);
     }
   }
 
   /**
    * Tracks the pointer movement and reflects it to the UI.
-   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @param {PointerEvent} e
    * @private
    */
   _onPointerMove(e) {
-    // Checking the pointer id avoids running the same code twice
-    // in case of touch screens.
-    if (this._isPointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive) {
       // Always update the current value of the pointer.
       // Once per frame, it gets consumed and becomes the last value.
       this._pointerCurrentX = e.x;
@@ -1458,7 +1426,7 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
       if (dX / dY > _dragAngleAllowance ||
           dY === 0 ||
           (dY > dX && dY - dX < _dragDistanceAllowance)) {
-        e.event.preventDefault();
+        e.preventDefault();
 
         this._addTrackingPoint(this._pointerLastX);
         this._disableWrapperTransitions();
@@ -1472,11 +1440,11 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
 
   /**
    * Stops the pointer tracking.
-   * @param {NormalisedPointerEvent} e The normalised pointer event.
+   * @param {PointerEvent} e
    * @private
    */
   _onPointerEnd(e) {
-    if (this._isPointerActive && e.id === this._pointerId) {
+    if (this._isPointerActive) {
       this._stopPointerTracking();
     }
   }
@@ -1488,15 +1456,12 @@ value. Add CSS units to its value to avoid breaking the slides layout.`);
    */
   _stopPointerTracking() {
     this._isPointerActive = false;
-    this._pointerId = undefined;
 
     this._addTrackingPoint(this._pointerLastX);
 
-    window.removeEventListener(EVENTS.STANDARD.TOUCHMOVE, this);
-    window.removeEventListener(EVENTS.STANDARD.MOUSEMOVE, this);
-    window.removeEventListener(EVENTS.STANDARD.TOUCHEND, this);
-    window.removeEventListener(EVENTS.STANDARD.MOUSEUP, this);
-    window.removeEventListener(EVENTS.STANDARD.TOUCHCANCEL, this);
+    window.removeEventListener(EVENTS.STANDARD.POINTERMOVE, this);
+    window.removeEventListener(EVENTS.STANDARD.POINTERUP, this);
+    window.removeEventListener(EVENTS.STANDARD.POINTERCANCEL, this);
 
     this._startDecelerating();
   }
