@@ -38,5 +38,13 @@
       await wcutils.flush();
       expect(this.slider.selected).to.equal(numberOfSlides - 1);
     });
+
+    it('returns indexes of slides in view', async function() {
+      this.slider.selected = 0;
+      this.slider.slidesPerView = 3;
+
+      await wcutils.flush();
+      expect(this.slider.slidesInView).to.deep.equal([0, 1, 2]);
+    });
   });
 })();
