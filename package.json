@@ -41,7 +41,7 @@
     "cssnano": "^4.1.10",
     "eslint": "^6.4.0",
     "eslint-config-google": "^0.14.0",
-    "karma": "^4.3.0",
+    "karma": "^6.4.1",
     "karma-chai": "^0.1.0",
     "karma-chai-spies": "^0.1.4",
     "karma-chrome-launcher": "^3.1.0",
