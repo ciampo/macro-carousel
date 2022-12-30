@@ -50,7 +50,7 @@
     "karma-firefox-launcher": "^1.2.0",
     "karma-mocha": "^1.3.0",
     "karma-safari-launcher": "^1.0.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "postcss-inline-svg": "^4.1.0",
     "prismjs": "^1.17.1",
     "rollup": "^1.21.3",
